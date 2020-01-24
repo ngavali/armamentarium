@@ -1,0 +1,379 @@
+<html>
+	<head>
+<style>
+
+body {
+	font-family:	Arial;
+	font-size:	12pt;
+}
+
+input[type=button], circle {
+	cursor: pointer;
+}
+
+svg {
+	cursor: crosshair;
+}
+
+text {
+	font-size: 11px;
+}
+
+.inputQuery {
+	font-family:	Arial;
+	font-size:	12pt;
+	width: 1200px;
+	height: 25px;
+}
+
+input[type=button] {
+	font-family:	Arial;
+	font-size:	12pt;
+	color:		blue;
+	border:		#888 1pt Solid;
+	margin:		5pt;
+	padding:	5pt;
+}
+
+</style>
+	<script>
+_ = function ( objString ) {
+	if ( objString ) {
+		return getDOMObject( objString );
+	}
+	else {
+	return { ready : function (myFunction) {
+			document.onreadystatechange = function () {
+				if(document.readyState === "complete"){
+					myFunction();
+					}
+				}
+			}
+		}
+	}
+
+	function getDOMObject( objString ) {
+		var t = (objString.match(/^./g)).toString();
+		var o = objString.substr(1);
+		var myObj;
+//		var tagName = ((( t === "." ) && ( document.getElementsByClassName(o) )) || (( t === "#" ) && ( document.getElementById(o) ))).tagName;
+
+		switch (t) {
+				case "." :	console.log("classname", o);
+				tagName = ( document.getElementsByClassName(o) && document.getElementsByClassName(o).tagName || null );
+						myObj = document.getElementsByClassName(o);
+						break;
+				case "#" : 	console.log("id", o);
+				tagName = ( document.getElementById(o) && document.getElementById(o).tagName || null );
+						myObj = document.getElementById(o);
+						break;
+				default  : 	tagName = null;
+		}
+
+		console.log(tagName);
+
+		if ( "DIV" === tagName ) {
+			return {
+				html : function ( myText ) {
+				return ( myText ) && ( document.getElementById(o).innerHTML = myText ) || document.getElementById(o).innerHTML;
+				}
+			}
+		} else if ( "TEXTAREA" === tagName ) {
+			return {
+				text : function () {
+				return document.getElementById(o).value;
+				}
+			}
+		} else if ( "INPUT" === tagName ) {
+			return { 
+				click : function(callBack) {
+					document.getElementById(o).addEventListener("click", function(){
+			    			callBack();
+						});
+					}
+			}
+		}
+		return myObj;
+	}
+
+	function getInnerHTML () {
+		this.innerHTML;
+	}
+
+}
+
+$ = (	function() {
+
+	function getJsonPrivate(request, callBack) {
+		var xmlhttp = new XMLHttpRequest();
+		xmlhttp.open(request.method, request.url, true);
+		xmlhttp.onreadystatechange = function() {
+		    if (xmlhttp.readyState == 4) {
+		        if(xmlhttp.status == 200) {
+		            var obj = JSON.parse(xmlhttp.responseText);
+			    callBack(obj);
+		         }
+		    }
+		}
+		xmlhttp.send(null);
+	}
+
+	return	{ getJson : function (request, callBack) {
+			getJsonPrivate(request, callBack);
+			}
+		}
+
+	}
+
+)();
+
+_.getJson = $.getJson;
+
+_().ready(function (){
+
+	_("#drawChart").click( function(){
+
+	var query = encodeURI(_("#inputQuery").text());
+
+	_.getJson(
+		{ method : "GET", url : "/cgi-bin/ng-charts/httpRequest.cgi?query="+query}, 
+		function(dataSet) { 
+			myC = {
+			"type"		: "lineChar",
+			"width"		: 1000,
+			"height"	: 400,
+			"target"	: "myChart",
+			"dataSource"	: dataSet,
+			"showBullets"	: 500,
+			"zero"		: true,
+			}
+			ngCharts.lineChart(myC);
+	
+		});
+
+	});
+
+
+});
+
+ngCharts = ( function() {
+
+	var xmlns = "http://www.w3.org/2000/svg";
+
+	function drawPolyLine(points, color, stroke) {
+	PolyLine = document.createElementNS (xmlns, "polyline");
+	PolyLine.setAttributeNS (null, "points", points);
+	PolyLine.setAttributeNS (null, "style", "fill:none;stroke:"+color+";stroke-width:"+stroke);
+	return PolyLine;
+	}
+
+	function drawLine(x1, y1, x2, y2, color, stroke, yval, lname ) {
+	Line = document.createElementNS (xmlns, "line");
+	Line.setAttributeNS (null, "id", lname);
+	Line.setAttributeNS (null, "x1", x1);
+	Line.setAttributeNS (null, "x2", x2);
+	Line.setAttributeNS (null, "y1", y1 );
+	Line.setAttributeNS (null, "y2", y2 );
+	Line.setAttributeNS (null, "yval", yval);
+	Line.setAttributeNS (null, "style", "stroke:"+color+";stroke-width:"+stroke );
+	return Line;
+	}
+
+	function drawBullet(x, y, color, r, stroke, yval) {
+	bullet = document.createElementNS (xmlns, "circle");
+	bullet.setAttributeNS (null, "class", "myBullet");
+	bullet.setAttributeNS (null, "yL", yval);
+	bullet.setAttributeNS (null, "cx", x );
+	bullet.setAttributeNS (null, "cy", y );
+	bullet.setAttributeNS (null, "r", r );
+	bullet.setAttributeNS (null, "stroke", "white");
+	bullet.setAttributeNS (null, "fill", color);
+//	bullet.setAttributeNS (null, "fill-opacity", 1 );
+//	bullet.setAttributeNS (null, "fill-opacity", 0 ); //transparent
+	bullet.setAttributeNS (null, "stroke-width", stroke);
+	return bullet;
+	}
+
+	function drawTextLabel(x, y, label) {
+	textLabel = document.createElementNS (xmlns, "text");
+	textLabel.setAttributeNS (null, "class", "myTextLabel");
+	textLabel.setAttributeNS (null, "x", x );
+	textLabel.setAttributeNS (null, "y", y );
+	textLabel.setAttributeNS (null, "fill", "#88a");
+	//textLabel.setAttributeNS (null, "transform", "scale(1,-1) translate(0,-"+boxHeight+")");
+//	textLabel.setAttributeNS (null, "transform", "translate(0,-50)");
+	textLabel.textContent = label;
+	return textLabel;
+	}
+
+	function drawLayer() {
+	Layer = document.createElementNS (xmlns, "g");
+	Layer.setAttributeNS (null, "id", "plotLayer" );
+	return Layer;
+	}
+
+	//var datapoints = [-10,-20,-30,-40,-50,10,0,5];
+
+	return { lineChart : function (myC) {
+
+	//Remove any existing graph
+	if( a=document.getElementById("myLineChart") ) {
+		document.getElementById(myC.target).removeChild(a);
+	}
+
+	var maxV = 0, minV = Infinity;
+	var pointColor = {};
+	var polyPoints = {};
+	var bullPoints = {};
+
+	/*
+	myC.dataSource.queryColumn.forEach( function ( v, k ) {
+		polyPoints[v]="";
+		pointColor[v] = "rgb(" + (Math.floor(Math.random() * 256)) + "," + (Math.floor(Math.random() * 256)) + "," + (Math.floor(Math.random() * 256)) + ")";
+	});
+*/
+	myC.dataSource.queryResult.forEach(function( item, key ) {
+		myC.dataSource.queryColumn.forEach( function ( v, k ) {
+			maxV = Math.ceil(Math.max(maxV, item[v]));
+			minV = Math.floor(Math.min(minV, item[v]));
+		});
+	});
+
+	if ( myC.zero == true && minV > 0) { 
+		minV = 0;
+	}
+
+	maxV=Math.ceil((maxV+1)/10)*10;
+//	minV=Math.floor((minV-1)/10)*11;
+
+	var svgElem = document.createElementNS (xmlns, "svg");
+	var plotWidth = myC.width;
+	var plotHeight = myC.height;
+	var dataPoints = myC.dataSource.queryResult.length;
+	var offsetX = 50, offsetY = 50;
+	var stepY = (plotHeight-offsetY*2)/(maxV-minV);
+	var stepX = (plotWidth-offsetX*2)/(dataPoints-1);
+	//(maxV-minV);
+	svgElem.setAttributeNS (null, "viewBox", "0 0 " + plotWidth + " " + plotHeight);
+	svgElem.setAttributeNS (null, "id", "myLineChart" );
+	svgElem.setAttributeNS (null, "width", plotWidth);
+	svgElem.setAttributeNS (null, "height", plotHeight);
+	//svgElem.setAttributeNS (null, "transform", "scale(1,-1)");
+	svgElem.style.display = "block";
+
+	PlotLayer=drawLayer();
+
+	AxisLabelLayer=drawLayer();
+	var gridStep = 10;
+	for ( i=1; maxV/gridStep*(gridStep-(i-1)) >= (1.1*minV); i++ ) {
+		if ( (maxV/gridStep*(gridStep-(i-1))) != 0 ) {
+			PlotLayer.appendChild ( drawLine ( 0, plotHeight-stepY*((i-1)*maxV/gridStep)-offsetY, plotWidth, plotHeight-stepY*((i-1)*maxV/gridStep)-offsetY, "#eee", 1 ) );
+			AxisLabelLayer.appendChild ( drawTextLabel( 0, stepY*((i-1)*maxV/gridStep)+offsetY-2, Math.ceil(maxV/gridStep*(gridStep-(i-1))) ) );
+		}
+	}
+	PlotLayer.setAttributeNS (null, "transform", "scale(1,-1) translate(0, -"+plotHeight+")");
+	//Y axis
+	PlotLayer.appendChild ( drawLine ( offsetX, 0, offsetX, plotHeight, "#88a", 1));
+	//X axis
+	if ( minV < 0 ) {
+		PlotLayer.appendChild ( drawLine ( 0, stepY*( Math.abs(minV) )+offsetY, plotWidth, stepY*Math.abs(minV)+offsetY, "#0a8", 1));
+		AxisLabelLayer.appendChild ( drawTextLabel( 0, stepY*( Math.abs(maxV) )+offsetY-2, 0 ) );
+	} else {
+		PlotLayer.appendChild ( drawLine ( 0, offsetY, plotWidth, offsetY, "#88a", 1));
+		AxisLabelLayer.appendChild ( drawTextLabel( 0, plotHeight-offsetY-2, 0 ) );
+	}
+
+	svgElem.appendChild( PlotLayer );
+	svgElem.appendChild( AxisLabelLayer );
+	PlotLayer.appendChild ( drawLine ( offsetX, 0, offsetX, plotHeight, "#aa8", 1, NaN,"markerX"));
+	PlotLayer.appendChild ( drawLine ( 0, offsetY, plotWidth, offsetY, "#aa8", 1, NaN,"markerY"));
+
+	var Bstroke=0.1;
+
+	myC.dataSource.queryColumn.forEach( function ( v, k ) {
+		i = 0;
+		bullPoints[v]=[];
+		BP=[];
+		polyPoints[v]="";
+		pointColor[v] = "rgb(" + (Math.floor(Math.random() * 256)) + "," + (Math.floor(Math.random() * 256)) + "," + (Math.floor(Math.random() * 256)) + ")";
+		myC.dataSource.queryResult.forEach(function( item, key ) {
+			y = stepY*(item[v]-minV)+offsetY;
+			x = i*stepX+offsetX;
+			if ( dataPoints < myC.showBullets ) {
+				Bstroke=3;
+			}
+			BP[i] = y;
+			PlotLayer.appendChild ( drawBullet( x, y, pointColor[v], Bstroke, 1, item[v]) );
+			polyPoints[v]+=x+","+y+" ";
+		i++;
+		})
+		bullPoints[v]=BP;
+		PlotLayer.appendChild( drawPolyLine(polyPoints[v], pointColor[v], 1) );
+	});
+
+/*
+	console.log(bullPoints);
+	console.log(polyPoints);
+	myC.dataSource.queryColumn.forEach( function ( v, k ) {
+		PlotLayer.appendChild( drawPolyLine(polyPoints[v], pointColor[v], 1) );
+	});
+*/
+	var svgContainer = document.getElementById(myC.target);
+	svgContainer.style.width = plotWidth;
+	svgContainer.style.height = plotHeight;
+	svgContainer.appendChild (svgElem);
+
+	//Handle mouse events over the graph
+
+	var elements = document.getElementsByClassName("myBullet");
+	elements = _(".myBullet");
+	for(var i=0; i<elements.length; i++) {
+		elements[i].addEventListener("mouseover", function(event) {
+		posX = event.x - svgContainer.offsetLeft;
+		posY = plotHeight - ( event.y - svgContainer.offsetTop );
+		_("#markerX").setAttributeNS( null, "x1", posX);
+		_("#markerX").setAttributeNS( null, "x2", posX);
+		_("#markerY").setAttributeNS( null, "y1", posY);
+		_("#markerY").setAttributeNS( null, "y2", posY);
+		//_("#markerX").setAttributeNS( null, "x1", this.getAttribute('cx'));
+		//_("#markerX").setAttributeNS( null, "x2", this.getAttribute('cx'));
+		_("#bulVal").html("( x1:"+this.getAttribute('cx')+", x2:"+event.x+ ", v:" + this.getAttribute('yL')+ " ) ->" +svgContainer.offsetLeft);
+		});
+	}
+
+	svgElem.addEventListener("mousemove", function(event) {
+		posX = event.x - svgContainer.offsetLeft;
+		posY = plotHeight - ( event.y - svgContainer.offsetTop );
+//		range = Math.floor((posX-offsetX)%stepX)
+		if ( posX >= offsetX && posX <= plotWidth-offsetY ) { //&& ( range < 5 || range > stepX-5 ) ) {
+			_("#markerX").setAttributeNS( null, "x1", posX);
+			_("#markerX").setAttributeNS( null, "x2", posX);
+			_("#markerY").setAttributeNS( null, "y1", posY);
+			_("#markerY").setAttributeNS( null, "y2", posY);
+		}
+//		_("#bulVal").html(Math.floor((posX-offsetX)%stepX));
+	});
+
+	_("#markerX").setAttributeNS (null, "stroke-dasharray", "4");
+	_("#markerY").setAttributeNS (null, "stroke-dasharray", "4");
+
+    }
+
+}	
+
+})();
+	</script>
+	</head>
+<body>
+<h2>Quantum - Pure Javascript Charts with Golang Backend - by ng-Charts!</h2>
+<center>
+<textarea col="100" id="inputQuery" class="inputQuery">
+select ts, open/(close/adj_close), high/(close/adj_close), low/(close/adj_close), close/(close/adj_close) from stockMarket.stock_quote_final where ex = 'bse' and id = 2 order by ts limit 100</textarea></br>
+<!--select ts, open, high, low, close from stockMarket.historical_data where exchange = 'NSE' and security_name = '3I INFOTECH' order by ts asc</textarea></br>
+<!--select ts, open, high, low, close from stockMarket.historical_data where exchange = 'NSE' and security_name = 'TCS' order by ts asc limit 10-->
+<input id="drawChart" type="button" value="Plot">
+<div id="bulVal">Values</div>
+<div id="myChart">
+</div>
+</body>
+</html

@@ -1,0 +1,161 @@
+/*@import url('https://fonts.googleapis.com/css?family="Droid Sans", Arima, "Source Sans Pro"');
+/*@import url('https://fonts.googleapis.com/css?family=Arial|Yantramanav');
+@import url('https://fonts.googleapis.com/css?family=Droid+Sans');
+@import url('https://fonts.googleapis.com/css?family="Droid Sans", Arima, "Source Sans Pro"|Libre+Franklin|Noto+Sans+JP|Patrick+Hand|Alegreya+Sans:300|Playfair+Display');*/
+
+html { overflow-y: scroll; }
+
+div#ContentBody {    
+	line-height: 35px;
+}
+
+pre {
+    line-height: 20px;
+    white-space: pre-wrap;       /* Since CSS 2.1 */
+    white-space: -moz-pre-wrap;  /* Mozilla, since 1999 */
+    white-space: -pre-wrap;      /* Opera 4-6 */
+    white-space: -o-pre-wrap;    /* Opera 7 */
+    word-wrap: break-word;       /* Internet Explorer 5.5+ */
+    overflow-x: auto;
+}
+
+div#menubar {
+	margin: 0px;
+	padding-top: 5px;
+	padding-bottom: 5px;
+	position: fixed;
+	width: 100%;
+	background: rgb(255,255,255);
+}
+
+.logo {
+	color: #9bc53d;
+	padding: 10px;
+}
+
+logo {
+	font-size: 22px;
+	font-weight: normal;
+	font-family: Arial;
+}
+
+k3 {
+	display: block;
+}
+
+h3, k3 {
+	font-size: 19px;
+	margin-top: 0px;
+}
+
+h3 {
+    color: #00A878;
+    color: #93B7BE;
+    color: #A0C1B9;
+    color: #6E8387;
+}
+
+h4 {
+    olor: #7FC6A4;
+    font-size: 17px;
+    margin-top: 5px;
+    margin-bottom: 0px;
+}
+
+table#menu {
+	width:1000px;
+	border:0px;
+	padding-bottom:5px;
+	border-bottom:#aae 1px dashed;
+	background: rgb(255,255,255);
+	font-size: 16px;
+	height: 70px;
+}
+
+div#bodyTopic {
+	margin: 0px;
+	padding-top: 105px;
+}
+
+table {
+	border-spacing: 0pt;
+}
+
+.head td {
+	border-bottom: #888 1px SOLID;
+	padding: 2pt;
+}
+
+table#topicContent {
+	width:1000px;
+	border:0px;
+	font-size: 17px;
+}
+
+body {
+	font-family: Arial;
+	font-size: 17px;
+	color: #444;
+	color: #000;
+	padding-left: 0px;
+	padding-right: 0px;
+	padding-bottom: 50px;
+	margin: 0px;
+}
+
+table#topicContent tr td {
+	font-family: Arial;
+	font-size: 17px;
+}
+
+table#menu tr td a {
+	padding-right: 5px;
+	text-decoration: none;
+	color: rgb( 100, 100, 100 );
+	color: #000;
+	font-family: Arial;
+}
+
+table#menu tr td a {
+	font-size: 17px;
+}
+
+a {
+	color: #4F5165;
+	outline: none;
+}
+
+a:hover {
+    color: #63326e;
+	text-decoration: underline;
+}
+
+img {
+	display: block;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+table#menu tr td .activeLink {
+	padding-right: 5px;
+    color: #00A878;
+    color: #D5C7BC;
+    color: #6E8387;
+	text-decoration: underline;
+	ont-size: 12pt;
+}
+
+/*text styles*/
+/* Emphasis */
+e {
+	font-weight: bold;
+	font-style: italic;
+}
+
+fs {
+    float: right;
+}
+
+.points {
+    padding-left: 50px;
+}

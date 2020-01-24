@@ -1,0 +1,99 @@
+<h3>
+<a href="#go" onclick="_().loadContent(this,'go','ContentBody');">Go Programming Language</a> - 
+<a href="#go/patterns" onclick="_().loadContent(this,'go/patterns','ContentBody');" > Design Patterns</a> - Factory</h3>
+Code
+<pre>
+//
+//	Factory pattern
+//
+
+package main
+
+import "fmt"
+
+type (
+        Car interface {
+                start()
+                drive()
+                stop()
+        }
+
+        car struct {
+                name  string
+                class string
+        }
+)
+
+const (
+        SEDAN = iota
+        SUV
+        HATCHBACK
+)
+
+func NewCar(name, sedan string) *car {
+        return &car{name, sedan}
+}
+
+func NewSedanCar(name string) Car {
+        return NewCar(name, "sedan")
+}
+
+func NewSUVCar(name string) Car {
+        return NewCar(name, "suv")
+}
+
+func NewHatchbackCar(name string) Car {
+        return NewCar(name, "hatchback")
+}
+
+func (c *car) start() {
+        fmt.Printf("You're [%10s:%8s] is ready for a drive...Hit the accelerator\n", c.class, c.name)
+}
+func (c *car) drive() { fmt.Println("Here we go!!!") }
+func (c *car) stop()  { fmt.Println("Hope you'd a pleasant drive.") }
+
+func CarFactory(name, class string) Car {
+        switch class {
+        case "sedan":
+                return NewSedanCar(name)
+        case "suv":
+                return NewSUVCar(name)
+        case "hatchback":
+                return NewHatchbackCar(name)
+        }
+        return nil
+}
+
+func main() {
+
+        var car Car
+
+        car = CarFactory("octavia", "sedan")
+        car.start()
+        car.drive()
+        car.stop()
+
+        car = CarFactory("seltos", "suv")
+        car.start()
+        car.drive()
+        car.stop()
+
+        car = CarFactory("polo", "hatchback")
+        car.start()
+        car.drive()
+        car.stop()
+
+}
+</pre>
+Output
+<pre>
+You're [     sedan: octavia] is ready for a drive...Hit the accelerator
+Here we go!!!
+Hope you'd a pleasant drive.
+You're [       suv:  seltos] is ready for a drive...Hit the accelerator
+Here we go!!!
+Hope you'd a pleasant drive.
+You're [ hatchback:    polo] is ready for a drive...Hit the accelerator
+Here we go!!!
+Hope you'd a pleasant drive.
+</pre>

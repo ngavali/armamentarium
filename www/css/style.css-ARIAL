@@ -1,0 +1,153 @@
+/*@import url('https://fonts.googleapis.com/css?family="Droid Sans", Arima, "Source Sans Pro"');
+/*@import url('https://fonts.googleapis.com/css?family=Serif, Arial|Yantramanav');
+@import url('https://fonts.googleapis.com/css?family=Droid+Sans');
+@import url('https://fonts.googleapis.com/css?family="Droid Sans", Arima, "Source Sans Pro"|Libre+Franklin|Noto+Sans+JP|Patrick+Hand|Alegreya+Sans:300|Playfair+Display');*/
+
+html { overflow-y: scroll; }
+
+div#ContentBody {    
+	line-height: 35px;
+}
+
+pre {
+	line-height: 20px;
+}
+
+div#menubar {
+	margin: 0px;
+	padding-top: 5px;
+	padding-bottom: 5px;
+	position: fixed;
+	width: 100%;
+	background: rgb(255,255,255);
+}
+
+.logo {
+    color: #9bc53d;
+	padding: 10px;
+}
+
+logo {
+	font-size: 22px;
+	font-weight: bold;
+	font-family: "Droid Sans", Arima, "Source Sans Pro", "Serif, Arial";
+}
+
+k3 {
+	display: block;
+}
+
+h3, k3 {
+	font-size: 14pt;
+	margin-top: 0px;
+}
+
+h3 {
+    color: #00A878;
+    color: #93B7BE;
+    color: #A0C1B9;
+    color: #6E8387;
+}
+
+h4 {
+    clor: #7FC6A4;
+
+}
+
+table#menu {
+	width:1000px;
+	border:0px;
+	padding-bottom:5px;
+	border-bottom:#eef 1px SOLID;
+	background: rgb(255,255,255);
+	font-size: 10pt;
+    height: 70px;
+}
+
+div#bodyTopic {
+	margin: 0px;
+	padding-top: 105px;
+}
+
+table {
+	border-spacing: 0pt;
+}
+
+.head td {
+	border-bottom: #888 1px SOLID;
+	padding: 2pt;
+}
+
+table#topicContent {
+	width:1000px;
+	border:0px;
+	font-size: 12pt;
+}
+
+body {
+	font-family: "Droid Sans", Arima, "Source Sans Pro", Serif, Arial;
+	font-size: 12pt;
+	color: #444;
+	color: #000;
+	padding-left: 0px;
+	padding-right: 0px;
+	padding-bottom: 50px;
+	margin: 0px;
+}
+
+table#topicContent tr td {
+	font-family: Serif, Arial
+	font-size: 12pt;
+}
+
+table#menu tr td a {
+	padding-right: 5px;
+	text-decoration: none;
+	color: rgb( 100, 100, 100 );
+	color: #000;
+	font-family: "Droid Sans", Arima, "Source Sans Pro", Serif, Arial;
+}
+
+table#menu tr td a {
+	font-size: 13pt;
+}
+
+a {
+	color: #4F5165;
+	outline: none;
+}
+
+a:hover {
+    color: #63326e;
+	text-decoration: underline;
+}
+
+img {
+	display: block;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+table#menu tr td .activeLink {
+	padding-right: 5px;
+    color: #00A878;
+    color: #D5C7BC;
+    color: #6E8387;
+	text-decoration: underline;
+	ont-size: 12pt;
+}
+
+/*text styles*/
+/* Emphasis */
+e {
+	font-weight: bold;
+	font-style: italic;
+}
+
+fs {
+    float: right;
+}
+
+.points {
+    padding-left: 50px;
+}

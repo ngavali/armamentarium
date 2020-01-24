@@ -1,0 +1,8 @@
+<h3><a href="#db" onclick="_().loadContent(this,'db','ContentBody');" > Database</a> - 2PC: Two Phase Commit</h3>
+Has 2 Phases, hence the name. Has 2 actors - Coordinator and Participant.
+<ul>
+<li>Prepare - Coordinator asks all participants to <b>prepare</b> the change(s).</li>
+<li>Commit  - Coordinator asks all participants to <b>commit</b> the change(s).</li>
+</ul>
+Is a blocking protocol since resources are blocked during the entire transaction. That is not the case with <a href="#ds/saga" onclick="_().loadContent(this,'ds/saga','ContentBody');">SAGA</a>.</p>
+<img src="images/2pc.svg" width="400px">

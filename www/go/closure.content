@@ -1,0 +1,26 @@
+<h3><a href="#go" onclick="_().loadContent(this,'go','ContentBody');" >Go Programming Language</a> - Closure</h3></p>
+<pre>
+package main
+
+import "fmt"
+
+func <name>incrementor</name>() func() int {
+        <v>i</v> := 0
+        <r>return</r> func() int {
+                <v>i</v>++
+                <r>return</r> <v>i</v>
+        }
+}
+
+func main() {
+        <v>inc1</v> := <name>incrementor</name>()
+        fmt.Println(<name>inc1()</name>, <name>inc1</name>())
+        <v>inc2</v> := <name>incrementor</name>()
+        fmt.Println(<name>inc1</name>(), <name>inc2</name>())
+}
+</pre>
+Output
+<pre>
+1 2
+3 1
+</pre>

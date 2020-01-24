@@ -1,0 +1,25 @@
+select 2, 'E2', true, 1
+UNION 
+select 3, 'E3', true, 1
+UNION
+select 4, 'E4', true, 1
+UNION 
+select 5, 'T1', true, 2
+UNION 
+select 6, 'T2', true, 2
+UNION
+select 7, 'T3', true, 2
+UNION 
+select 8, 'T4', true, 2
+UNION 
+select 9, 'T5', true, 2
+UNION 
+select 10, 'T6', true, 2
+UNION 
+select 11, 'T7', true, 2
+UNION 
+select 12, 'T8', true, 2
+UNION 
+select 13, 'L1', true, 3
+UNION 
+select 14, 'L2', true, 3

@@ -1,0 +1,162 @@
+<h3><a href="#go" onclick="_().loadContent(this,'go','ContentBody');" >Go Programming Language</a> - Simple HTTP Server</h3></p>
+<pre>
+package main
+
+import (
+        "fmt"
+        "log"
+        "net/http"
+)
+
+func apiRequestHandler(res http.ResponseWriter, req *http.Request) {
+        log.Printf("api hit!!! from %s\n", req.RemoteAddr)
+        res.Header().Set("Server", "Simple HTTP Server")
+        fmt.Fprint(res, "api hit!!!\n")
+}
+
+func main() {
+        listenTo := ":8888"
+        http.HandleFunc("/api", apiRequestHandler)
+        if _err := http.ListenAndServe(listenTo, nil); _err != nil {
+                log.Println("Unable to start server -> ", _err)
+        }
+}
+</pre>
+Terminal 1
+<pre>
+ng@celeritas [ ~/golang/src ]$ go run server/simple_http_server.go
+2016/03/17 19:02:19 api hit!!! from 127.0.0.1:36634
+2016/03/17 19:02:20 api hit!!! from 127.0.0.1:36640
+2016/03/17 19:02:21 api hit!!! from 127.0.0.1:36644
+...
+</pre>
+Terminal 2
+<pre>
+ng@celeritas [ ~ ]$ wget -dO- localhost:8888/api 2>&1 | egrep "(Server|api)"
+--2016-03-17 19:02:19--  http://localhost:8888/api
+GET /api HTTP/1.1
+Server: Simple HTTP Server
+api hit!!!
+ng@celeritas [ ~ ]$ wget -dO- localhost:8888/api 2>&1 | egrep "(Server|api)"
+--2016-03-17 19:02:20--  http://localhost:8888/api
+GET /api HTTP/1.1
+Server: Simple HTTP Server
+api hit!!!
+ng@celeritas [ ~ ]$ wget -dO- localhost:8888/api 2>&1 | egrep "(Server|api)"
+--2016-03-17 19:02:21--  http://localhost:8888/api
+GET /api HTTP/1.1
+Server: Simple HTTP Server
+api hit!!!
+</pre>
+<h4>Handlers, Wrappers and Interceptor</h4>
+<pre>
+package main
+
+import (
+        "fmt"
+        "log"
+        "net/http"
+)
+
+func MustParams(h http.HandlerFunc, mustParams ...string) http.HandlerFunc {
+        return func(res http.ResponseWriter, req *http.Request) {
+                q := req.URL.Query()
+                for _, param := range mustParams {
+                        //                      if len(q.Get(param)) == 0 {
+                        if _, ok := q[param]; !ok {
+                                http.Error(res, "Required Param: "+param+" missing", http.StatusBadRequest)
+                                return
+                        }
+                }
+                h(res, req)
+        }
+}
+
+func MustAuth(h http.HandlerFunc) http.HandlerFunc {
+        return Log(MustParams(func(res http.ResponseWriter, req *http.Request) {
+                q := req.URL.Query()
+                if q.Get("user") == "user" && q.Get("pass") == "pass" {
+                        h(res, req)
+                } else {
+                        http.Error(res, "Invalid credentials ", http.StatusUnauthorized)
+                        return
+                }
+        }, "user", "pass"))
+}
+
+func Log(h http.HandlerFunc) http.HandlerFunc {
+        return func(res http.ResponseWriter, req *http.Request) {
+                rw := &responseInterceptor{res, http.StatusOK, 0}
+                h(rw, req)
+                log.Printf("Method: %v Status: %v Size: %v URL: %v User-Agent: %v", req.Method, rw.Status(), rw.ResponseBytes(), req.URL.String(), req.Header.Get("User-Agent"))
+        }
+}
+
+var aboutHandlerFunc = func(res http.ResponseWriter, req *http.Request) {
+        _, _err := res.Write([]byte("This is about page!!!"))
+        if _err != nil {
+                fmt.Printf("error: %v\n", _err)
+        }
+}
+
+var homeHandlerFunc = func(res http.ResponseWriter, req *http.Request) {
+        _, _err := res.Write([]byte("This is home!!!"))
+        if _err != nil {
+                fmt.Printf("error: %v\n", _err)
+        }
+}
+
+type responseInterceptor struct {
+        http.ResponseWriter
+        status        int
+        responseBytes int
+}
+
+func (rs *responseInterceptor) Status() int {
+        return rs.status
+}
+
+func (rs *responseInterceptor) ResponseBytes() int {
+        return rs.responseBytes
+}
+
+func (rs *responseInterceptor) WriteHeader(status int) {
+        rs.status = status
+        rs.ResponseWriter.WriteHeader(status)
+}
+
+func (rs *responseInterceptor) Write(b []byte) (int, error) {
+        _responseBytes, _err := rs.ResponseWriter.Write(b)
+        rs.responseBytes = _responseBytes
+        return _responseBytes, _err
+}
+
+var interceptorHandlerFunc = func(res http.ResponseWriter, req *http.Request) {
+        http.Error(res, "Forbidden temple", http.StatusForbidden)
+}
+
+func main() {
+
+        http.HandleFunc("/about", MustAuth(aboutHandlerFunc))
+        http.HandleFunc("/home", Log(homeHandlerFunc))
+        http.HandleFunc("/temple", Log(interceptorHandlerFunc))
+
+        log.Println("Starting http server. Listening on :8888")
+        if _err := http.ListenAndServe(":8888", nil); _err != nil {
+                fmt.Println("Unable to start listener:", _err)
+        }
+
+}
+</pre>
+Sample log output
+<pre width="800px">
+$ go run api_handler.go
+2019/10/30 18:04:03 Starting http server. Listening on :8888
+2019/10/30 18:04:09 Method: GET Status: 200 Size: 15 URL: /home User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3865.120 Safari/537.36
+2019/10/30 18:04:16 Method: GET Status: 403 Size: 17 URL: /temple User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3865.120 Safari/537.36
+2019/10/30 18:04:24 Method: GET Status: 400 Size: 29 URL: /about User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3865.120 Safari/537.36
+2019/10/30 18:04:31 Method: GET Status: 400 Size: 29 URL: /about?user=& User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3865.120 Safari/537.36
+2019/10/30 18:04:35 Method: GET Status: 401 Size: 21 URL: /about?user=&pass= User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3865.120 Safari/537.36
+2019/10/30 18:04:41 Method: GET Status: 200 Size: 21 URL: /about?user=user&pass=pass User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3865.120 Safari/537.36
+^Csignal: interrupt
+</pre>

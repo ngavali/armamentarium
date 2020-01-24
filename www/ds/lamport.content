@@ -1,0 +1,57 @@
+<h3><a href="#ds" onclick="_().loadContent(this,'ds','ContentBody');" >Distributed Systems</a> - Lamport timestamps</h3>
+Lamport timestamps provides simplest mechanism for ordering events in a distributed system, eliminating the complexities of time synchronization across the nodes (processes). Each process maintains its own logical clock (nothing but an incremental counter). These logical clocks do not work like our real world clocks and the ticking (counter progression) is governed by an algorithm. Wherein, counter is updated whenever an event occurs. The generated counter values (assigned to an event) are used to order events and determine causality. In a process, an event could occur due to some local processing or as a result of interaction with an another process. Lamport timestamps primarily deals with the later case, two or more processes interacting with each other (communicating by exchanging messages).
+</p>
+We will walkthrough the algorithm, an illustration and finally its limitations.
+<h4>The Algorithm</h4>
+Each process maintains its own lamport timestamp counter. A timestamp is assigned to each event in a process.</p>
+
+1. The counter is incremented before a timestamp is assigned to an event.</br>
+A process (<b>P</b>) increments its counter (C) whenever it observes any event (x) and assigns it to that event.</br>
+<center>C<sub>P</sub>(x) = C<sub>P</sub> + 1</center>
+
+2. If an event is the sending of a message then the event's counter timestamp is sent along with the message.</br>
+For an event <b>x</b> sending of a message <b>m</b>, sender process <b>S</b> includes its counter with the message it sends.</br>
+<center>C<sub>S</sub>(x) = C<sub>S</sub>+1 and Send {message, C<sub>S</sub>(x)}</center><fs>... (Note the +1 due to rule #1)</fs></br>
+
+3. If an event is the receiving of a message then the current value (timestamp) of the counter is compared with the received timestamp. Greater of the either is selected, incremented and assigned to the event.</br>
+For an event <b>y</b> receiving a mesage <b>m</b> from the sender process <b>S</b>, receiver process <b>R</b> updates its counter as follows.</br>
+<center>C<sub>R</sub>(y) = max( C<sub>R</sub> , C<sub>S</sub> received with the message ) + 1</center> <fs>... (Note the +1 due to rule #1)</fs></br>
+
+Increment in each step guarantees that the timestamp of a future event is always greater than those happened in past.</p>
+
+Now say, an event <b>x</b> has <i>happened before</i> (denoted by symbol <name>&rarr;</name>) event <b>y</b>. We then establish following relationship</br>
+<center>
+x &rarr; y &rArr; C(x) < C(y)  <fs>... (1)</fs>
+</center>
+<table>
+Where,
+<div class="points">
+C(e) is the counter value for an event <b>e</b></br>
+</div>
+<h4>Illustration</h4>
+Let us take a look at an example to validate the same. Below diagram depicts events happening in a distributed system with three participating processes.</br>
+Here, e<sub>ik</sub> represents k<sup>th</sup> event in i<sup>th</sup> process (<i>P</i><sub>i</sub>) and the numerals in green represent local logical clock progression in a given process.
+<img src="images/lamportTimestamp.svg" width="500px">
+For an event e<sub>12</sub> and e<sub>22</sub> we can see that</br> 
+<center>
+e<sub>12</sub> &rarr; e<sub>22</sub> &rArr; C(e<sub>12</sub>) < C(e<sub>22</sub>)</br>
+and the converse is also true</br>
+C(e<sub>12</sub>) < C(e<sub>22</sub>) &rArr; e<sub>12</sub> &rarr; e<sub>22</sub></br>
+</center>
+Now, if you observe carefully, you can quickly argue that the converse is not always true. Yes, you are right. When two events are unrelated to each other we can see that converse of (1) is not always true. C(a) < C(b) does not necessarily mean that event a has happened before or caused event b.</br>
+<center>
+C(a) < C(b) &#x21CF; a &rarr; b <fs>... (2)</fs>
+</center>
+e.g. C(e<sub>32</sub>) < C(e<sub>13</sub>) &#x21CF; e<sub>32</sub> &rarr; e<sub>13</sub></br>
+Here, we cannot determine causality between two events by <i>simply comparing their counter values</i>.
+Also, events can happen concurrently and would be totally unrelated to each other.</br>
+Thus, below are necessary conditions for relation (1) to work both ways:
+<div class="points">
+1. Events x and y happen within same process</br>
+OR</br>
+2. Event x is sending of a message <b>m</b> by one process and event y is receiving of the same message <b>m</b> in an another process.</br>
+</div>
+</p>
+That's all folks! In next article we will see how these limitations are overcome by a <a href="#ds/vectorclock" onclick="_().loadContent(this,'ds/vectorclock','ContentBody');">Vector Clock</a>.
+</p>
+Thanks.

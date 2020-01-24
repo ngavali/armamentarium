@@ -1,0 +1,74 @@
+<h3><a href="#go" onclick="_().loadContent(this,'go','ContentBody');" >Go Programming Language</a> - Goroutine</h3></p>
+Demonstration of goroutine with waitgroup.</br>
+A WaitGroup waits for a collection of goroutines to finish.
+<pre>
+package main
+
+import (
+        "fmt"
+        "sync"
+        "time"
+)
+
+func main() {
+
+        var wg sync.WaitGroup
+
+        wg.Add(1)
+
+        go func(wg *sync.WaitGroup) {
+
+                wg.Add(1)
+
+                go func(wg *sync.WaitGroup) {
+
+                        for i, _ := range make([]byte, 10) {
+                                fmt.Printf("key -> %d : val -> %q\n", i, i+97)
+                                time.Sleep(100 * time.Millisecond)
+                        }
+                        fmt.Printf("wg inside byte goroutine : %p\n", &wg)
+                        wg.Done()
+
+                }(wg)
+
+                for i, v := range []int{0: 1, 9: 9} {
+                        fmt.Printf("key -> %d : val -> %d\n", i, v)
+                        time.Sleep(100 * time.Millisecond)
+                }
+                fmt.Printf("wg inside int  goroutine : %p\n", &wg)
+                wg.Done()
+
+        }(&wg)
+
+        wg.Wait()
+
+        fmt.Printf("wg inside main           : %p\n", &wg)
+
+}
+</pre>
+Output
+<pre>
+key -> 0 : val -> 1
+key -> 0 : val -> 'a'
+key -> 1 : val -> 0
+key -> 1 : val -> 'b'
+key -> 2 : val -> 'c'
+key -> 2 : val -> 0
+key -> 3 : val -> 'd'
+key -> 3 : val -> 0
+key -> 4 : val -> 0
+key -> 4 : val -> 'e'
+key -> 5 : val -> 'f'
+key -> 5 : val -> 0
+key -> 6 : val -> 0
+key -> 6 : val -> 'g'
+key -> 7 : val -> 'h'
+key -> 7 : val -> 0
+key -> 8 : val -> 0
+key -> 8 : val -> 'i'
+key -> 9 : val -> 'j'
+key -> 9 : val -> 9
+wg inside int  goroutine : 0xc000086018
+wg inside byte goroutine : 0xc00009a000
+wg inside main           : 0xc000082010
+</pre>

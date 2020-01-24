@@ -1,0 +1,163 @@
+<h3><a href="#go" onclick="_().loadContent(this,'go','ContentBody');" >Go Programming Language</a> - Embedding</h3></p>
+<pre>
+package main
+
+import "fmt"
+
+type Host interface {
+        Name() string
+        Port() int
+}
+
+type host struct {
+        hostname string
+        port     int
+}
+
+func (h *host) Name() string {
+        return h.hostname
+}
+
+func (h *host) Port() int {
+        return h.port
+}
+
+type DbReader interface {
+        Host
+        MakeDsn() string
+        Read() string
+}
+
+type dataReader interface {
+        DbReader
+}
+
+type dataWriter interface {
+        DbWriter
+}
+
+type dataProcessor interface {
+        Process() string
+}
+
+type DbWriter interface {
+        Host
+        MakeDsn() string
+        Write() string
+}
+
+type mysqlDbWriter struct {
+        host
+        username string
+        password string
+}
+
+func (m *mysqlDbWriter) Process() string {
+        return "Mysql writer process"
+}
+
+func (m *mysqlDbWriter) MakeDsn() string {
+        return "mysql writer dsn"
+}
+
+func (m *mysqlDbWriter) Write() string {
+        return "mysql writer Rows"
+}
+
+type mysqlDbReader struct {
+        host
+        username string
+        password string
+}
+
+func (m *mysqlDbReader) Process() string {
+        fmt.Println(m.Name())
+        fmt.Println(m.MakeDsn())
+        fmt.Println(m.Read())
+        return "Mysql reader process"
+}
+
+func (m *mysqlDbReader) MakeDsn() string {
+        return "mysql reader dsn"
+}
+
+func (m *mysqlDbReader) Read() string {
+        return "mysql reader Rows"
+}
+
+type File interface {
+        Name() string
+        Path() string
+}
+
+type file struct {
+        filename string
+        filepath string
+}
+
+func (f *file) Name() string {
+        return f.filename
+}
+
+func (f *file) Path() string {
+        return f.filepath
+}
+
+type httpFile struct {
+        secure bool
+        host
+        file
+}
+
+func (f *httpFile) Name() string {
+        return f.file.Name()
+}
+
+func (f *httpFile) Host() string {
+        return f.host.Name()
+}
+
+func (f *httpFile) Path() string {
+        scheme := "http"
+        if f.secure {
+                scheme = "https"
+        }
+        return fmt.Sprintf("%s://%s:%d%s", scheme, f.host.Name(), f.host.Port(), f.file.Path())
+}
+
+type localFile struct {
+        filename string
+        location string
+}
+
+func (l *localFile) Name() string {
+        return l.filename
+}
+
+func (l *localFile) Type() string {
+        return "local"
+}
+
+func (l *localFile) Location() string {
+        return l.location
+}
+
+type csvReader struct {
+        File
+}
+
+func (m *csvReader) Read() string {
+        return "csv Rows"
+}
+
+func main() {
+        var dataHandle interface{}
+        //      var dataHandle dataProcessor
+        dataHandle = &mysqlDbReader{host{"localhost", 8080}, "user", "pass"}
+        fmt.Println((dataHandle.(*mysqlDbReader)).Process())
+        var remoteFile = httpFile{true, host{"gavalinc.appspot.com", 443}, file{"2pc.svg", "/images/"}}
+        fmt.Println(remoteFile.Name())
+        fmt.Println(remoteFile.Host())
+        fmt.Println(remoteFile.Path())
+}
+</pre>

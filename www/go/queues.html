@@ -1,0 +1,163 @@
+<html>
+<link rel="stylesheet" href="/css/style.css">
+<link rel="stylesheet" href="/css/code.css">
+<script src="/js/menu.js" type="text/javascript"></script>
+<style>
+	a#home { text-decoration: none; } 
+	div#bodyContent {
+		width: 400px;
+		height: 100px;
+	
+		position: absolute;
+		top:0;
+		bottom: 0;
+		left: 0;
+		right: 0;
+	
+		margin: auto;
+	}
+</style>
+<body>
+<div id="menubar" >
+<table id="menu" style="table-layout:fixed" align="center">
+<tr>
+<td width="180px"><a href="/"><logo style="display:inline;color: rgb(84, 84, 84)">The</br><span class="logo">Rational Bear</span></logo></a></td>
+<td align="right"><div id="menuitem"></div></td>
+</tr>
+</table>
+</div>
+<center>
+<div id="bodyTopic" >
+<table id="topicContent" align="center">
+<tr><td>
+<h3><a href="/go.html">Go Programming Language</a> - Queue, Unblocking the channel</h3></p>
+Creating a data stream using channels without any bounds? Full throttle! Yes, It is possible and we will discuss about the solution wherein we will use an intermediate storage structure [So called Queue] to handle buffering of the data stream.</p>
+We will try to overcome the problem, wherein channels block the processes which are writing to and reading from it.<p>
+Queue allows dynamic buffering of the data stream compared to a buffered channel, writer and reader processes accessing the queue doesn't influence each others behavior ( i.e., they donot block each other as in the case of channels - ex. Fast writer can continue writing to the channel without any need to wait for a slow reader to consume data stream from the other end of the channel ).</p>
+Having said that, writing-to and reading-from a Queue must be a safe operation to avoid any possibility of data corruption resulting in any inconsistenties or abnormal behavior.</p>
+And to ensure same we use a mutex.</p>
+Complete flow is depicted below, in Fig.1.</p>
+<center>
+	<img src="/images/queues.svg" width="400px" /><b>Fig.1. </b>Data flow
+</center></p>
+<h3>Components</h3>
+There are 4 go rountines, 2 Channels and 1 Queue, each described as follows:</p>
+<table width="100%">
+	<tr><td colspan="3"><h4>Goroutines</h4></td></tr>
+	<tr><td>Writer</td><td>-</td><td>Generates a data stream [integer, string or float] that is written to Channel #1 [In]</td></tr>
+	<tr><td>Enqueue'er</td><td>-</td><td>Reads data stream from Channel #1 [In] into an intermediate storage [buffer = Queue]</td></tr>
+	<tr><td>Dequeue'er</td><td>-</td><td>Reads from an intermediate storage [Queue] and sends it to Channel #2 [Out]</td></tr>
+	<tr><td>Reader</td><td>-</td><td>Reads the data stream from Channel #2 [Out]</td></tr>
+	<tr><td colspan="3"></p></td></tr>
+
+	<tr><td colspan="3"></p><h4>Channels</h4></td></tr>
+	<tr><td>[#1] In</td><td>-</td><td>Writer goroutine writes to this Channel</td></tr>
+	<tr><td>[#2] Out</td><td>-</td><td>Reader goroutine reads from this Channel</td></tr>
+	<tr><td colspan="3"></p></td></tr>
+
+	<tr><td colspan="3"></p><h4>Queue(s)</h4></td></tr>
+	<tr><td>queue</td><td>-</td><td>An array of type Interface acting buffer between In and Out channel</td></tr>
+	<tr><td colspan="3"></p></td></tr>
+
+	<tr><td colspan="3"></p><h4>Miscellaneous</h4></td></tr>
+	<tr><td>mx</td><td>-</td><td>Mutex to create atomic sections. [Writing and Reading from Queue]</td></tr>
+	<tr><td>wg</td><td>-</td><td>Wait group to make sure we wait until all go routines complete</td></tr>
+	<tr><td colspan="3"></p></td></tr>
+</table>
+
+<h3>Code</h3>
+Let us go through the code now
+<pre>
+package main
+
+import (
+        "fmt"
+        "sync"
+)
+
+func main() {
+
+        <name>In</name> := make(chan interface{})
+        <name>Out</name> := make(chan interface{})
+
+        var <name>wg</name> sync.WaitGroup
+        var queue []interface{}
+
+        <name>mx</name> := &sync.Mutex{}
+
+        finishEnqueue := false
+
+        <name>wg</name>.Add(4)
+
+	<c>//Writer Goroutine</c>
+        go func(fOut chan interface{}, <name>wg</name> *sync.WaitGroup) {
+                for i := 0; i &lt; 10; i++ {
+			fOut &lt;- i 			<c>//Write integer values to In channel</c>
+                }
+                for i := 1; i &lt; 10; i++ {
+			fOut &lt;- string(i + 64) 		<c>//Write characters to In channel</c>
+                }
+                for i := 1; i &lt; 10; i++ {
+			fOut &lt;- float32(i) / 100 	<c>//Write float values to In channel</c>
+                }
+                close(fOut)
+                fmt.Println("Write complete!")
+                <name>wg</name>.Done()
+        }(<name>In,</name> &<name>wg)</name>
+
+	<c>//Enqueue'er Goroutine</c>
+        go func(fIn chan interface{}, <name>wg</name> *sync.WaitGroup) {
+                for {
+                        i, ok := &lt;-fIn
+                        if !ok {
+                                <r>break</r>
+                        }
+			<name>mx</name>.<r>Lock()</r>			<c>//Acquire lock for Write</c>
+			queue = append(queue, i)	<c>//Write to the Queue</c>
+			<name>mx</name>.<r>Unlock()</r>			<c>//Release Write lock</c>
+                }
+                finishEnqueue = true
+                <name>wg</name>.Done()
+        }(<name>In,</name> &<name>wg)</name>
+
+	<c>//Dequeue'er Goroutine</c>
+        go func(fOut chan interface{}, <name>wg</name> *sync.WaitGroup) {
+                for finishEnqueue != true || len(queue) != 0 {
+			<name>mx</name>.<r>Lock()</r>			<c>//Acquire lock for Read</c>
+                        if len(queue) &gt; 0 {
+				fOut &lt;- queue[0]	<c>//Read an element from Queue and write to Out channel</c>
+				queue = queue[1:]	<c>//Remove read element from Queue</c>
+                        }
+			<name>mx</name>.<r>Unlock()</r>			<c>//Release Read lock</c>
+                }
+                close(fOut)
+                <name>wg</name>.Done()
+        }(<name>Out,</name> &<name>wg)</name>
+
+	<c>//Reader Goroutine</c>
+        go func(fIn chan interface{}, <name>wg</name> *sync.WaitGroup) {
+                for {
+			i, ok := &lt;-fIn			<c>//Read from the Out channel</c>
+                        if !ok {
+                                fmt.Println("Read complete!")
+                                <r>break</r>
+                        }
+                        fmt.Println("Read  -&gt;", i)
+                }
+                <name>wg</name>.Done()
+        }(<name>Out,</name> &<name>wg)</name>
+
+	<name>wg</name>.Wait()					<c>//Wait until all goroutine finish</c>
+
+}
+</pre>
+You can thus create disjoint producers and consumers. At the same time, we have to keep track of the Queue size ( memory usage ).</p>
+Hope you have enjoyed this tutorial. If you observe any errors or problem with the implementation logic, feel free send me an email. I will be glad to hear about it! your feedback is most welcome.</p>
+Thank you
+</p></p>
+</td></tr>
+</table>
+<div>
+<center>
+</body>
+</html>

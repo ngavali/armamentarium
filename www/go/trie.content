@@ -1,0 +1,115 @@
+<h3><a href="#go" onclick="_().loadContent(this,'go','ContentBody');" >Go Programming Language</a> - Trie</h3></p>
+<code><r>Work in progress</r></code></p>
+Example: English dictionary.
+<pre>
+package main
+
+import (
+        "errors"
+        "fmt"
+        "strings"
+)
+
+type (
+        Trie struct {
+                *node
+        }
+
+        node struct {
+                key   byte
+                value string
+                next  [26]*node
+        }
+)
+
+var (
+        ERR_NOT_FOUND = errors.New("Object not found.")
+
+        Case = map[bool]uint8{true: 65, false: 97}
+)
+
+func (t *Trie) Insert(key, value string) {
+
+        if t.node == nil {
+                t.node = &node{}
+        }
+        //convert a-z to A-Z and then adjust in the range of 0-25
+        curr := t.node
+        for _, v := range []uint8(key) {
+                v = v % Case[v < 97]
+                if curr.next[v] == nil {
+                        curr.next[v] = &node{key: v}
+                }
+                curr = curr.next[v]
+        }
+        curr.value = value
+}
+
+func (t *Trie) Search(key string) (string, error) {
+
+        curr := t.node
+        for _, v := range []uint8(key) {
+                v = v % Case[v < 97]
+                if curr.next[v] == nil {
+                        return "", ERR_NOT_FOUND
+                }
+                curr = curr.next[v]
+        }
+
+        return curr.value, nil
+
+}
+
+func (t *Trie) Iterate() {
+
+        curr := t.node
+
+        fmt.Printf("%+v\n", curr.next)
+
+        for k, v := range curr.next {
+
+                if v != nil {
+                        (&Trie{v}).Iterate()
+                        fmt.Printf("key : %d :: value : (%c)\n", k+1, v.key+65)
+                }
+
+        }
+
+}
+
+func main() {
+
+        Dictionary := &Trie{}
+
+        Dictionary.Insert("apple", "the round fruit of a tree of the rose family, which typically has thin green or red skin and crisp flesh.")
+        Dictionary.Insert("applet", "a very small application, especially a utility program performing one or a few simple functions.")
+        Dictionary.Insert("a", "the first letter of the alphabet")
+        Dictionary.Insert("cat", "a small domesticated carnivorous mammal with soft fur, a short snout, and retractable claws. It is widely kept as a pet or for catching mice.")
+        Dictionary.Insert("car", "a road vehicle, typically with four wheels, powered by an internal combustion engine and able to carry a small number of people.")
+        Dictionary.Insert("bat", "an implement with a handle and a solid surface, typically of wood, used for hitting the ball in games such as cricket, baseball, and table tennis.")
+        Dictionary.Insert("ball", "a solid or hollow spherical or egg-shaped object that is kicked, thrown, or hit in a game.")
+
+        fmt.Printf("%10s : value\n%s\n", "key", strings.Repeat("-", 80))
+        for _, key := range []string{"apple", "applet", "a", "bat", "ball", "cat", "cap", "car"} {
+                if v, ok := Dictionary.Search(key); ok == nil {
+                        fmt.Printf("%10s : %v\n", key, v)
+                } else {
+                        fmt.Printf("%10s : Error=%v\n", key, ok)
+                }
+        }
+
+}
+</pre>
+Output
+<pre>
+       key : value
+--------------------------------------------------------------------------------
+     apple : the round fruit of a tree of the rose family, which typically has thin green or red skin and crisp flesh.
+    applet : a very small application, especially a utility program performing one or a few simple functions.
+         a : the first letter of the alphabet
+       bat : an implement with a handle and a solid surface, typically of wood, used for hitting the ball in games such as cricket, baseball, and table tennis.
+      ball : a solid or hollow spherical or egg-shaped object that is kicked, thrown, or hit in a game.
+       cat : a small domesticated carnivorous mammal with soft fur, a short snout, and retractable claws. It is widely kept as a pet or for catching mice.
+       cap : Error=Object not found.
+       car : a road vehicle, typically with four wheels, powered by an internal combustion engine and able to carry a small number of people.
+</pre>

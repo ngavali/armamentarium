@@ -1,0 +1,217 @@
+<h3><a href="#go" onclick="_().loadContent(this,'go','ContentBody');" >Go Programming Language</a> - Protocol Buffer</h3></p>
+<b>When to choose?</b> Performance is your goal. But, beware of strings.
+<h4>Install golang plugin</h4>
+go get -u github.com/golang/protobuf/protoc-gen-go
+<h4>Example</h4>
+Define the structure of message</br>
+File: protobuff/Author.proto
+<pre>
+syntax = "proto3";
+package protobuff;
+
+message Author{
+    string name = 1;
+    message Book{
+        int32 id = 1;
+        string name = 2;
+        string genre = 3;
+    }
+    repeated Book Books = 2;
+}
+</pre>
+Generate protobuff/Author.pb.go
+<pre>
+cd protobuff/
+protoc --go_out=. Author.proto
+</pre>
+protobuff/encoderProtoBuff.go
+<pre>
+package protobuff
+
+import (
+        "errors"
+        "fmt"
+        "io/ioutil"
+        "log"
+        "net"
+
+        proto "github.com/golang/protobuf/proto"
+)
+
+func sendMessage(data []byte, addr string) error {
+        conn, _err := net.Dial("tcp", addr)
+        if _err != nil {
+                return _err
+        }
+        defer conn.Close()
+        _, _err = conn.Write(data)
+        log.Printf("Sending %d bytes to addr %s.\n", len(data), addr)
+        return _err
+
+}
+
+type protoBuffHandler struct{}
+
+func (h *protoBuffHandler) EncodeAndSend(pb interface{}, destinationAddr string) error {
+        v, ok := pb.(*Author)
+        if !ok {
+                return errors.New("Proto: Unknown message type")
+        }
+        data, _err := proto.Marshal(v)
+        if _err != nil {
+                return _err
+        }
+
+        fmt.Printf("Encoded data: %s\n", data)
+        return sendMessage(data, destinationAddr)
+}
+
+func (h *protoBuffHandler) DecodeProtoBuff(buffer []byte) (*Author, error) {
+        pb := new(Author)
+        return pb, proto.Unmarshal(buffer, pb)
+}
+
+func (h *protoBuffHandler) ListenAndDecode(addr string) (<-chan interface{}, error) {
+        outChan := make(chan interface{})
+
+        listener, _err := net.Listen("tcp", addr)
+        if _err != nil {
+                return outChan, _err
+        }
+        log.Println("Listening to ", addr)
+
+        go func() {
+                defer listener.Close()
+                for {
+                        conn, _err := listener.Accept()
+                        if _err != nil {
+                                fmt.Println("Connection error:", _err)
+                                break
+                        }
+                        log.Println("Accepted connection from:", conn.RemoteAddr())
+                        go func(c net.Conn) {
+                                defer c.Close()
+                                for {
+                                        buffer, _err := ioutil.ReadAll(c)
+                                        if _err != nil {
+                                                fmt.Println("Connection read error:", _err)
+                                                break
+                                        }
+                                        if len(buffer) == 0 {
+                                                continue
+                                        }
+                                        pb, _err := h.DecodeProtoBuff(buffer)
+                                        if _err != nil {
+                                                fmt.Println("ProtoBuff decode error:", _err)
+                                                continue
+                                        }
+                                        select {
+                                        case outChan <- pb:
+                                                //case <-time.After(30 * time.Second):
+                                                //default:
+                                        }
+                                }
+                        }(conn)
+                }
+
+        }()
+        return outChan, nil
+}
+</pre>
+protobuff/protoBuffHandler.go
+<pre>
+package protobuff
+
+const (
+        ProtoBuf uint8 = iota
+)
+
+type ConnectionHandler interface {
+        EncodeAndSend(pb interface{}, destinationAddr string) error
+        ListenAndDecode(addr string) (<-chan interface{}, error)
+}
+
+func NewConnection(connType uint8) ConnectionHandler {
+        switch connType {
+        case ProtoBuf:
+                return &protoBuffHandler{}
+        }
+        return nil
+}
+</pre>
+main.go
+<pre>
+package main
+
+import (
+        "flag"
+        proto "protobuff"
+        "log"
+        "strings"
+)
+
+func runServer(addr string) {
+        h := proto.NewConnection(proto.ProtoBuf)
+        if h == nil {
+                log.Fatal("Unable to get handler")
+        }
+        readChan, _err := h.ListenAndDecode(addr)
+        if _err != nil {
+                log.Fatal(_err)
+        }
+        for msg := range readChan {
+                log.Printf("Message: %+v\n", msg.(*proto.Author))
+        }
+}
+
+func runClient(addr string) {
+        h := proto.NewConnection(proto.ProtoBuf)
+        if h == nil {
+                log.Fatal("Unable to get handler")
+        }
+        Author := &proto.Author{
+                Name: "Franz Kafka",
+                Books: []*proto.Author_Book{
+                        {Id: 1, Name: "Letter to his father", Genre: "Non-fiction"},
+                        {Id: 2, Name: "Metamorphosis", Genre: "Fiction"},
+                        {Id: 3, Name: "The trial", Genre: "Philosophical fiction, Dystopian Fiction"},
+                },
+        }
+
+        _err := h.EncodeAndSend(Author, addr)
+        if _err != nil {
+                log.Fatal("Unable to send message. Error:", _err)
+        }
+
+}
+
+func main() {
+        commType := flag.String("type", "", "Server (s) or Client (c)?")
+        commaddr := flag.String("addr", ":8666", "Address host:port")
+        flag.Parse()
+        switch strings.ToUpper(*commType) {
+        case "S":
+                runServer(*commaddr)
+        case "C":
+                runClient(*commaddr)
+        }
+}
+</pre>
+Server terminal
+<pre>
+$ go run main.go --type s  --addr :8666
+2018/12/22 21:38:28 Listening to  :8666
+2018/12/22 21:38:29 Accepted connection from: 127.0.0.1:59880
+2018/12/22 21:38:29 Message: name:"Franz Kafka" genre:"Non-fiction, Fiction" Books:<id:1 name:"Letter to his father" > Books:<id:2 name:"Metamorphosis" > Books:<id:3 name:"The trial" >
+
+^Csignal: interrupt
+</pre>
+Client terminal
+<pre>
+$ go run main.go --type c --addr :8666
+Encoded data:
+
+Franz KafkaLetter to his father
+MetamorphosisFiction7   The trial(Philosophical fiction, Dystopian Fiction
+2018/12/22 21:41:03 Sending 137 bytes to addr :8666.
+</pre>

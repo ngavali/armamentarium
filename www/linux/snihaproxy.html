@@ -1,0 +1,232 @@
+<html>
+<link rel="stylesheet" href="/css/style.css">
+<link rel="stylesheet" href="/css/code.css">
+<script src="/js/menu.js" type="text/javascript"></script>
+<style>
+	a#home { text-decoration: none; } 
+	div#bodyContent {
+		width: 400px;
+		height: 100px;
+	
+		position: absolute;
+		top:0;
+		bottom: 0;
+		left: 0;
+		right: 0;
+	
+		margin: auto;
+	}
+</style>
+<body>
+<div id="menubar" >
+<table id="menu" style="table-layout:fixed" align="center">
+<tr>
+
+
+
+
+<td width="180px"><a href="/"><logo style="display:inline;color: rgb(84, 84, 84)">The</br><span class="logo">Rational Bear</span></logo></a></td>
+<td align="right"><div id="menuitem"></div></td>
+
+</tr>
+</table>
+</div>
+<center>
+<div id="bodyTopic" >
+<table id="topicContent" align="center">
+<tr><td>
+<h3><a href="/linux.html">Linux</a> - HAProxy - SNI implementation</h3></p>
+In this article, we will see how to configure HAProxy to serve multiple backend http(SSL) domains over a single IP address using Server Name Indication (SNI) TLS extension. 
+You must have seen apache httpd ( or any other http server ) being used to host mutliple http domains on a same machine and serving multiple SSL enabled virtual hosts on a single IP using SNI.</p>
+
+HAProxy is more feature rich and allows us to integrate varieties of backend services seamlessly ( In our case, HTTPS ). It can perform backend health checks, load balance incoming requests and maintain high availability and much more.</p>
+
+Here, SSL request will not be terminated at HAProxy. With SNI enabled client, server name is sent in the client hello message during the SSL handshake which will be intercepted by HAProxy to route client request to the appropriate backend. Multiple backend services can be hide behind the reverse proxy and no need to load all domain certs on HAProxy.</p>
+
+Below is a simple setup, wherein HAProxy routes client request(s) to either of the backend host running SSL enabled http services, depending on the hostname presented in the request.</p>
+<center>
+	<img src="/images/snihaproxy.svg" width="500px" style="padding:10pt"/><b>Fig.1. </b>Setup
+</center>
+</p>
+IP & port details
+<pre>
+haprx.snitest.com=192.168.56.101:443 HAProxy service
+host1.snitest.com=192.168.56.102:443 Apache service
+host2.snitest.com=192.168.56.103:443 Apache service
+</pre>
+<h3>Backend web services</h3>
+<h4>Setup apache http(s) web services on backend hosts</h4>
+Generate self-signed certificates for both backends.</p>
+For host1</p>
+<pre>
+openssl req -newkey rsa:2048 -nodes -keyout host1.snitest.com.key -x509 -days 365 -out host1.snitest.com.crt
+</pre>
+and similarly, for host2</p>
+<pre>
+openssl req -newkey rsa:2048 -nodes -keyout host2.snitest.com.key -x509 -days 365 -out host2.snitest.com.crt
+</pre>
+Copy them to respective directories on each host. You can choose any other location per your ease.
+<pre>
+host1:/etc/ssl/mycerts/host1.snitest.com/host1.snitest.com.crt
+host1:/etc/ssl/mycerts/host1.snitest.com/host1.snitest.com.key
+host2:/etc/ssl/mycerts/host2.snitest.com/host2.snitest.com.crt
+host2:/etc/ssl/mycerts/host2.snitest.com/host2.snitest.com.key
+</pre>
+Apache virtualhost configuration on host1</p>
+<pre>
+cat&gt;host1.snitest.com.conf&lt;&lt;EOF
+&lt;IfModule mod_ssl.c&gt;
+        Listen 443
+        &lt;VirtualHost _default_:443&gt;
+                ServerName host1.snitest.com
+                ServerAdmin webmaster@localhost
+                DocumentRoot /var/www/boson
+                &lt;Directory /&gt;
+                    Require all granted
+                &lt;/Directory&gt;
+                ErrorLog /var/log/httpd/boson-error.log
+                CustomLog /var/log/httpd/boson-access.log combined
+                SSLEngine on
+                SSLCertificateFile    /etc/ssl/mycerts/host1.snitest.com/host1.snitest.com.crt
+                SSLCertificateKeyFile /etc/ssl/mycerts/host1.snitest.com/host1.snitest.com.key
+        &lt;/VirtualHost&gt;
+&lt;/IfModule&gt;
+EOF
+</pre>
+Apache virtualhost configuration on host2</p>
+<pre>
+cat&gt;host2.snitest.com.conf&lt;&lt;EOF
+&lt;IfModule mod_ssl.c&gt;
+        Listen 443
+        &lt;VirtualHost _default_:443&gt;
+                ServerName host2.snitest.com
+                ServerAdmin webmaster@localhost
+                DocumentRoot /var/www/meson
+                &lt;Directory /&gt;
+                    Require all granted
+                &lt;/Directory&gt;
+                ErrorLog /var/log/httpd/meson-error.log
+                CustomLog /var/log/httpd/meson-access.log combined
+                SSLEngine on
+                SSLCertificateFile    /etc/ssl/mycerts/host2.snitest.com/host2.snitest.com.crt
+                SSLCertificateKeyFile /etc/ssl/mycerts/host2.snitest.com/host2.snitest.com.key
+        &lt;/VirtualHost&gt;
+&lt;/IfModule&gt;
+EOF
+</pre>
+Create landing page for both virtualhosts, i.e. an index.html page with some message.
+<pre>
+mkdir -p /var/www/boson
+
+cat&gt;/var/www/boson/index.html&lt;&lt;EOF
+&lt;h1&gt;Boson test page. It works!&lt;/h1&gt;
+EOF
+
+mkdir -p /var/www/meson
+
+cat&gt;/var/www/meson/index.html&lt;&lt;EOF
+&lt;h1&gt;Meson test page. It works!&lt;/h1&gt;
+EOF
+</pre>
+<h3>HAProxy</h3>
+Configuration file /etc/haproxy/haproxy.cfg.
+<pre>
+cat>/etc/haproxy/haproxy.cfg&lt;&lt;EOF
+global
+        log /dev/log    local0
+        log /dev/log    local1 notice
+        chroot /var/lib/haproxy
+        user haproxy
+        group haproxy
+        daemon
+
+defaults
+        timeout connect 5s
+        timeout client 30s
+        timeout server 30s
+
+frontend ssl_vip
+        bind 192.168.56.101:443
+        mode tcp
+
+        tcp-request inspect-delay 5s
+        tcp-request content accept if { req_ssl_hello_type 1 }
+
+	#Intercept incoming TLS requests based on the SNI field
+        acl ssl_app_1 req_ssl_sni -i host1.snitest.com
+        acl ssl_app_2 req_ssl_sni -i host2.snitest.com
+
+        use_backend ssl_host_1 if ssl_app_1
+        use_backend ssl_host_2 if ssl_app_2
+
+backend ssl_host_1
+        mode tcp
+        stick-table type binary len 32 size 30k expire 30m
+
+        acl clienthello req_ssl_hello_type 1
+        acl serverhello rep_ssl_hello_type 2
+
+        tcp-request inspect-delay 5s
+        tcp-request content accept if clienthello
+
+        tcp-response content accept if serverhello
+
+        stick on payload_lv(43,1) if clienthello
+
+        stick store-response payload_lv(43,1) if serverhello
+
+        option ssl-hello-chk
+        server ssl_host_1 192.168.56.102:443 check
+
+backend ssl_host_2
+        mode tcp
+
+        stick-table type binary len 32 size 30k expire 30m
+
+        acl clienthello req_ssl_hello_type 1
+        acl serverhello rep_ssl_hello_type 2
+
+        tcp-request inspect-delay 5s
+        tcp-request content accept if clienthello
+
+        tcp-response content accept if serverhello
+
+        stick on payload_lv(43,1) if clienthello
+
+        stick store-response payload_lv(43,1) if serverhello
+
+        option ssl-hello-chk
+        eerver ssl_host_2 192.168.56.103:443 check
+
+listen stats
+## HAProxy stats web gui.
+        bind 0.0.0.0:9000
+        mode http
+        stats enable
+        stats uri /haproxy_stats
+        stats realm HAProxy\ Statistics
+        stats auth haproxy:haproxy
+        stats admin if TRUE
+EOF
+</pre>
+Without need of any actual DNS entry, let us try to test the setup using the host file spoofing trick by adding following lines in the /etc/hosts file. This will resolve backend hostnames locally</p>
+<pre>
+192.168.56.101	host1.snitest.com
+192.168.56.102	host2.snitest.com
+</pre>
+Now, try accessing webpages for each host from your web browser.
+<pre>
+<a href="https://host1.snitest.com">https://host1.snitest.com</a>
+<a href="https://host2.snitest.com">https://host2.snitest.com</a>
+</pre>
+<h3>References</h3>
+<a href="https://httpd.apache.org/docs/2.4/ssl/">Apache SSL configuration (version 2.4)</a></br>
+<a href="https://www.haproxy.org/download/1.5/doc/configuration.txt">HAProxy configuration</a></p>
+That's all folks! </br>
+Thanks
+</td></tr>
+</table>
+<div>
+<center>
+</body>
+</html>

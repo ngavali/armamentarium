@@ -1,0 +1,16 @@
+<h3><a href="#go" onclick="_().loadContent(this,'go','ContentBody');" >Go Programming Language</a> - SAML</h3></p>
+<code><r>Work in progress</r></code></p>
+OAuth: Open Authorization
+</p>
+SAML: Security Assertion Markup Language </br>
+SSO</br>
+benefits:</br>
+No need to remember and renew passwords</br>
+No need to type credentials every time.</br>
+actors:</br>
+service provider (remote application), identity provider (customer), user</br>
+who:</br>
+Customer already know its users and their credentials maintained internally in AD or some other form.</br>
+How:</br>
+This is done through an exchange of digitally signed XML documents.</br>
+remote application identifies the user's origin (by domain, IP, or similar) and redirects user to identity provider, where the user will be authenticated</br>

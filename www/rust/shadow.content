@@ -1,0 +1,33 @@
+<h3><a href="#rust" onclick="_().loadContent(this,'rust','ContentBody');" >Rust Programming Language</a> - Shadowing</h3></p>
+Having series of changes on the same variable without using <code><v>mut</v></code> keyword
+<pre>
+fn main() {
+    let x = 1;
+    println!("{}", x);
+    let x = x * 10;
+    println!("{}", x);
+}
+</pre>
+Output of Cargo run
+<pre>
+    Finished dev [unoptimized + debuginfo] target(s) in 0.00s
+     Running `/external/application/rust/variables/target/debug/shadowing`
+1
+10
+</pre>
+We can not only shadow variable value(s) in previous declaration but also the type
+<pre>
+fn main() {
+    let x = 1;
+    println!("{}", x);
+    let x = "abc";
+    println!("{}", x);
+}
+</pre>
+Output of Cargo run
+<pre>
+    Finished dev [unoptimized + debuginfo] target(s) in 0.00s
+     Running `/external/application/rust/variables/target/debug/shadowing`
+1
+abc
+</pre>

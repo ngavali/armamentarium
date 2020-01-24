@@ -1,0 +1,219 @@
+<h3><a href="#go" onclick="_().loadContent(this,'go','ContentBody');" >Go Programming Language</a> - Using DB lock for process sychronization</h3></p>
+Many times it happens that you have to run a process periodically such that only one instance of this process has to be executing at any given point of time. 
+</p>There are several ways to achieve same. Simplest of them is to use a file lock, it works well when you try to run such process(es) on a single system. But say for the sake of high availability, you have to run such a process in a distributed environment among several machines with the same restriction, file lock is no longer a viable option.</p>
+
+What about using a database for locking, really? Yes, MySQL/Mariadb comes with one such feature and in this article we will explore the same. Concept can be extended to achieve process synchronization in a distributed environment.
+</p>
+<h4>Reference - <a href="https://mariadb.com/kb/en/library/get_lock/">MariaDB Locks</a></h4>
+It provides us an ability to create a <i>named</i> lock and once created, it will be maintained and not released unless and until any of the following event occurs:</p>
+1. <i>Lock is released by the process that has created/acquired it.</i></p>OR</p>
+2. <i>Client disconnects the db session.</i></p>OR</p>
+3. <i>Client connection is lost abruptly due to network issues or other failure.</i>
+</p>
+<h4>Lock operations</h4>
+</p>
+Let us take a look at important lock operations:
+<pre>
+GET_LOCK('&lt;LOCKNAME&gt;',&lt;TIMEOUT&gt;)	<c>//Try to create/acquire a lock with given name, give up after timeout</c></br>
+IS_FREE_LOCK('&lt;LOCKNAME&gt;')		<c>//Check if lock with given name is free/available</c></br>
+IS_USED_LOCK('&lt;LOCKNAME&gt;')		<c>//Check if lock is in use</c></br>
+RELEASE_LOCK('&lt;LOCKNAME&gt;')		<c>//Release the lock with given name</c></br>
+</pre>
+Each call will return back the status value = 1 for success or 0 in case of failure.</p>
+In case of IS_USED_LOCK, connection identifier of the client is returned back ONLY to the one that is <i>holding</i> the lock, otherwise or for other cases a NULL is returned.</p>
+<h3>Code</h3>
+Let us create a package dbLock which implements db locking operations and exposes necessary functionality i.e., checking the lock availability, managing the lock life cycle - it's state. I have tried to keep it as simple as possible.</p>
+<h4>Package dbLock</h4>
+&bull; db.go - Handles db operations
+</p>
+<pre>
+package dbLock
+
+import (
+        "database/sql"
+        _ "github.com/go-sql-driver/mysql"
+        "log"
+)
+
+type dbConnection struct {
+        db *sql.DB
+}
+
+<c>//To instantiate a new db connection</c>
+func NewDbConnection() dbConnection {
+        var dbCon dbConnection
+        db, _err := sql.Open("mysql", "username:password@tcp(hostname:port)/")
+        if _err != nil {
+                log.Fatalln(_err)
+        }
+        _err = db.Ping()
+        if _err != nil {
+                log.Fatalln(_err)
+        }
+        dbCon.db = db
+        return dbCon
+}
+
+<c>//To run our lock operation queries against Mariadb database and get the status</c>
+func (dbCon *dbConnection) Run(query string) int {
+        rows, _err := dbCon.db.Query(query)
+        if _err != nil {
+                log.Fatalln(_err)
+        }
+        var status int
+        var selectRowsInterface interface{}
+        rows.Next()
+        selectRowsInterface = &status
+        rows.Scan(selectRowsInterface)
+        rows.Next()
+        return status
+}
+
+</pre>
+&bull; lock.go - Handles lock operations
+<pre>
+package dbLock
+
+<c>//Lock</c>
+type Lock struct {
+        dbCon dbConnection	<c>//To handle DB connection</c>
+        ln    string		<c>//Lock name</c>
+        lk    bool		<c>//Lock status</c>
+        to    string		<c>//Lock timeout</c>
+}
+
+<c>//To instantiate a lock</c>
+func NewLock(lockName string, timeout string) Lock {
+        var l Lock
+        l.dbCon = NewDbConnection()
+        l.ln = lockName
+        l.lk = false
+        l.to = timeout
+        return l
+}
+
+<c>//Check if Lock is free</c>
+func (l *Lock) IsLockFree() bool {
+        if l.dbCon.Run("SELECT IS_FREE_LOCK('"+l.ln+"') status") == 1 {
+                return true
+        }
+        return false
+}
+
+<c>//Get the Lock</c>
+func (l *Lock) GetLock() bool {
+        if l.dbCon.Run("SELECT GET_LOCK('"+l.ln+"',"+l.to+") status") == 1 {
+                l.lk = true
+        } else {
+                l.lk = false
+        }
+        return l.lk
+}
+
+<c>//Get the Lock status</c>
+func (l *Lock) GetLockStatus() bool {
+        if l.lk && l.dbCon.Run("SELECT IS_USED_LOCK('"+l.ln+"') status") < 0 {
+                l.lk = false
+        }
+        return l.lk
+}
+
+<c>//Get the Lock Name</c>
+func (l *Lock) GetLockName() string {
+        return l.ln
+}
+
+<c>//Release the Lock</c>
+func (l *Lock) UnLock() bool {
+        // Release lock
+        if l.lk && l.dbCon.Run("SELECT RELEASE_LOCK('"+l.ln+"') status") == 1 {
+                l.lk = false
+
+        }
+        return !l.lk
+}
+</pre>
+<h4>Main code</h4>
+&bull; synchronos.go - Will utilize the db lock and execute task we want to sycnhronize.</p> Here, iterate through a loop for few seconds and will release the lock midway.
+<pre>
+package main
+
+import (
+        "dbLock"
+        "log"
+        "os"
+        "time"
+)
+
+func main() {
+        var myLock string
+	timeout := "0"
+        if len(os.Args) == 2 {
+                myLock = os.Args[1]
+		if len(os.Args) == 3 {
+                        timeout = os.Args[2]
+                }
+                lk := dbLock.NewLock(myLock, timeout)
+                <c>// Let me grab a seat to take some rest...</c>
+		<c>// Hope none is trying to get that seat!!!</c>
+		log.Println("Trying to acquire lock - '" + lk.GetLockName() + "' with timeout " + timeout)
+                if <name>lk.GetLock()</name> {
+                        log.Println(lk.GetLockName() + " - Lock Acquired...")
+                        <c>// Wooh! got it ... Let me take some nap now ...zzz </c>
+			<c>// or lie down and observe the nature</c>
+                        for i := 0; i < 5; i++ {
+                                if lk.GetLockStatus() {
+                                        log.Println("Status of lock '" + lk.GetLockName() + "' - Acquired...")
+                                } else {
+                                        log.Println("Status of lock '" + lk.GetLockName() + "' - Lost/Released...")
+                                }
+                                time.Sleep(1 * time.Second)	<c>// Aaah! let me relax</c>
+                                if i > 1 {
+                                    <name>lk.UnLock()</name>
+                                }
+                        }
+                        <c>// Well that was nice nap, lets just leave this place!</c>
+                        if <name>lk.UnLock()</name> {
+                                log.Println(lk.GetLockName() + " - Lock Released...")
+                        }
+                } else {
+                        <c>// Better luck next time, I will come again!!!</c>
+                        log.Println(lk.GetLockName() + " - Lock Acquire Failed...")
+                }
+        } else {
+                log.Fatalln("Usage: ./synchronos &lt;lockName&gt; &lt;timeout-default=0&gt;")
+        }
+}
+</pre>
+Let us now try to execute the main code on two different hosts around the same time.
+<h4>Host 1 terminal</h4>
+While going through the loop, it is released at some point in time before the status is log it.
+<pre>
+[ng@celeritas]$ ./synchronos myLock 10
+2018/04/02 19:31:51 Trying to acquire lock - 'myLock' with timeout 10
+2018/04/02 19:31:51 ni - Lock Acquired...
+2018/04/02 19:31:51 Status of lock 'myLock' - Acquired...
+2018/04/02 19:31:52 Status of lock 'myLock' - Acquired...
+2018/04/02 19:31:53 Status of lock 'myLock' - Acquired...
+<r>2018/04/02 19:31:54 Status of lock 'myLock' - Lost/Released...</r>
+2018/04/02 19:31:55 Status of lock 'myLock' - Lost/Released...
+2018/04/02 19:31:56 ni - Lock Released...
+</pre>
+<h4>Host 2 terminal</h4>
+Run same process with a timeout value this time. It waits for a given timeout period, and gets the lock midway as soon as it is released by the other process.
+<pre>
+[ng@celeritas]$ ./synchronos myLock 10
+2018/04/02 19:31:51 Trying to acquire lock - 'myLock' with timeout 10
+2018/04/02 19:31:54 ni - Lock Acquired...
+<v>2018/04/02 19:31:54 Status of lock 'myLock' - Acquired...</v>
+2018/04/02 19:31:55 Status of lock 'myLock' - Acquired...
+2018/04/02 19:31:56 Status of lock 'myLock' - Acquired...
+2018/04/02 19:31:57 Status of lock 'myLock' - Lost/Released...
+2018/04/02 19:31:58 Status of lock 'myLock' - Lost/Released...
+2018/04/02 19:31:59 ni - Lock Released...
+</pre>
+Now, what if the DB server goes down! How do we replicate the active locks(s)? If operations are involved with the same DB that process want to work on, you shouldn't worry much but what if that is not the case? Welcome to the world of distributed systems and Stay tuned!
+</p>
+That's all for now!
+</p>
+- Thanks

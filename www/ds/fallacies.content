@@ -1,0 +1,13 @@
+<h3><a href="#ds" onclick="_().loadContent(this,'ds','ContentBody');" >Distributed Systems</a> - The fallacies of distributed computing</h3>
+<r>Work in progress!!!</r></p>
+A set of assertions made by L Peter Deutsch.
+<ol>
+<li>The network is reliable.</li>
+<li>Latency is zero.</li>
+<li>Bandwidth is infinite.</li>
+<li>The network is secure.</li>
+<li>Topology doesn’t change.</li>
+<li>There is one administrator.</li>
+<li>Transport cost is zero.</li>
+<li>The network is homogeneous.</li>
+</ol>

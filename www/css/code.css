@@ -1,0 +1,43 @@
+pre {
+	font-family: "Courier New", Consolas;
+	font-size: 13px;
+	background: rgb( 250, 250, 250);
+	color: rgb(100,100,100);
+	color: #000;
+	padding: 10px;
+    border-radius: 2px;
+}
+
+k3 {
+	font-size: 14pt;
+	font-weight: bold;
+}
+
+name {
+	font-weight: bold;
+	color: #0072BB;
+}
+
+code {
+	font-family: "Courier New", Consolas;
+	font-size: 13px;
+	background: rgb( 255, 255, 220 );
+        color: rgb(10,10,10);
+	padding: 5px;
+	border-radius: 2px;
+}
+
+c {
+	font-weight: bold;
+	color: #747274;
+}
+
+r {
+	color: #E75A7C;
+	font-weight: bold;
+}
+
+v {
+    color: #107E7D;
+    font-weight: bold;
+}

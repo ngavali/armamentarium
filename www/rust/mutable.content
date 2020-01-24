@@ -1,0 +1,32 @@
+<h3><a href="#rust" onclick="_().loadContent(this,'rust','ContentBody');" >Rust Programming Language</a> - Mutability</h3></p>
+Version 1
+<pre>
+fn main() {
+    let x = 1;
+    println!("{}", x);
+    <r>x = 2;</r>
+    println!("{}", x);
+}
+</pre>
+Output of Cargo run
+<pre>
+   Compiling variables v0.1.0 (/external/application/rust/variables)
+error[E0384]: cannot assign twice to immutable variable `x`
+ --> src/main.rs:4:1
+  |
+2 |     let x = 1;
+  |         -
+  |         |
+  |         first assignment to `x`
+  |         help: make this binding mutable: `mut x`
+3 |     println!("{}", x);
+4 |     x = 2;
+  |     <r>^^^^^ cannot assign twice to immutable variable</r>
+
+error: aborting due to previous error
+
+For more information about this error, try `rustc --explain E0384`.
+error: Could not compile `variables`.
+
+To learn more, run the command again with --verbose.
+</pre>

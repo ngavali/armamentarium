@@ -1,0 +1,85 @@
+<h3><a href="#db" onclick="_().loadContent(this,'db','ContentBody');" > Database</a> - Normalization</h3>
+<r>Work in progress</r>
+<h4>Notations used</h4>
+<dl>
+<dt>Functional dependency</dt>
+<dd>X<sub>p</sub> &rarr; Y<sub>np</sub>, value(s) of Y are determined by the value(s) of X.</br>X and Y are columns (attributes) of a table (relation).
+</dd>
+<dt>Subscript</dt>
+<dd>p &nbsp; is Primary key</br>
+np is any non-Primary attribute</dd>
+<dt><b>NF1</b></dt>
+<dd>A column must not contain multiple values.</br>
+ex.
+<table border="1px">
+<tr><th>name</th><th>phone_number</th></tr>
+<tr><td>Nilesh</td><td>12341, 12394</td></tr>
+<tr><td>Vihaan</td><td>38534, 43345</td></tr>
+</table>
+Lets split them
+<table border="1px">
+<tr><th>name</th><th>phone_number</th></tr>
+<tr><td>Nilesh</td><td>12341</td></tr>
+<tr><td>Nilesh</td><td>12394</td></tr>
+<tr><td>Vihaan</td><td>38534</td></tr>
+<tr><td>Vihaan</td><td>43345</td></tr>
+</table>
+Avoid repeating values by creating two tables
+<table border="1px">
+<tr><th>id</th><th>name</th></tr>
+<tr><td>1</td><td>Nilesh</td></tr>
+<tr><td>2</td><td>Vihaan</td></tr>
+</table>
+
+and,</br>
+
+<table border="1px">
+<tr><th>id</th><th>phone_number</th></tr>
+<tr><td>1</td><td>12341</td></tr>
+<tr><td>1</td><td>12394</td></tr>
+<tr><td>2</td><td>38534</td></tr>
+<tr><td>2</td><td>43345</td></tr>
+</table>
+</dd></p>
+<dt><b>NF2</b></dt>
+<dd>
+X<sub>p</sub> &#x2192; Y<sub>np</sub></br>
+No partial functional dependencies. i.e. Y must be completely determined on X and not the subset of X.</br>
+ex.
+<table border="1px">
+<tr><th>name</th><th>Subject</th><th>Tutor</th></tr>
+<tr><td>Nilesh</td><td>Math</td><td>Tutor1</td></tr>
+<tr><td>Nilesh</td><td>History</td><td>Tutor2</td></tr>
+<tr><td>Vihaan</td><td>History</td><td>Tutor2</td></tr>
+<tr><td>Vihaan</td><td>Math</td><td>Tutor1</td></tr>
+</table>
+Here, Subject &#x2192; Teacher</br>
+Lets split
+<table border="1px">
+<tr><th>name</th><th>Subject</th></tr>
+<tr><td>Nilesh</td><td>Math</td></tr>
+<tr><td>Nilesh</td><td>History</td></tr>
+<tr><td>Vihaan</td><td>History</td></tr>
+<tr><td>Vihaan</td><td>Math</td></tr>
+</table>
+
+and,</br>
+
+<table border="1px">
+<tr><th>Subject</th><th>Tutor</th></tr>
+<tr><td>Math</td><td>Tutor1</td></tr>
+<tr><td>History</td><td>Tutor2</td></tr>
+</table>
+
+</dd>
+<dt><b>NF3</b></dt>
+<dd>
+X<sub>p</sub> &#x2192; Y<sub>np</sub> &#x2192; Z<sub>np</sub></br>
+No functional dependencies on non-prime column(s). i.e. no transitive dependencies.
+</dd>
+<dt><b>BCNF</b></dt>
+<dd>
+X<sub>p or np</sub> &#x2192; Y<sub>p</sub></br>
+X must be a super key.
+<dd>
+</dl>

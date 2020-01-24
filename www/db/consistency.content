@@ -1,0 +1,13 @@
+<h3><a href="#db" onclick="_().loadContent(this,'db','ContentBody');" > Database</a> - Isolation levels for transations.</h3>
+<r>Work in progress!!!</r></p>
+<h4>Side effects</h4>
+Dirty reads,</br>
+Phantom reads</p>
+<h3>Isolation levels</h3>
+<dl>
+<dt><h4>Read uncommitted</h4></dt>
+<dd>Dirty reads</dd>
+<dt><h4>Read committed</h4></dt>
+<dt><h4>Repeatable reads</h4></dt>
+<dt><h4>Serializable</h4></dt>
+</dl>

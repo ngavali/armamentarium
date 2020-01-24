@@ -1,0 +1,574 @@
+<html>
+	<head>
+<style>
+
+body {
+	font-family:	Arial;
+	font-size:	12pt;
+    margin:0px;
+    padding:0px;
+}
+
+input#zeroValueAxis {
+    border-radius: 5px;
+    outline: none;
+}
+
+input[type=button], circle {
+	cursor: pointer;
+}
+
+svg {
+	cursor: crosshair;
+}
+
+div#valueText {
+    background-color: #eff1ed;
+}
+
+table tr td {
+    font-family: Verdana;
+    font-size: 11px;
+}
+
+text {
+	font-size: 11px;
+}
+
+.inputQuery {
+	font-family:	Arial;
+	font-size:	11px;
+	width: 1200px;
+	height: 25px;
+}
+
+input[type=button] {
+	font-family:	Arial;
+	font-size:	14px;
+	margin:		8px;
+	padding:	8px;
+    border-radius: 5px;
+    background: #CC2936;
+    color: #fff;
+    border: 0px;
+}
+
+</style>
+	<script>
+_ = function ( objString ) {
+	if ( objString ) {
+		return getDOMObject( objString );
+	}
+	else {
+	return { ready : function (myFunction) {
+			document.onreadystatechange = function () {
+				if(document.readyState === "complete"){
+					myFunction();
+					}
+				}
+			}
+		}
+	}
+
+	function getDOMObject( objString ) {
+		var t = (objString.match(/^./g)).toString();
+		var o = objString.substr(1);
+		var myObj;
+//		var tagName = ((( t === "." ) && ( document.getElementsByClassName(o) )) || (( t === "#" ) && ( document.getElementById(o) ))).tagName;
+
+		switch (t) {
+				case "." :	//console.log("classname", o);
+				tagName = ( document.getElementsByClassName(o) && document.getElementsByClassName(o).tagName || null );
+						myObj = document.getElementsByClassName(o);
+						break;
+				case "#" : 	//console.log("id", o);
+				tagName = ( document.getElementById(o) && document.getElementById(o).tagName || null );
+						myObj = document.getElementById(o);
+						break;
+				default  : 	tagName = null;
+		}
+
+		if ( "DIV" === tagName ) {
+			return {
+				html : function ( myText ) {
+				return ( myText ) && ( document.getElementById(o).innerHTML = myText ) || document.getElementById(o).innerHTML;
+				}
+			}
+		} else if ( "TEXTAREA" === tagName ) {
+			return {
+				text : function () {
+				return document.getElementById(o).value;
+				}
+			}
+		} else if ( "INPUT" === tagName ) {
+			return { 
+				click : function(callBack) {
+					document.getElementById(o).addEventListener("click", function(){
+			    			callBack();
+						});
+					},
+                isChecked : function() { return document.getElementById(o).checked }
+			}
+		}
+		return myObj;
+	}
+
+	function getInnerHTML () {
+		this.innerHTML;
+	}
+
+}
+
+$ = (	function() {
+
+	function getJsonPrivate(request, callBack) {
+		var xmlhttp = new XMLHttpRequest();
+		xmlhttp.open(request.method, request.url, true);
+		xmlhttp.onreadystatechange = function() {
+		    if (xmlhttp.readyState == 4) {
+		        if(xmlhttp.status == 200) {
+		            var obj = JSON.parse(xmlhttp.responseText);
+			    callBack(obj);
+		         }
+		    }
+		}
+		xmlhttp.send(null);
+	}
+
+	return	{ getJson : function (request, callBack) {
+			getJsonPrivate(request, callBack);
+			}
+		}
+
+	}
+
+)();
+
+_.getJson = $.getJson;
+
+_().ready(function (){
+
+    function draw() {
+
+    //var query = encodeURI(_("#inputQuery").text());
+
+	_.getJson(
+	//	{ method : "GET", url : "/cgi-bin/ng-charts/httpRequest.cgi?query="+query}, 
+		{ method : "GET", url : "/static/cdata.json"}, 
+		function(dataSet) { 
+			myC = {
+			"type"		: "lineChart",
+			"width"		: 800,
+			"height"	: 350,
+			"target"	: "myChart",
+			"dataSource"	: dataSet,
+			"showBullets"	: 500,
+			"zero"		: false,
+			}
+			ngCharts.lineChart(myC, 300, 350 );
+			//ngCharts.lineChart(myC, 0, myC.dataSource.queryResult.length-1);
+		});
+    
+    }
+
+	_("#drawChart").click( function(){
+
+//	var query = encodeURI(_("#inputQuery").text());
+        draw();
+
+	});
+
+    draw();
+
+});
+
+ngCharts = ( function() {
+
+    var colorBand = [ "#d5a021", "#1e555c", "#3a2e39", "#eb5e55", "#e63462", "#4b4237", "#ee4b6a", "#d8a47f", "#df3b57", "#0f7173", "#ef8354", "#3d3b30", "#4d5061", "#5c80bc", "#084887", "#f58a07", "#293132", "#547aa5", "#474044", "#4f5165", "#4a306d", "#44bba4", "#e94f37", "#d81e5b", "#00a7e1", "#006494", "#dc493a", "#b95f89", "#946846", "#52489c", "#f2af29", "#ad343e", "#474747", "#355834", "#6e633d", "#473144", "#fe5f55", "#6c6ea0", "#edb183" ];
+
+	var xmlns = "http://www.w3.org/2000/svg";
+	var charObject;
+	var maxV = 0, minV = Infinity;
+
+    var DP = 0;
+    var dataSource = { "Columns" : [], "Points" : [] };
+	
+	var pointColor = {};
+	var polyPoints = {};
+	//var bullPoints = {};
+    var plotWidth;
+    var plotHeight;
+	var dataPoints;
+
+	var offsetX;
+    var offsetY;
+	var stepY ;
+    var stepX;
+	var gridStep;
+
+	function drawPolyLine(points, color, stroke) {
+	PolyLine = document.createElementNS (xmlns, "polyline");
+	PolyLine.setAttributeNS (null, "points", points);
+	PolyLine.setAttributeNS (null, "style", "fill:none;stroke:"+color+";stroke-width:"+stroke);
+	return PolyLine;
+	}
+
+	function drawLine(x1, y1, x2, y2, color, stroke, yval, lname ) {
+	Line = document.createElementNS (xmlns, "line");
+	Line.setAttributeNS (null, "id", lname);
+	Line.setAttributeNS (null, "x1", x1);
+	Line.setAttributeNS (null, "x2", x2);
+	Line.setAttributeNS (null, "y1", y1 );
+	Line.setAttributeNS (null, "y2", y2 );
+	Line.setAttributeNS (null, "yval", yval);
+	Line.setAttributeNS (null, "style", "stroke:"+color+";stroke-width:"+stroke );
+	return Line;
+	}
+
+	function drawBullet(x, y, color, r, stroke, yval) {
+	bullet = document.createElementNS (xmlns, "circle");
+	bullet.setAttributeNS (null, "class", "myBullet");
+	bullet.setAttributeNS (null, "yL", yval);
+	bullet.setAttributeNS (null, "cx", x );
+	bullet.setAttributeNS (null, "cy", y );
+	bullet.setAttributeNS (null, "r", r );
+	bullet.setAttributeNS (null, "stroke", "white");
+	bullet.setAttributeNS (null, "fill", color);
+//	bullet.setAttributeNS (null, "fill-opacity", 1 );
+//	bullet.setAttributeNS (null, "fill-opacity", 0 ); //transparent
+	bullet.setAttributeNS (null, "stroke-width", stroke);
+	return bullet;
+	}
+
+    function drawRect( x, y, width, height, color, id, op=0.8 ) {
+    rectangle = document.createElementNS (xmlns, "rect");
+    rectangle.setAttributeNS (null, "id", id);
+    rectangle.setAttributeNS (null, "x", x);
+    rectangle.setAttributeNS (null, "y", y);
+    rectangle.setAttributeNS (null, "width", width);
+    rectangle.setAttributeNS (null, "height", height);
+    rectangle.setAttributeNS (null, "fill", color );
+    rectangle.setAttributeNS (null, "fill-opacity", op );
+    rectangle.setAttributeNS (null, "stroke", "#aa8" );
+    rectangle.setAttributeNS (null, "stroke-width",0);
+    return rectangle;
+    }
+
+	function drawTextLabel(x, y, label) {
+	textLabel = document.createElementNS (xmlns, "text");
+	textLabel.setAttributeNS (null, "class", "myTextLabel");
+	textLabel.setAttributeNS (null, "x", x );
+	textLabel.setAttributeNS (null, "y", y );
+	textLabel.setAttributeNS (null, "fill", "#333");
+	textLabel.textContent = label;
+	return textLabel;
+	}
+
+	function drawLayer(id) {
+	Layer = document.createElementNS (xmlns, "g");
+	Layer.setAttributeNS (null, "id", id );
+	return Layer;
+	}
+
+    function horizontalGrid() {
+    	for ( i=1; maxV/gridStep*(gridStep-(i-1)) >= (1.1*minV); i++ ) {
+    		if ( (maxV/gridStep*(gridStep-(i-1))) != 0 ) {
+	    		PlotLayer.appendChild ( drawLine ( 0, plotHeight-stepY*((i-1)*maxV/gridStep)-offsetY, plotWidth, plotHeight-stepY*((i-1)*maxV/gridStep)-offsetY, "#eee", 1 ) );
+	    		AxisLabelLayer.appendChild ( drawTextLabel( 0, stepY*((i-1)*maxV/gridStep)+offsetY-2, Math.ceil(maxV/gridStep*(gridStep-(i-1))) ) );
+	    	}
+	    }
+        console.log(teleportedVar);
+    }
+    
+    function verticalGrid() {
+    if ( dataPoints > 10 ) {
+    	for ( j=Math.round(dataPoints/10); j<dataPoints; j+=Math.round(dataPoints/10 )) {
+    		x = Math.round(j)*stepX+offsetX;
+    		AxisLabelLayer.appendChild ( drawTextLabel( x+2, plotHeight - offsetY + 20, dataSource.Points[j]["ts"] ) );
+    		PlotLayer.appendChild ( drawLine ( x, 0, x, plotHeight - offsetY, "#eee", 1 ) );
+    	}
+    } else {
+    	for ( j=1; j<dataPoints; j++) {
+    		x = j*stepX+offsetX;
+    		AxisLabelLayer.appendChild ( drawTextLabel( x+2, plotHeight - offsetY + 20, dataSource.Points[j]["ts"] ) );
+    		PlotLayer.appendChild ( drawLine ( x, 0, x, plotHeight, "#eee", 1 ) );
+    	}
+    }
+    }
+
+	return {
+
+	lineChart   : function (myC, start, end) {
+    
+    enableZero = _("#zeroValueAxis").isChecked();
+    //Initialize chart points
+    dataSource = { "Columns" : [], "Points" : [] };
+    dataSource.Columns = myC.dataSource.queryColumn;
+
+	maxV = 0;
+    minV = Infinity;
+
+    //console.log(this);
+
+    for ( DP = start; DP<=end; DP++ ){
+        dataSource.Points[DP-start] = myC.dataSource.queryResult[DP];
+    } 
+
+	//Remove any existing graph
+	if( a=document.getElementById("myLineChart") ) {
+		document.getElementById(myC.target).removeChild(a);
+	}
+
+	dataSource.Columns.forEach( function ( v, k ) {
+		polyPoints[v]="";
+//		pointColor[v] = "rgb(" + (Math.floor(Math.random() * 256)) + "," + (Math.floor(Math.random() * 256)) + "," + (Math.floor(Math.random() * 256)) + ")";
+        pointColor[v] = colorBand[k];
+	});
+
+    var mxV =0, mnV = Infinity;
+
+	dataSource.Points.forEach(function( item, key ) {
+		dataSource.Columns.forEach( function ( v, k ) {
+            if ( v != 'volume' ) {
+			maxV = Math.ceil(Math.max(maxV, item[v]));
+			minV = Math.floor(Math.min(minV, item[v]));
+            } else {
+            mxV = Math.ceil(Math.max(mxV, item[v]));
+            mnV = Math.floor(Math.min(mnV, item[v]));
+            }
+		});
+	});
+
+	if ( enableZero == true && minV > 0) { 
+		minV = 0;
+	}
+
+	maxV=Math.ceil((maxV+1)/10)*10;
+//	minV=Math.floor((minV-1)/10)*11;
+
+	var svgElem = document.createElementNS (xmlns, "svg");
+
+	plotWidth = myC.width;
+	plotHeight = myC.height;
+	dataPoints = end - start + 1;
+	//var dataPoints = dataSource.Points.length;
+	offsetX = 50;
+    offsetY = 50;
+	stepY = (plotHeight-offsetY*2)/(maxV-minV);
+	stepX = (plotWidth-offsetX*2)/(dataPoints-1);
+	gridStep = 10;
+	//(maxV-minV);
+	svgElem.setAttributeNS (null, "viewBox", "0 0 " + plotWidth + " " + plotHeight);
+	svgElem.setAttributeNS (null, "id", "myLineChart" );
+	svgElem.setAttributeNS (null, "width", plotWidth);
+	svgElem.setAttributeNS (null, "height", plotHeight);
+	//svgElem.setAttributeNS (null, "transform", "scale(1,-1)");
+	svgElem.style.display = "block";
+	
+	PlotLayer=drawLayer("plotLayer");
+	AxisLabelLayer=drawLayer("AxisLabelLayer");
+
+    teleportedVar="I can go anywhere!";
+
+    horizontalGrid();
+    verticalGrid();
+
+	PlotLayer.setAttributeNS (null, "transform", "scale(1,-1) translate(0, -"+plotHeight+")");
+	//Y axis
+	PlotLayer.appendChild ( drawLine ( offsetX, 0, offsetX, plotHeight, "#000", 0.5, NaN, "yaxis"));
+	//X axis
+    zeroAxis = offsetY;
+	if ( minV < 0 ) {
+		PlotLayer.appendChild ( drawLine ( 0, stepY*( Math.abs(minV) )+offsetY, plotWidth, stepY*Math.abs(minV)+offsetY, "#000", 0.5, NaN, "xaxis"));
+		AxisLabelLayer.appendChild ( drawTextLabel( 0, stepY*( Math.abs(maxV) )+offsetY-2, 0 ) );
+        zeroAxis = stepY*( Math.abs(minV) )+offsetY;
+	} else {
+		PlotLayer.appendChild ( drawLine ( 0, offsetY, plotWidth, offsetY, "#000", 0.5, NaN, "xaxis"));
+		AxisLabelLayer.appendChild ( drawTextLabel( 0, plotHeight-offsetY-2, minV ) );
+	}
+
+	var valueText = drawTextLabel( offsetX + 5, offsetY - 5, "celeritas - right click to reset zoom");
+	svgElem.appendChild( valueText );
+	svgElem.appendChild( PlotLayer );
+	svgElem.appendChild( AxisLabelLayer );
+	PlotLayer.appendChild ( drawLine ( offsetX, 0, offsetX, plotHeight, "#aa8", 1, NaN,"markerX"));
+	PlotLayer.appendChild ( drawLine ( 0, offsetY, plotWidth, offsetY, "#aa8", 1, NaN,"markerY"));
+
+	var Bstroke=0.1;
+    //console.log(mxV, " , ", mnV );
+    //console.log(maxV, " , ", minV );
+
+    dataSource.Points.forEach(function( item, key ) {
+    color = "#d81159";
+    close = item["close"];
+    open  = item["open"];
+    high  = item["high"];
+    low   = item["low"];
+
+    if (close > open) {
+        tmp = open;
+        open = close ;
+        close = tmp;
+        color = "#629677";
+    }
+    
+    y = stepY*(close-minV)+offsetY;
+    h = stepY*(high-minV)+offsetY;
+    l = stepY*(low-minV)+offsetY;
+    t = stepY*(open-minV) - stepY*(close-minV);
+    x = key*stepX+offsetX;
+    w = (plotWidth)/(dataPoints+50);
+
+    vColor = "#1d3461";
+    if ( enableZero == true && minV >= 0) { 
+        PlotLayer.appendChild(drawRect(x+w*0.1, zeroAxis, w*0.8, stepY*item["volume"]*maxV/mxV, vColor, "volume", 0.3 ));
+    } else {
+        if ( minV < 0 ) {
+        PlotLayer.appendChild(drawRect(x+w*0.1, zeroAxis, w*0.8, stepY*item["volume"]*maxV/mxV, vColor, "volume", 0.3 ));
+        } else {
+        PlotLayer.appendChild(drawRect(x+w*0.1, zeroAxis, w*0.8, stepY*item["volume"]*(maxV-minV)/mxV, vColor, "volume", 0.3 ));
+        }
+    }
+    PlotLayer.appendChild(drawLine(x+w/2, l, x+w/2, h, "#444", 1, high, "HL" ));
+    PlotLayer.appendChild(drawRect(x, y, w, t, color, "candleStick", 1 ));
+    PlotLayer.appendChild(drawLine(x, h, x+w, h, "#444", 1, high, "High" ));
+    PlotLayer.appendChild(drawLine(x, l, x+w, l, "#444", 1, low, "Low" ));
+
+
+    dataSource.Columns.forEach( function ( v, k ) {
+        if (!( v == 'close' || v =='open' || v == 'high' || v == 'low' || v == 'volume')) {
+        polyPoints[v] += x+","+(stepY*(item[v]-minV)+offsetY)+" ";
+        }
+    });
+
+    });
+
+    dataSource.Columns.forEach( function ( v, k ) {
+        PlotLayer.appendChild( drawPolyLine(polyPoints[v], pointColor[v], 1) );
+    });
+
+	var svgContainer = document.getElementById(myC.target);
+	svgContainer.style.width = plotWidth;
+	svgContainer.style.height = plotHeight;
+	svgContainer.style.height = myC.height;
+	svgContainer.appendChild (svgElem);
+
+	//Handle mouse events over the graph
+
+	var elements = document.getElementsByClassName("myBullet");
+	elements = _(".myBullet");
+	for(var i=0; i<elements.length; i++) {
+		elements[i].addEventListener("mouseover", function(event) {
+		posX = event.x - svgContainer.offsetLeft;
+		posY = plotHeight - ( event.y - svgContainer.offsetTop );
+		_("#markerX").setAttributeNS( null, "x1", posX);
+		_("#markerX").setAttributeNS( null, "x2", posX);
+		_("#markerY").setAttributeNS( null, "y1", posY);
+		_("#markerY").setAttributeNS( null, "y2", posY);
+		});
+	}
+
+	var indexS = NaN;
+	var indexD = NaN;
+
+	svgElem.addEventListener("mousedown", function(event) {
+		indexS = Math.round((event.x - svgContainer.offsetLeft-offsetX)/stepX);
+        PlotLayer.appendChild( drawLine(event.x - svgContainer.offsetLeft, offsetY, event.x - svgContainer.offsetLeft, plotHeight, "#aa8", 0.5, 0, "selectionS" ) );
+        PlotLayer.appendChild( drawLine(event.x - svgContainer.offsetLeft, offsetY, event.x - svgContainer.offsetLeft, plotHeight, "#aa8", 0.5, 0, "selection" ) );
+        PlotLayer.appendChild( drawRect(event.x - svgContainer.offsetLeft, offsetY, 0.5, plotHeight, "#6699cc", "selectionArea", 0.2 ) );
+	});
+	
+	svgElem.addEventListener("mouseup", function(event) {
+            PlotLayer.removeChild(_("#selection"));
+            PlotLayer.removeChild(_("#selectionS"));
+            PlotLayer.removeChild(_("#selectionArea"));
+
+			var indexD = Math.round((event.x - svgContainer.offsetLeft-offsetX)/stepX);
+
+			if (Math.abs(indexD-indexS) > 1) {
+
+			if (indexS > indexD) {
+				tmp = indexD;
+				indexD = indexS;
+				indexS = tmp;
+			}
+
+            indexS+= start;
+            indexD+= start
+            if ( indexS < start ) {
+                indexS = start;
+            }
+            if ( indexD >= end ) {
+                indexD = end;
+            }
+
+			if( a=document.getElementById("myLineChart") ) {
+ 			       document.getElementById(myC.target).removeChild(a);
+			}
+
+			ngCharts.lineChart(myC, indexS, indexD );
+				
+			}
+	});
+
+
+	svgElem.addEventListener("contextmenu", function() {
+		ngCharts.lineChart(myC, 0, myC.dataSource.queryResult.length-1);
+	});
+
+	svgElem.addEventListener("mousemove", function(event) {
+		posX = event.x - svgContainer.offsetLeft;
+		posY = plotHeight - ( event.y - svgContainer.offsetTop );
+
+		if ( posX >= offsetX && posX <= plotWidth-offsetY ) { //&& ( range < 5 || range > stepX-5 ) ) {
+		var index = Math.round((posX-offsetX)/stepX);
+		var ballonText = "<table><tr><td>ts</td><td>: "+dataSource.Points[index]["ts"]+"</td></tr>";
+		for( var key in dataSource.Columns ) {
+			key = dataSource.Columns[key];
+			ballonText += "<tr><td>"+ key + "</td><td>: " + dataSource.Points[index][key] + "</td></tr>";
+		}
+		x = index*stepX+offsetX+(plotWidth)/(dataPoints+50)/2;
+		y = stepY*(dataSource.Points[index]["open"]-minV)+offsetY;
+		_("#markerX").setAttributeNS( null, "x1", x);
+		_("#markerX").setAttributeNS( null, "x2", x);
+		_("#markerY").setAttributeNS( null, "y1", y);
+		_("#markerY").setAttributeNS( null, "y2", y);
+		_("#valueText").html(ballonText+"</table>");
+		document.getElementById("valueText").style.left = x + svgContainer.offsetLeft + 10; 
+		document.getElementById("valueText").style.top  = svgContainer.offsetTop;
+
+        if ( _("#selection") ) {
+            _("#selection").setAttributeNS( null, "x1", event.x - svgContainer.offsetLeft ); //- parseInt(_("#selection").getAttribute( "x1" )) ); 
+            _("#selection").setAttributeNS( null, "x2", event.x - svgContainer.offsetLeft ); //- parseInt(_("#selection").getAttribute( "x2" )) ); 
+            if ( parseInt(_("#selection").getAttribute( "x1" )) > parseInt(_("#selectionS").getAttribute( "x1" )) ) {
+                _("#selectionArea").setAttributeNS( null, "x", parseInt(_("#selectionS").getAttribute( "x1" )) ); //- parseInt(_("#selection").getAttribute( "x2" )) ); 
+                _("#selectionArea").setAttributeNS( null, "width", parseInt(_("#selection").getAttribute( "x1" )) - parseInt(_("#selectionS").getAttribute( "x1" )) ); //- parseInt(_("#selection").getAttribute( "x2" )) ); 
+            } else {
+                _("#selectionArea").setAttributeNS( null, "x", parseInt(_("#selection").getAttribute( "x1" )) ); //- parseInt(_("#selection").getAttribute( "x2" )) ); 
+                _("#selectionArea").setAttributeNS( null, "width", parseInt(_("#selectionS").getAttribute( "x1" )) - parseInt(_("#selection").getAttribute( "x1" )) ); //- parseInt(_("#selection").getAttribute( "x2" )) ); 
+            }
+
+            //_("#selection").setAttributeNS( null, "width", event.x - svgContainer.offsetLeft - parseInt(_("#selection").getAttribute( "x" )) ); 
+        }
+		}
+	});
+
+	_("#markerX").setAttributeNS (null, "stroke-dasharray", "2");
+	_("#markerY").setAttributeNS (null, "stroke-dasharray", "2");
+
+    }
+
+}	
+
+})();
+	</script>
+	</head>
+<body>
+<center>
+<h3>Celeritas - Pure Javascript Charts!</h3>
+<input type="checkbox" id="zeroValueAxis" name="zeroValueAxis" value="zeroValueAxis" >Zero value axis
+<input id="drawChart" type="button" value="Plot"></br>
+<div id="valueText" style="position:absolute;float:right;text-align:left;border-radius:5px;left:0px;top:0px;padding:2px;">Values</div></br>
+<div id="myChart" oncontextmenu="return false;"></div>
+</body>
+</html

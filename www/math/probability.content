@@ -1,0 +1,103 @@
+<h3><a href="#math" onclick="_().loadContent(this,'math','ContentBody');" >Mathematics</a> - Gentle review of the probability theory</h3>
+As a kid, I always struggled understanding the concepts of probability during the school days ( rarely got the answers right ). Most of the times left frustrated but, still finding it a very captivating topic and later at some point decided to take a sincere effort to get a better understanding instead of restricting that for academic purposes. This article is the result of same and it is written with an intend to provide a gentle introduction to the reader of the very fundamental concepts of probability in a very simplest possible way. So, let get started.</p>
+<h3>What is probability</h3>
+In simplest terms it can be defined as, how likely something (an event) is expected to happen</p>
+<!--b>&#x2119</b>P(An event) = ( number of favourable outcomes ) / ( total number of all possible outcome(s) )</p-->
+<img src="/images/probabilityD.svg" width="440px" /></p>
+<dl>
+<dt>Ex.</dt>
+<dd>Total number of all possible outcome(s) in a coin toss is 2 {Head,Tail} and for a dice roll it is 6 {1,2,3,4,5,6}</br>
+Number of favourable outcome(s) for observing head in a coin toss, is 1={Head}.</br>
+i.e., P(Head) = 1/2 {0.5 or 50%}</br>
+<e>Thing to remember:</e> Total sum of the probabilities of all possible events in a given experiment is always 1.</br>
+i.e., P(Head)+P(Tail) = 1</br>
+Thus, P(Tail) = 1 - P(Head) = 0.5
+</dd>
+</dl>
+<h3>Notations</h3>
+<table>
+<tr><td><e>And</e></td><td>is denoted by </td><td>∩</td></tr>
+<tr><td><e>Or</e></td><td>is denoted by </td><td>∪</td></tr>
+</table></p>
+<h3>Types of events</h3>
+<dl>
+<dt><h4>Mutually exclusive events</h4></dt>
+<dd>Mutually exclusive events can never occur at the <e>same time</e>. Joint probability for such events is always 0 (zero).</br>
+Notice that <e>simultaneity</e> is the key.</br>
+</dd>
+</dl>
+<dl>
+<dt>Ex.</dt>
+<dd>A coin toss, it cannot yield both head and tail at the same time.</br>However, consider a case of drawing a King or Heart card from a deck of 52 card, there is a possiblity that card could be a <i>King</i> of <i>Hearts</i>. </br>
+So, both are not mutually exclusive events. </br>While on the other hand drawing a card which is both King and Queen is not possible. Thus, both become mutually exclusive events.</dd>
+</dl>
+</p>
+<center>
+    <img src="/images/exclusion.svg" height="160px" /></p>
+    P(A∩B) = 0
+    </br>And,</br>P(A∪B) = P(A) + P(B)
+</center></p>
+</p>
+<dl>
+<dt>Finally,</dt>
+<dd>Rolling a <e>single</e> dice and observing 2 and an odd number is impossible. (Mutually exclusive events)</br>
+Instead, if two dices are rolled. Would it be still impossible to observe the above outcome?</dd>
+</dt>
+</dl>
+<h4>Independent events</h4>
+These are the events that don't affect each other.</br>
+<dl>
+<dt>
+The Probability of two <e>independent</e> events happening <e>together</e> is simply.</dt>
+<dd>P(A∩B) = P(A) * P(B)</p></dd>
+<dt>And</br>The probability of <e>either</e> of them happening</dt>
+<dd>P(A∪B) = P(A) + P(B) - P(A∩B)</br>
+Wondering, why subtract P(A∩B). Remember the previous example of King of Hearts case, it belonged to the two worlds of outcome when:</br>1. You draw a King</br>2. You draw a Heart</br>
+We counted it twice, i.e. once in P(A) and another in P(B).
+</br>Or in other way think that both outcomes got merged as they cannot happen individually so that has to be counted only once and not separately. Give it a thought and spend some time here. It might not be evident in one go, but you shall understand it.
+</dd></p>
+<dt>Ex.</dt>
+<dd>
+Consider rolling of two dices instead of one. Let event A be observing 2 on the first and B be observing an odd number on the second.</br>
+P(A) = 1/6 and P(B) = 3/6</br>
+P(A∩B) = P(A) * P(B) = 1/6 * 3/6 = 1/12</br>
+P( observing 2 on first or observing odd number on second ) = P(A∪B) = P(A) + P(B) - P(A∩B) = 1/6 + 3/6 - 1/12 = 21/36.</p>
+<i>One very important thing to note here is that both events A and B are not mutually exclusive. As both can occur at the same time.</i>
+</dd>
+</dt>
+</dl>
+<h4>Dependent events</h4>
+When an occurance of one event affects the occurance of another, they are said to be dependent events.
+<dl>
+<dt><dd>
+P(A∩B) = P(A) * P(B|A) = P(B) * P(A|B)
+</br>And, P(A∪B) = P(A) + P(B) - P(A∩B)</br>
+Where, P(B|A) = Probability of B given A is observed.</br>
+Similarly, P(A|B) = Probability of A  given B is observed.
+</dd></dt>
+</dl>
+<dl>
+<dt>Ex.</dt>
+<dd>Drawing two cards from a deck of 52 cards such that first is a face card and second is a number card.</br>
+Here, when the first card is draw p(face card) = 12/52</br> 
+For second card no. of total choices is 51 from which favourable outcomes can be drawn, such that p(number card) = 40/51.</br>
+The P(1st card is a face card and 2nd a number) = P(1st is a face card) * P(2nd is a no. card given 1st is a face card) = 12/15 * 40/51.
+</dd>
+</dt>
+</dl>
+We encounter something special here i.e., P(B|A) and P(A|B) identified as <e>conditional probabilities</e>.
+</p>
+<h3>Conditional probability</h3>
+Probability of happening of an event A given that event B has <i>also</i> happened or observed.</p>
+<center>
+P(A|B) = P(A∩B) / P(B)</br>And similarly</br>
+P(B|A) = P(A∩B) / P(A)</p>
+</center>
+Universe changes and favourable outcomes are evaluated relative to this new universe.</p>
+<center>
+    <img src="/images/conditionalP.svg" height="180px" /></p>
+</center>
+</p>
+That's all folks! Hope you have enjoyed it.
+</p>
+Thanks.

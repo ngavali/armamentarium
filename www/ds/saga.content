@@ -1,0 +1,16 @@
+<h3><a href="#ds" onclick="_().loadContent(this,'ds','ContentBody');" >Distributed Systems</a> - Distributed transaction, SAGA</h3>
+<r>Work in progress!!!</r>
+</p>
+A <e>long running</e> transaction composed of N <e>local</e> transactions - T<sub>1</sub>, T<sub>2</sub>, T<sub>3</sub>, ... and, T<sub>N</sub></br>
+With <e>compensating</e> transactions - C<sub>1</sub>, C<sub>2</sub>, C<sub>3</sub>, ... and, C<sub>N</sub>. Each able to undo a corresponding local transaction.</p>
+When, any of the nth local transaction fails (n ∈ [1,N]), compensating transactions are applied to the failed and all previous transactions (that is C<sub>n</sub>, C<sub>n-1</sub>, ... and, C<sub>1</sub>) reversing the effect of each of the corresponding local transactions.</p>
+
+<h3>Recovery</h3>
+<h4>Backward</h4>
+Apply compensating transactions on failure in reverse order of applied local transactions.
+<h4>Forward</h4>
+Retry until success
+<h4>Forward/Backward</h4>
+Define checkpost on success. On encountering the failure apply compensating transactions till last successful checkpoint and then start again with forward recovery.
+<h4>Key points</h4>
+All transactional actions along with compensating ones are expected to be idempotent.

@@ -1,0 +1,218 @@
+<tr><td>
+		<h3><a href="#db" onclick="_().loadContent(this,'db','ContentBody');" > Database</a> - SQL joins</h3>
+		SQL joins offer us the way to extract relevant rows by combining columns from one (self-join) or more tables. </p>
+		Rows from one (self-join) or more tables are associated together by corresponding common column(s) having same values.</p> These column(s) form key(s) for the join and row selectivity.</p>
+Now, before going any further and digging into SQL join queries, first let us try to build a visual map of joins ( See Fig.1 below ) and understand different types of joins available in MySQL/Mariadb database.</p>
+		<h3>Visual Representation</h3>
+<center>
+	<img src="/images/joins.png" width="450px" /></p><b>Fig.1</b>
+</center></p>
+		Each dot represents a row entry in the table, blue for B and red for A. Now, note that in the intersection has dots for both color blue and red forming pairs. They represent rows from both table A and B that have same values for common key column(s). Thus, join on table A and B is performed using some column(s) ( Join key(s) ). </p>
+Depending on the type of join we can choose to retrieve information stored in row columns from either or both of the tables using key column(s).</p> 
+In left join, we can see non-intersecting red dots ( rows in table A ) have no matching pairs from B, so rows from B end up with NULLs in them. It selects all the rows from the table on the left, hence the name.</p>
+Similarly, in right join non-intersecting blue dots ( rows in table B ) have no matching pairs from A, so rows from A end up with NULLs in them. It selects all the rows from the table on the right, hence the name.</p>
+The intersection - inner join ( A &cap; B ), we can see blue and red dots form pairs as they have matching keys and thus no NULLs. The intersection can result in no rows ( empty set ) if no matching pair is found.</p>
+In full outer join, all rows from each side are extracted, non-matching rows hold NULLs for the other side.</p>
+It might appear quite confusing at this moment, but once we go through an example things shall become more clear. I will be using mariadb database to demonstrate the same.<p>
+<h3>SQL Query syntax</h3>
+Let us first look at the syntax for performing a join on two tables.
+<h4>Inner join</h4>
+<pre>
+SELECT *
+FROM A
+<name>INNER JOIN</name> B
+<name>ON</name>
+<b>A.key = B.key</b>
+</pre>
+<h4>Left join</h4>
+<pre>
+SELECT * 
+FROM A 
+<name>LEFT JOIN</name> B
+<name>ON</name>
+<b>A.key = B.key</b>
+</pre>
+<h4>Right join</h4>
+<pre>
+SELECT *
+FROM A
+<name>RIGHT JOIN</name> B
+<name>ON</name>
+<b>A.key = B.key</b>
+</pre>
+<h4>Outer join</h4>
+Get me everything, full outer join is not available in maraiadb. We can simulate by doing the UNION of LEFT and a RIGHT join.</br> 
+UNION is used instead of UNION ALL to avoid duplicates resulting from matching pairs from LEFT and RIGHT join.</p>
+<pre>
+SELECT *
+FROM A
+<name>LEFT JOIN</name> B
+<name>ON</name>
+<b>A.key = B.key</b>
+<name>UNION</name>
+SELECT *
+FROM A
+<name>RIGHT JOIN</name> B
+<name>ON</name>
+<b>A.key = B.key</b>
+</pre>
+Now, let us see how to use them through a simple example, Author and their Books.</p>
+Create an Author table:
+<pre>
+CREATE TABLE `Author` (
+  `authorId` bigint(20) unsigned NOT <r>NULL</r> AUTO_INCREMENT,
+  `authorName` varchar(20) DEFAULT NULL,
+  PRIMARY KEY (`authorId`)
+) ENGINE=InnoDB
+;
+</pre>
+Create a Book table:
+<pre>
+CREATE OR REPLACE TABLE `Book` (
+  `bookId` bigint(20) unsigned NOT <r>NULL</r> AUTO_INCREMENT,
+  `bookName` varchar(50) DEFAULT NULL,
+  `authorId` bigint(20) unsigned DEFAULT NULL,
+  PRIMARY KEY (`bookId`),
+  CONSTRAINT `fk_authorId` FOREIGN KEY (`authorId`) REFERENCES `Author` (`authorId`)
+) ENGINE=InnoDB
+;
+</pre>
+<h3>Populate sample data</h3>
+
+<pre>
+INSERT INTO Author ( authorId, authorName ) VALUES 
+( 1, 'Leo Tolstoy' ), 
+( 2, 'Marcel Proust' ), 
+( 3, 'John Bunyan' ), 
+( 4, 'Lewis Carroll'), 
+( 5, 'Nilesh Gavali')
+;
+</pre>
+<pre>
+INSERT INTO Book ( bookId, bookName, authorId ) VALUES 
+( 1, 'Alice''s Adventures in Wonderland', 4 ),
+( 2, 'The Pilgrim''s Progress', 3 ),
+( 3, 'In Search of Lost Time', 2 ),
+( 4, 'Anna Karenina', 1 ),
+( 5, 'Yajurveda', <r>NULL</r> ),
+( 6, 'Yajurveda', <r>NULL</r> )
+;
+</pre>
+<h3>Performing joins</h3>
+In our case, join key column <code>authorId</code> is used to associate rows from Author and Book table. 
+<h4>Inner join</h4>
+<pre>
+&gt;SELECT * FROM Author<name> INNER JOIN </name>Book <name>ON</name> <b>Author.authorId = Book.authorId</b>
+;
++----------+---------------+--------+----------------------------------+----------+
+| authorId | authorName    | bookId | bookName                         | authorId |
++----------+---------------+--------+----------------------------------+----------+
+|        4 | Lewis Carroll |      1 | Alice's Adventures in Wonderland |        4 |
+|        3 | John Bunyan   |      2 | The Pilgrim's Progress           |        3 |
+|        2 | Marcel Proust |      3 | In Search of Lost Time           |        2 |
+|        1 | Leo Tolstoy   |      4 | Anna Karenina                    |        1 |
++----------+---------------+--------+----------------------------------+----------+
+4 rows in set (0.00 sec)
+</pre>
+Get only rows matching against the given key from both tables Book and Author.
+<h4>Left join</h4>
+<pre>
+&gt;SELECT * FROM Author<name> LEFT JOIN </name>Book <name>ON</name> <b>Author.authorId = Book.authorId</b>
+;
++----------+---------------+--------+----------------------------------+----------+
+| authorId | <b>authorName</b>    | bookId | bookName                         | authorId |
++----------+---------------+--------+----------------------------------+----------+
+|        1 | <b>Leo Tolstoy</b>   |      4 | Anna Karenina                    |        1 |
+|        2 | <b>Marcel Proust</b> |      3 | In Search of Lost Time           |        2 |
+|        3 | <b>John Bunyan</b>   |      2 | The Pilgrim's Progress           |        3 |
+|        4 | <b>Lewis Carroll</b> |      1 | Alice's Adventures in Wonderland |        4 |
+|        5 | <b>Nilesh Gavali</b> |   <r>NULL</r> | <r>NULL</r>                             |     <r>NULL</r> |
++----------+---------------+--------+----------------------------------+----------+
+5 rows in set (0.00 sec)
+</pre>
+All of the rows from the Author table are listed with matching rows from the Book table including non-matching rows as NULLs.
+<h4>Right join</h4>
+<pre>
+&gt;SELECT * FROM Author<name> RIGHT JOIN </name>Book <name>ON</name> <b>Author.authorId = Book.authorId</b>
+;
++----------+---------------+--------+----------------------------------+----------+
+| authorId | authorName    | bookId | <b>bookName</b>                         | authorId |
++----------+---------------+--------+----------------------------------+----------+
+|        4 | Lewis Carroll |      1 | <b>Alice's Adventures in Wonderland</b> |        4 |
+|        3 | John Bunyan   |      2 | <b>The Pilgrim's Progress</b>           |        3 |
+|        2 | Marcel Proust |      3 | <b>In Search of Lost Time</b>           |        2 |
+|        1 | Leo Tolstoy   |      4 | <b>Anna Karenina</b>                    |        1 |
+|     <r>NULL</r> | <r>NULL</r>          |      5 | <b>Atharvaveda</b>                      |     <b>NULL</b> |
+|     <r>NULL</r> | <r>NULL</r>          |      6 | <b>Yajurveda</b>                        |     <b>NULL</b> |
++----------+---------------+--------+----------------------------------+----------+
+6 rows in set (0.00 sec)
+</pre>
+All of the rows from the Book table are listed with matching rows from the Author table including non-matching rows as NULLs.
+<h4>Outer join</h4>
+<pre>
+&gt;SELECT * FROM Author<name> LEFT JOIN </name>Book <name>ON</name> <b>Author.authorId = Book.authorId</b>
+UNION
+SELECT * FROM Author<name> RIGHT JOIN </name>Book <name>ON</name> <b>Author.authorId = Book.authorId</b>
+;
++----------+---------------+--------+----------------------------------+----------+
+| authorId | <b>authorName</b>    | bookId | <b>bookName</b>                         | authorId |
++----------+---------------+--------+----------------------------------+----------+
+|        1 | <b>Leo Tolstoy</b>   |      4 | <b>Anna Karenina</b>                    |        1 |
+|        2 | <b>Marcel Proust</b> |      3 | <b>In Search of Lost Time</b>           |        2 |
+|        3 | <b>John Bunyan</b>   |      2 | <b>The Pilgrim's Progress</b>           |        3 |
+|        4 | <b>Lewis Carroll</b> |      1 | <b>Alice's Adventures in Wonderland</b> |        4 |
+|        5 | <b>Nilesh Gavali</b> |   <r>NULL</r> | <r>NULL</r>                             |     <r>NULL</r> |
+|     <r>NULL</r> | <r>NULL</r>          |      5 | <b>Atharvaveda</b>                      |     <b>NULL</b> |
+|     <r>NULL</r> | <r>NULL</r>          |      6 | <b>Yajurveda</b>                        |     <b>NULL</b> |
++----------+---------------+--------+----------------------------------+----------+
+7 rows in set (0.00 sec)
+</pre>
+<h4>Cross join</h4>
+Finally, a special case (Cartesian product) we have not talked about. Here, each row from one table is joined with each & every row from every other table in the join. In our case, each row from table A (Author) will be joined with each & every row from the table B (Book).</p>
+We do not specify any join key.
+<pre>
+&gt;SELECT * FROM Author, Book;
++----------+---------------+--------+----------------------------------+----------+
+| authorId | authorName    | bookId | bookName                         | authorId |
++----------+---------------+--------+----------------------------------+----------+
+|        1 | Leo Tolstoy   |      1 | Alice's Adventures in Wonderland |        4 |
+|        2 | Marcel Proust |      1 | Alice's Adventures in Wonderland |        4 |
+|        3 | John Bunyan   |      1 | Alice's Adventures in Wonderland |        4 |
+|        4 | Lewis Carroll |      1 | Alice's Adventures in Wonderland |        4 |
+|        5 | Nilesh Gavali |      1 | Alice's Adventures in Wonderland |        4 |
+|        1 | Leo Tolstoy   |      2 | The Pilgrim's Progress           |        3 |
+|        2 | Marcel Proust |      2 | The Pilgrim's Progress           |        3 |
+|        3 | John Bunyan   |      2 | The Pilgrim's Progress           |        3 |
+|        4 | Lewis Carroll |      2 | The Pilgrim's Progress           |        3 |
+|        5 | Nilesh Gavali |      2 | The Pilgrim's Progress           |        3 |
+|        1 | Leo Tolstoy   |      3 | In Search of Lost Time           |        2 |
+|        2 | Marcel Proust |      3 | In Search of Lost Time           |        2 |
+|        3 | John Bunyan   |      3 | In Search of Lost Time           |        2 |
+|        4 | Lewis Carroll |      3 | In Search of Lost Time           |        2 |
+|        5 | Nilesh Gavali |      3 | In Search of Lost Time           |        2 |
+|        1 | Leo Tolstoy   |      4 | Anna Karenina                    |        1 |
+|        2 | Marcel Proust |      4 | Anna Karenina                    |        1 |
+|        3 | John Bunyan   |      4 | Anna Karenina                    |        1 |
+|        4 | Lewis Carroll |      4 | Anna Karenina                    |        1 |
+|        5 | Nilesh Gavali |      4 | Anna Karenina                    |        1 |
+|        1 | Leo Tolstoy   |      5 | Atharvaveda                      |     <b>NULL</b> |
+|        2 | Marcel Proust |      5 | Atharvaveda                      |     <b>NULL</b> |
+|        3 | John Bunyan   |      5 | Atharvaveda                      |     <b>NULL</b> |
+|        4 | Lewis Carroll |      5 | Atharvaveda                      |     <b>NULL</b> |
+|        5 | Nilesh Gavali |      5 | Atharvaveda                      |     <b>NULL</b> |
+|        1 | Leo Tolstoy   |      6 | Yajurveda                        |     <b>NULL</b> |
+|        2 | Marcel Proust |      6 | Yajurveda                        |     <b>NULL</b> |
+|        3 | John Bunyan   |      6 | Yajurveda                        |     <b>NULL</b> |
+|        4 | Lewis Carroll |      6 | Yajurveda                        |     <b>NULL</b> |
+|        5 | Nilesh Gavali |      6 | Yajurveda                        |     <b>NULL</b> |
++----------+---------------+--------+----------------------------------+----------+
+30 rows in set (0.00 sec)
+</pre>
+Hope this article would have helped you clear the clutter and all fuzz about joins. In next part, I will talk about how joins work and query optimization techniques.</p>
+Thanks and that's all folks!
+</td></tr>
+</table>
+<div>
+	</center>
+</body>
+</html>

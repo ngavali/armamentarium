@@ -1,0 +1,24 @@
+<h3>Go Programming Language</h3>
+My musings with Go</p>
+<h4>Data Structures</h4>
+<a href="#go/tree" onclick="_().loadContent(this,'go/tree','ContentBody');">Tree</a>,
+<a href="#go/trie" onclick="_().loadContent(this,'go/trie','ContentBody');">Trie</a>,
+<a href="#go/linkedList" onclick="_().loadContent(this,'go/linkedList','ContentBody');">Linked List</a>,
+<h4>Microservices</h4>
+Simple <a href="#go/httpserver" onclick="_().loadContent(this,'go/httpserver','ContentBody');">HTTP Server</a>, 
+<a href="#go/protobuff" onclick="_().loadContent(this,'go/protobuff','ContentBody');">Protocol Buffers</a>,
+<a href="#go/grpc" onclick="_().loadContent(this,'go/grpc','ContentBody');">gRPC</a>
+<h4>Concepts</h4>
+<a href="#go/pointers" onclick="_().loadContent(this,'go/pointers','ContentBody');">Pointers</a>,
+<a href="#go/goroutine" onclick="_().loadContent(this,'go/goroutine','ContentBody');">Goroutine</a>,
+<a href="#go/closure" onclick="_().loadContent(this,'go/closure','ContentBody');">Closure</a>,
+<a href="#go/etlpipe" onclick="_().loadContent(this,'go/etlpipe','ContentBody');">ETL Pipeline</a>,
+<!--a href="#go/linkedList" onclick="_().loadContent(this,'go/linkedList','ContentBody');">Linked List Reversal</a></br-->
+<a href="#go/embedding" onclick="_().loadContent(this,'go/embedding','ContentBody');">Embedding</a>
+<h4>Design patterns</h4>
+<a href="#go/patterns" onclick="_().loadContent(this,'go/patterns','ContentBody');">Design patterns</a>
+<h4>General</h4>
+Unblocking the channel with a <a href="#go/queues" onclick="_().loadContent(this,'go/queues','ContentBody');">Queue</a></br>
+Process sychronization using a <a href="#go/dblocks" onclick="_().loadContent(this,'go/dblocks','ContentBody');">DB lock</a></br>
+<a href="#go/auth" onclick="_().loadContent(this,'go/auth','ContentBody');">OAuth and SAML</a></br>
+<a href="#go/git" onclick="_().loadContent(this,'go/git','ContentBody');">GIT</a></br>

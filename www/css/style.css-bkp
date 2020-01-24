@@ -1,0 +1,137 @@
+/*@import url('https://fonts.googleapis.com/css?family=Yantramanav');
+@import url('https://fonts.googleapis.com/css?family=Roboto|Yantramanav');*/
+@import url('https://fonts.googleapis.com/css?family=Merriweather|Frank+Ruhl+Libre|Vidaloka|Rasa|Kameron');
+
+body {
+	overflow-y: scroll;
+}
+
+div#ContentBody {    
+	line-height: 25px;
+}
+
+pre {
+	line-height: 20px;
+}
+
+div#menubar {
+	margin: 0px;
+	padding-top: 5px;
+	padding-bottom: 5px;
+	position: fixed;
+	width: 100%;
+	background: rgb(255,255,255);
+}
+
+.logo {
+	color: #5D4E6D;
+	color: #832161;
+	color: #C17767;
+	color: #CC3363;
+}
+
+logo {
+	font-size: 15pt;
+	font-weight: bold;
+	font-family: Kameron, Merriweather;
+}
+
+k3 {
+	display: block;
+}
+
+h3, k3 {
+	font-size: 14pt;
+	font-weight: none;
+	margin-top: 0px;
+}
+
+h3 {
+	color: #547AA5;
+	color: #E6AF2E;
+	color: #1C6E8C;
+	color: #598B2C;
+	color: #6D98BA;
+	color: #2aa198;
+}
+
+table#menu {
+	width:1000px;
+	border:0px;
+	padding-bottom:5px;
+	border-bottom:#888 1pt SOLID;
+	background: rgb(255,255,255);
+}
+
+div#bodyTopic {
+	margin: 0px;
+	padding-top: 100px;
+}
+
+table {
+	border-spacing: 0pt;
+}
+
+.head td {
+	border-bottom: #888 1px SOLID;
+	padding: 2pt;
+}
+
+table#topicContent {
+	width:1000px;
+	border:0px;
+	font-size: 12pt;
+}
+
+body {
+	font-family: Rasa, Yantramanav, Arial;
+	font-size: 12pt;
+	color: #444;
+	padding-left: 0px;
+	padding-right: 0px;
+	padding-bottom: 50px;
+	margin: 0px;
+}
+
+table#topicContent tr td {
+	font-family: Rasa, Yantramanav, Arial;
+	font-size: 12pt;
+}
+
+table#menu tr td a {
+	padding-right: 5px;
+	text-decoration: none;
+	color: rgb( 100, 100, 100 );
+}
+
+table#menu tr td a {
+	font-size: 12pt;
+}
+
+a {
+	color: #4F5165;
+	outline: none;
+}
+
+a:hover {
+	color: #CC3363;
+	olor: #D3B99F;
+	text-decoration: underline;
+}
+
+img {
+	display: block;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+table#menu tr td .activeLink {
+	padding-right: 5px;
+	color: rgb(220, 30, 26);
+	color: #832161;
+	color: #C17767;
+	color: #832161;
+	color: #CC3363;
+	text-decoration: underline;
+	font-size: 12pt;
+}

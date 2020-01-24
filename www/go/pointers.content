@@ -1,0 +1,28 @@
+<h3><a href="#go" onclick="_().loadContent(this,'go','ContentBody');" >Go Programming Language</a> - Pointers</h3></p>
+Reverse characters of a string in the given range.
+<pre>
+package main
+
+import (
+        "fmt"
+)
+
+func reversePointer(list []byte, start, end int) []byte {
+        for i := 0; i < (start+end-2)/2; i++ {
+                list[start+i-1], list[end-1-i] = list[end-1-i], list[start+i-1]
+        }
+        return list
+}
+
+func main() {
+        var list = []byte{'A', 'B', 'C', 'D', 'E', 'F', 'G'}
+        fmt.Printf("%s\n", list)
+        reversePointer(list, 2, 5)
+        fmt.Printf("%s\n", list)
+}
+</pre>
+Output
+<pre>
+ABCDEFG
+AEDCBFG
+</pre>

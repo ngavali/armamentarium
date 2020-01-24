@@ -1,0 +1,213 @@
+<r>Work in progress!</r></p>
+<h3><a href="#go" onclick="_().loadContent(this,'go','ContentBody');" >Go Programming Language</a> - Linked List Reversal</h3></p>
+In this short article, we will see how to reverse a linked list using recursion logic.</p>
+<h4>At first, the act of reversal</h4>
+Assume, while traversing a link list (forget the direction) we are at node A, we try to perform reversal by updating node B to point to node A. i.e. we update B.next such that it points to A.</br>
+Below fig. depicts the act of reversal all from node A's perspective.</p>
+<center>
+<img src="/images/linkReversal.svg" height="100px" />
+Followed by (A).next &#8594; nil, concludes the reversal for these two nodes.
+</center></p>
+For a node preceeding to the node A, again using the same technique we update</br>
+Next of node A as</br>(A).next = (Preceeding Node.next).next → Preceeding Node</br>And next of the Preceeding node to nil</br>(Preceeding node).next is set to nil.</br>Thus, A.next is updated and if that (A) was the only node during our traversal in the above mentioned order then it would have remained nil.</br>
+(Observe the direction in which we operate on nodes, i.e. while we are moving away from the Tail)</br>
+Now, you must have got an idea on reversal's basic operation and for sure it has to be done in the reverse direction (recursion is here for the rescue, we will go deeper into the list towards its Tail and do these operations while coming out of it again,
+It is like road trip you need sign boards to guide you towards the destination if you change them before using them</p>
+<i>Ok I got it, but what about the Head?</i></p>
+<h4>Approach 1</h4>
+By passing the Head, while going deeper. And on encountering Tail, point Head to Tail.</br>
+(In below figure, blue arrow represents updated next pointer when coming out of recursive loop at each step)</p>
+<center>
+<img src="/images/linkListReverseByHeadPass.svg" height="200px" />
+</center>
+<h4>Approach 2</h4>
+By returning the Tail, when coming out. After the completion of reversal, point Head to Tail.</br>
+(In below figure, blue arrow represents updated next pointer when coming out of recursive loop at each step)</p>
+<center>
+<img src="/images/linkListReverseByTailReturn.svg" height="200px" />
+</center>
+<h4>Code</h4>
+<pre>
+package main
+
+import "fmt"
+
+type <name>linkedList</name> interface {
+        Add(*node)
+        Iterate()
+        Delete(*node)
+        Head()
+        Reverse(*node)
+        ReverseRedux() *node
+}
+
+type <name>node</name> struct {
+        data string
+        next *node
+}
+
+func (l *node) Add(n *node) {
+        n.next = l.next
+        l.next = n
+}
+
+func (l *node) Delete(n *node) {
+        for (l.next).data != n.data {
+                l = l.next
+        }
+        l.next = n.next
+}
+
+func (l *node) Head() {
+        fmt.Printf("Head is at: %p\n", l)
+}
+
+func (l *node) Iterate() {
+        fmt.Printf("Iterating through nodes in linked list\n") //\nAddress %p -> data %v\n", &l, l)
+        for l != nil {
+                fmt.Printf("Address %p -> data %v , next %p\n", l, l.data, l.next)
+                l = l.next
+        }
+}
+
+func (l *node) Reverse(head *node) {
+        if l.next != nil {
+                (l.next).Reverse(head)
+                l.next.next = l
+                l.next = nil
+                <r>return</r>
+        }
+        head.next = l
+        fmt.Println("assign tail to head", head)
+}
+
+func (l *node) ReverseRedux() *node {
+        if l.next != nil {
+                head := (l.next).ReverseRedux()
+                l.next.next = l
+                l.next = nil
+                <r>return</r> head
+        }
+        <r>return</r> l
+}
+
+func main() {
+        ll := &node{"head 00", nil}
+        node1 := &node{"node 01", nil}
+        node2 := &node{"node 02", nil}
+        node3 := &node{"node 03", nil}
+        node4 := &node{"node 04", nil}
+
+        ll.Head()
+
+        ll.Add(node1)
+        ll.Add(node2)
+        ll.Add(node3)
+        ll.Add(node4)
+
+        ll.Iterate()
+
+        fmt.Printf("Reversing the linked list (by passing the Head)\n")
+
+        ll.next.Reverse(ll)
+
+        ll.Head()
+
+        ll.Iterate()
+
+        fmt.Printf("Reversing the linked list (by returning the Tail)\n")
+
+        <c>//Assign Tail to Head</c>
+        ll.next = ll.next.ReverseRedux()
+
+        ll.Head()
+
+        ll.Iterate()
+}
+</pre>
+<h4>Output</h4>
+<pre>
+Head is at: 0xc42000a080
+Iterating through nodes in linked list
+Address 0xc42000a080 -> data head 00 , next 0xc42000a100
+Address 0xc42000a100 -> data node 04 , next 0xc42000a0e0
+Address 0xc42000a0e0 -> data node 03 , next 0xc42000a0c0
+Address 0xc42000a0c0 -> data node 02 , next 0xc42000a0a0
+Address 0xc42000a0a0 -> data node 01 , next 0x0
+Reversing the linked list (by passing the Head)
+assign tail to head &{head 00 0xc42000a0a0}
+Head is at: 0xc42000a080
+Iterating through nodes in linked list
+Address 0xc42000a080 -> data head 00 , next 0xc42000a0a0
+Address 0xc42000a0a0 -> data node 01 , next 0xc42000a0c0
+Address 0xc42000a0c0 -> data node 02 , next 0xc42000a0e0
+Address 0xc42000a0e0 -> data node 03 , next 0xc42000a100
+Address 0xc42000a100 -> data node 04 , next 0x0
+Reversing the linked list (by returning the Tail)
+Head is at: 0xc42000a080
+Iterating through nodes in linked list
+Address 0xc42000a080 -> data head 00 , next 0xc42000a100
+Address 0xc42000a100 -> data node 04 , next 0xc42000a0e0
+Address 0xc42000a0e0 -> data node 03 , next 0xc42000a0c0
+Address 0xc42000a0c0 -> data node 02 , next 0xc42000a0a0
+Address 0xc42000a0a0 -> data node 01 , next 0x0
+</pre>
+</p>
+<h3>Using temporary variables</h3>
+This is left as an exercise for the reader. We use extra variable to store the pointer to prev and next nodes.
+<h4>Code</h4>
+<pre>
+func (l *node) Reverse() {
+        head := l
+        var prev *node
+        l = l.next
+        for l != nil {
+                next := l.next
+                l.next = prev
+                prev = l
+                l = next
+        }
+        head.next = prev
+}
+
+func main() {
+        ll := &node{"head 00", nil}
+        node1 := &node{"node 01", nil}
+        node2 := &node{"node 02", nil}
+        node3 := &node{"node 03", nil}
+        node4 := &node{"node 04", nil}
+
+        fmt.Printf("Head is at: %p\n", ll)
+
+        ll.Add(node1)
+        ll.Add(node2)
+        ll.Add(node3)
+        ll.Add(node4)
+
+        ll.Iterate()
+
+        fmt.Printf("Reversing the linked list\n")
+
+        ll.Reverse()
+
+        ll.Iterate()
+}
+</pre>
+<h4>Output</h4>
+<pre>
+Head is at: 0xc42000a080
+Iterating through nodes in linked list
+Address 0xc42000a080 -> data head 00 , next 0xc42000a100
+Address 0xc42000a100 -> data node 04 , next 0xc42000a0e0
+Address 0xc42000a0e0 -> data node 03 , next 0xc42000a0c0
+Address 0xc42000a0c0 -> data node 02 , next 0xc42000a0a0
+Address 0xc42000a0a0 -> data node 01 , next 0x0
+Reversing the linked list
+Iterating through nodes in linked list
+Address 0xc42000a080 -> data head 00 , next 0xc42000a0a0
+Address 0xc42000a0a0 -> data node 01 , next 0xc42000a0c0
+Address 0xc42000a0c0 -> data node 02 , next 0xc42000a0e0
+Address 0xc42000a0e0 -> data node 03 , next 0xc42000a100
+Address 0xc42000a100 -> data node 04 , next 0x0
+</pre>
+That's all folks!

@@ -1,0 +1,137 @@
+<h3><a href="#go" onclick="_().loadContent(this,'go','ContentBody');" >Go Programming Language</a> - Tree</h3></p>
+<h4>Tree Traversal</h4>
+<pre style='background:#fff'>
+         15
+        /  \
+       /    \
+      7      19
+     / \       \
+    /   \       \
+   3     8      17
+  / \
+ /   \
+1     4
+</pre>
+<pre>
+package main
+
+import (
+        "fmt"
+)
+
+type node struct {
+        data  int
+        left  *node
+        right *node
+}
+
+func NewNode(d int) *node {
+        return &node{d, nil, nil}
+}
+
+func (n *node) Left() *node {
+        return n.left
+}
+
+func (n *node) Right() *node {
+        return n.right
+}
+
+func (n *node) SetData(d int) {
+        n.data = d
+}
+
+func (n *node) SetLeft(l *node) {
+        n.left = l
+}
+
+func (n *node) SetRight(r *node) {
+        n.right = r
+}
+
+func preorder(root *node) {
+        if root != nil {
+                fmt.Println(root.data)
+                preorder(root.left)
+                preorder(root.right)
+        }
+}
+
+func postorder(root *node) {
+        if root != nil {
+                postorder(root.left)
+                postorder(root.right)
+                fmt.Println(root.data)
+        }
+}
+
+func inorder(root *node) {
+        if root != nil {
+                inorder(root.left)
+                fmt.Println(root.data)
+                inorder(root.right)
+        }
+}
+
+func main() {
+
+        Tree := NewNode(15)
+
+        Tree.SetLeft(NewNode(7))
+        Tree.Left().SetLeft(NewNode(3))
+        Tree.Left().Left().SetLeft(NewNode(1))
+        Tree.Left().Left().SetRight(NewNode(4))
+        Tree.Left().SetRight(NewNode(8))
+        Tree.Left().Right().SetRight(NewNode(9))
+
+        Tree.SetRight(NewNode(19))
+        Tree.Right().SetLeft(NewNode(17))
+
+        fmt.Println("----------\nPre  Order\n----------")
+        preorder(Tree)
+        fmt.Println("----------\nPost Order\n----------")
+        postorder(Tree)
+        fmt.Println("----------\nIn   Order\n----------")
+        inorder(Tree)
+
+}
+</pre>
+Output
+<pre>
+----------
+Pre  Order
+----------
+15
+7
+3
+1
+4
+8
+9
+19
+17
+----------
+Post Order
+----------
+1
+4
+3
+9
+8
+7
+17
+19
+15
+----------
+In   Order
+----------
+1
+3
+4
+7
+8
+9
+15
+17
+19
+</pre>

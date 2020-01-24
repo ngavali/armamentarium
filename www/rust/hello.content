@@ -1,0 +1,40 @@
+<h3><a href="#rust" onclick="_().loadContent(this,'rust','ContentBody');" >Rust Programming Language</a> - Say Hello, Rust!</h3></p>
+Create a new binary project</br>
+<pre>
+$ cargo new --bin hello
+     Created binary (application) `hello` package
+$ cat hello/Cargo.toml
+[package]
+name = "hello"
+version = "0.1.0"
+authors = ["Nilesh Gavali <gavali.niles80186@gmail.com>"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+$ cat hello/src/main.rs
+fn main() {
+    println!("Hello, world!");
+}
+</pre>
+Run hello world program
+<pre>
+$ cargo run
+   Compiling hello v0.1.0 (/external/application/rust/hello)
+    Finished dev [unoptimized + debuginfo] target(s) in 0.26s
+     Running `target/debug/hello`
+Hello, world!
+</pre>
+Build the program. It will create a binary file in the target directory (target/debug/hello)
+<pre>
+$ cargo build
+   Compiling hello v0.1.0 (/rust/hello)
+    Finished dev [unoptimized + debuginfo] target(s) in 0.27s
+</pre>
+Create a release build
+<pre>
+$ cargo build --release
+   Compiling hello v0.1.0 (/external/application/rust/hello)
+    Finished release [optimized] target(s) in 0.19s
+</pre>

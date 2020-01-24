@@ -1,0 +1,342 @@
+<tr><td>
+	<h3><a href="#db" onclick="_().loadContent(this,'db','ContentBody');" >Database</a> - Simple Job scheduler</h3>
+	In this article we will model a simple jobScheduler in database ( Job definition and its flow/dependencies ) and build required functionality ( retreive/store Job information and schedule Job(s) execution ). Here, I have used MySQL/Mariadb to implement the same. You can choose a database of your choice and port queries accordingly.
+<h4>Example Job workflow</h4>
+Below figure depicts an ETL (Extract, Transform and Load in Data Warehouse) Job workflow, wherein one process follows another. Circles represent jobs and arrows indicate the direction of the Job execution and dependencies.</br> For example : A &rarr; B indicates that Job B depends on Job A, and can run only when Job A completes successfully. Similarly, in below example Job T1 depends on Job E1 and E2 and can be run only when both are successfully completed and rest follows the same. 
+</p>
+<center>
+	<img src="/images/etlflow.svg" width="400px" /></p><b>Fig.1. </b>Example ETL Job workflow
+</center>
+</p>
+<h4>Database model for the Job scheduler</h4>
+<center>
+	<img src="/images/jobSchedular.svg" width="500px" /></p><b>Fig.2. </b>Data Model
+</center>
+<h4>Creating tables and populating sample data.</h4>
+Define Job type</p>
+<pre>
+CREATE TABLE `jobType` (
+    `jobTypeId` BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+    `jobTypeName` VARCHAR(20) DEFAULT NULL,
+    PRIMARY KEY (`jobTypeId`)
+) ENGINE=INNODB
+;
+
+insert into jobType values 
+( 1, 'Extract'   ),
+( 2, 'Transform' ),
+( 3, 'Load'      )
+;
+</pre>
+Define a Job
+<pre>
+CREATE TABLE `job` (
+    `jobId` BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+    `jobName` VARCHAR(20) DEFAULT NULL,
+    `jobDescription` TEXT DEFAULT NULL,
+    `isRunnable` TINYINT(1) DEFAULT NULL,
+    `jobTypeId` BIGINT(20) UNSIGNED,
+    PRIMARY KEY (`jobId`),
+    FOREIGN KEY (`jobTypeId`)
+        REFERENCES jobType (`jobTypeId`)
+) ENGINE=INNODB
+;
+
+insert into job (jobId, jobName, isRunnable, jobTypeId) values
+( 1, 'E1', true, 1),
+( 2, 'E2', true, 1),
+( 3, 'E3', true, 1),
+( 4, 'E4', true, 1),
+( 5, 'T1', true, 2),
+( 6, 'T2', true, 2),
+( 7, 'T3', true, 2),
+( 8, 'T4', true, 2),
+( 9, 'T5', true, 2),
+(10, 'T6', true, 2),
+(11, 'T7', true, 2),
+(12, 'T8', true, 2),
+(13, 'L1', true, 3),
+(14, 'L2', true, 3)
+;
+</pre>
+Define possible Job states. Here, I have defined minimal states [ READY, RUNNING, FINISHED ] that a Job can have, you can extend them as per your need. A Job in a READY state can be picked up for execution, can be moved to a RUNNING state.
+<pre>
+CREATE TABLE jobState (
+    `jobStateId` SERIAL,
+    `jobStateName` VARCHAR(20),
+    PRIMARY KEY (`jobStateId`)
+) ENGINE=INNODB
+;
+
+insert into jobState values (1, 'READY'), (2, 'RUNNING'), (3, 'FINISHED')
+;
+</pre>
+Define Job dependencies.
+<pre>
+CREATE TABLE `jobDag` (
+    `jobId` BIGINT(20) UNSIGNED NOT NULL,
+    `dependsOn` BIGINT(20) UNSIGNED DEFAULT NULL,
+    PRIMARY KEY (`jobId` , `dependsOn`),
+    FOREIGN KEY (`jobId`)
+        REFERENCES `job` (`jobId`),
+    FOREIGN KEY (`dependsOn`)
+        REFERENCES `job` (`jobId`)
+) ENGINE=INNODB
+;
+
+INSERT INTO jobDag ( jobId, dependsOn ) values
+(1,1), (2,2), (3,3), (4,4),
+(5,1), (5,2), (6,2), (7,2),(7,3),
+(8,5), (9,5), (9,6), (9,7),
+(10,8), (11,9), (11,4),
+(12,10), (12,11),
+(13,12), (14,12)
+;
+</pre>
+Add all RUNNABLE Jobs to the scheduler and set Job state as READY to be executed.
+<pre>
+CREATE TABLE jobScheduler (
+    `ts` TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    `jobId` BIGINT(20) UNSIGNED DEFAULT NULL,
+    `jobStateId` BIGINT(20) UNSIGNED DEFAULT 1,
+    PRIMARY KEY (`ts` , `jobId`),
+    FOREIGN KEY (`jobId`)
+        REFERENCES `job` (`jobId`),
+    FOREIGN KEY (`jobStateId`)
+        REFERENCES `jobState` (`jobStateId`)
+) ENGINE=INNODB
+;
+
+insert into jobScheduler (jobId) select jobId from job where isRunnable = 1
+;
+</pre>
+List runnable Job(s) using below query [*], wherein we select Job(s) in READY state and then check if it is blocked by any of the parent Job.</br>
+A Job with no parent is NOT blocked by any other Job.</p>
+<pre>
+SELECT
+	js.ts,
+	j.jobId,
+	j.jobName,
+	SUM(IF(jsd.jobStateId = 3 OR dependsOn = d.jobId, 0, 1)) isBlocked
+						<c>--Check if parent job is finish
+						--Or has NO dependencies
+						--Set isBlocked if none of the above</c>
+FROM
+	jobScheduler js
+LEFT JOIN ( jobDag d , job j , jobScheduler jsd )
+	ON
+	js.jobId = d.jobId 	AND
+	js.jobId = j.jobId 	AND
+	d.dependsOn = jsd.jobId AND
+	js.ts = jsd.ts
+WHERE
+	js.jobStateId = 1			<c>--For all jobs in READY state</c>
+GROUP BY 1 , 2
+HAVING isBlocked = 0				<c>--On isBlocked SUM is &gt;0 then eliminate</c>
+;
+<!--
+SELECT
+	js.ts,
+	j.jobId,
+	j.jobName,
+	SUM(IF(jsd.jobStateId = 3 OR dependsOn = d.jobId, 0, 1)) isBlocked
+FROM
+	jobScheduler js
+LEFT JOIN jobDag d 
+	ON js.jobId = d.jobId
+LEFT JOIN job j 
+	ON js.jobId = j.jobId
+LEFT JOIN jobScheduler jsd 
+	ON d.dependsOn = jsd.jobId
+	AND js.ts = jsd.ts
+WHERE
+	js.jobStateId = 1
+GROUP BY 1 , 2
+HAVING isBlocked = 0
+;-->
++---------------------+-------+---------+-----------+
+| ts                  | jobId | jobName | isBlocked |
++---------------------+-------+---------+-----------+
+| 2012-12-12 19:41:21 |     1 | E1      | 0         |
+| 2012-12-12 19:41:21 |     2 | E2      | 0         |
+| 2012-12-12 19:41:21 |     3 | E3      | 0         |
+| 2012-12-12 19:41:21 |     4 | E4      | 0         |
++---------------------+-------+---------+-----------+
+4 rows in set (0.01 sec)
+</pre>
+Update Job(s) state as RUNNING once picked up for the execution.
+<pre>
+update jobScheduler set jobStateId = 2 where jobId IN ( 1, 2, 3, 4 ) and ts = '2012-12-12 19:41:21'
+;
+Query OK, 4 rows affected (0.00 sec)
+Rows matched: 4  Changed: 4  Warnings: 0
+</pre>
+Try to list runnable Job(s) again using above [*] query.
+<pre>
+Empty set (0.01 sec)
+</pre>
+List RUNNING Job(s)
+<pre>
+SELECT ts, js.jobId, j.jobName FROM jobScheduler js LEFT JOIN job j ON js.jobId = j.jobId WHERE jobStateId = 2
+;
++---------------------+-------+---------+
+| ts                  | jobId | jobName |
++---------------------+-------+---------+
+| 2012-12-12 19:41:21 |     1 | E1      |
+| 2012-12-12 19:41:21 |     2 | E2      |
+| 2012-12-12 19:41:21 |     3 | E3      |
+| 2012-12-12 19:41:21 |     4 | E4      |
++---------------------+-------+---------+
+4 rows in set (0.00 sec)
+</pre>
+Update Job(s) state as FINISHED whose execution has been completed successfully.
+<pre>
+update jobScheduler set jobStateId = 3 where jobId IN ( 1, 2, 3, 4 ) and ts = '2012-12-12 19:41:21'
+;
+Query OK, 4 rows affected (0.01 sec)
+Rows matched: 4  Changed: 4  Warnings: 0
+</pre>
+Try to list runnable jobs again using above [*] query
+<pre>
++---------------------+-------+---------+-----------+
+| ts                  | jobId | jobName | isBlocked |
++---------------------+-------+---------+-----------+
+| 2012-12-12 19:41:21 |     5 | T1      | 0         |
+| 2012-12-12 19:41:21 |     6 | T2      | 0         |
+| 2012-12-12 19:41:21 |     7 | T3      | 0         |
++---------------------+-------+---------+-----------+
+3 rows in set (0.00 sec)
+</pre>
+<h4>Putting it all together</h4>
+Create a view to list runnable Job(s)
+<pre>
+CREATE OR REPLACE VIEW jobRunnable ( ts, jobRunnableId, jobRunnableName, isBlocked ) AS
+SELECT
+	js.ts,
+	j.jobId,
+	j.jobName,
+	SUM(IF(jsd.jobStateId = 3 OR dependsOn = d.jobId, 0, 1)) isBlocked
+ FROM
+	jobScheduler js
+ LEFT JOIN ( jobDag d , job j , jobScheduler jsd )
+	ON
+	js.jobId = d.jobId 	AND
+	js.jobId = j.jobId 	AND
+	d.dependsOn = jsd.jobId AND
+	js.ts = jsd.ts
+ WHERE
+	js.jobStateId = 1
+ GROUP BY 1 , 2
+ HAVING isBlocked = 0
+;
+<!--
+CREATE OR REPLACE VIEW jobRunnable ( ts, jobRunnableId, isBlocked ) AS
+SELECT
+    js.ts,
+    j.jobId,
+    SUM(IF(jsd.jobStateId = 4
+            OR dependsOn = d.jobId,
+        0,
+        1)) isBlocked
+  FROM
+    jobScheduler js
+        LEFT JOIN
+    jobDag d ON js.jobId = d.jobId
+        LEFT JOIN
+    job j ON js.jobId = j.jobId
+        LEFT JOIN
+    jobScheduler jsd ON d.dependsOn = jsd.jobId
+        AND js.ts = jsd.ts
+  WHERE
+    js.jobStateId = 1
+  GROUP BY 1, 2
+  HAVING isBlocked = 0
+;-->
+> select * from jobRunnable;
++---------------------+---------------+-----------------+-----------+
+| ts                  | jobRunnableId | jobRunnableName | isBlocked |
++---------------------+---------------+-----------------+-----------+
+| 2012-12-12 19:41:21 |             1 | E1              | 0         |
+| 2012-12-12 19:41:21 |             2 | E2              | 0         |
+| 2012-12-12 19:41:21 |             3 | E3              | 0         |
+| 2012-12-12 19:41:21 |             4 | E4              | 0         |
++---------------------+---------------+-----------------+-----------+
+4 rows in set (0.01 sec)
+</pre>
+<!--COMMENT>
+I have created an additional query to check if given Job can be delayed. Say, in our case E4 can be delayed to run along with T5.
+<pre>
+CREATE OR REPLACE VIEW jobRunnableValidate ( ts, jobId, JobName, isBlocked ) AS
+select
+        ts,
+        runnableJob jobId,
+        runnableJobName JobName,
+        IF(SUM(dependsOnAll) is NULL, 0, 1) isBlocked
+FROM
+( select
+        js.ts,
+        jobDag.dependsOn runnableJob,
+        job.jobName runnableJobName,
+        nextJob.jobId nextJobId,
+        nextJob.dependsOn dependsOnAll
+  FROM jobScheduler js
+  LEFT JOIN jobDag
+        ON js.jobId = jobDag.jobId
+  LEFT JOIN (
+                select
+                        js.ts,
+                        js.jobId,
+                        jsd.jobId dependsOn
+                FROM jobScheduler js
+                LEFT JOIN jobDag
+                        ON js.jobId = jobDag.jobId
+                LEFT JOIN jobScheduler jsd
+                        ON jobDag.dependsOn = jsd.jobId and jsd.jobStateId != 3
+                        and js.ts = jsd.ts
+                WHERE (js.ts, jobDag.dependsOn) NOT IN ( SELECT js.ts, jobRunnableId FROM jobRunnable )
+        ) as nextJob
+        ON jobDag.jobId = nextJob.jobId AND js.ts = nextJob.ts
+        LEFT JOIN job
+        ON jobDag.dependsOn = job.jobId
+        WHERE (js.ts, jobDag.dependsOn) IN ( SELECT ts, jobRunnableId from jobRunnable )
+                AND jobDag.jobId != jobDag.dependsOn
+) as runnableJobs
+GROUP BY 1, 2
+;
+
+> select * from jobRunnableValidate;
++---------------------+-------+---------+-----------+
+| ts                  | jobId | JobName | isBlocked |
++---------------------+-------+---------+-----------+
+| 2012-12-12 19:41:21 |     1 | E1      |         0 |
+| 2012-12-12 19:41:21 |     2 | E2      |         0 |
+| 2012-12-12 19:41:21 |     3 | E3      |         0 |
+| 2012-12-12 19:41:21 |     4 | E4      |         1 |
++---------------------+-------+---------+-----------+
+4 rows in set (0.00 sec)
+</pre-->
+While Job moves from one state to another, one has to make sure processing job(s) and updating state is safe when mutliple schedulers can co-exists on different machines running in distributed mode.</p>
+We enable transactions, make use of SELECT FOR UPDATE query to ensure that N-instances do not intercept and are not allowed to mingle with job states during such operations.
+
+Ex. Moving Job from READY to RUNNING state
+<pre>
+set autocommit = 0;
+select * from jobScheduler where jobId = 5 and jobStateId = 1 and ts = '2012-12-12 19:41:21' for update;
+update jobScheduler set jobStateId = 2 where jobId = 5;
+commit;
+</pre>
+Similarly, moving Job from RUNNING to FINISHED state
+<pre>
+set autocommit = 0;
+select * from jobScheduler where jobId = 5 and jobStateId = 2 and ts = '2012-12-12 19:41:21' for update;
+update jobScheduler set jobStateId = 4 where jobId = 5;
+commit;
+</pre>
+We have just touched the tip of an iceberg and there is lot to be explored. In next article, we will expand our concept and understanding of the basic scheduler further to include more functionalities.</p>
+Thanks and thats all folks!
+</td></tr>
+</table>
+<div>
+<center>
+</body>
+</html>

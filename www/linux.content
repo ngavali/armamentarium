@@ -1,0 +1,5 @@
+<h3>Linux</h3>
+Miscellaneous topics</p>
+HAProxy - <a href="#linux/snihaproxy" onclick="_().loadContent(this,'linux/snihaproxy','ContentBody');">SNI implementation</a></br>
+HAProxy - SNI implementation - <a href="#linux/snitransparenthaproxy" onclick="_().loadContent(this,'linux/snitransparenthaproxy','ContentBody');">Capturing the client IP</a></br>
+OpenSSL <a href="#linux/openssl" onclick="_().loadContent(this,'linux/openssl','ContentBody');">commands</a></br>

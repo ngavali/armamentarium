@@ -1,0 +1,96 @@
+<h3>
+<a href="#go" onclick="_().loadContent(this,'go','ContentBody');">Go Programming Language</a> - 
+<a href="#go/patterns" onclick="_().loadContent(this,'go/patterns','ContentBody');" > Design Patterns</a> - Factory</h3>
+Code
+<pre>
+//
+//	Factory pattern
+//
+
+package main
+
+import "fmt"
+
+type Vehicle interface {
+        drive()
+}
+
+const (
+        CAR = iota
+        BIKE
+)
+
+type Car struct{}
+
+func NewCar() *Car {
+        return new(Car)
+}
+
+func (c *Car) start() {
+        fmt.Println("car started.")
+}
+func (c *Car) drive() {
+        c.start()
+        fmt.Println("enjoy your car ride.")
+        c.stop()
+}
+func (c *Car) stop() {
+        fmt.Println("car stopped.")
+}
+
+type Bike struct{}
+
+func NewBike() *Bike {
+        return new(Bike)
+}
+
+func (b *Bike) start() {
+        fmt.Println("bike started.")
+}
+func (b *Bike) drive() {
+        b.start()
+        fmt.Println("enjoy your bike ride.")
+        b.stop()
+}
+func (b *Bike) stop() {
+        fmt.Println("bike stopped.")
+}
+
+type VehicleFactory struct{}
+
+func NewVehicleFactory() *VehicleFactory {
+        return new(VehicleFactory)
+}
+
+func (vf *VehicleFactory) GetVehicle(vehicleType int) Vehicle {
+        switch vehicleType {
+        case CAR:
+                return NewCar()
+        case BIKE:
+                return NewBike()
+        }
+        return nil
+}
+
+func main() {
+        var v Vehicle
+        vf := NewVehicleFactory()
+        fmt.Println(":Let's drive a Car:")
+        v = vf.GetVehicle(CAR)
+        v.drive()
+        fmt.Println(":Let's drive a Bike:")
+        v = vf.GetVehicle(BIKE)
+        v.drive()
+}
+</pre>
+Output
+<pre>
+:Let's drive a Car:
+car started.
+enjoy your car ride.
+car stopped.
+:Let's drive a Bike:
+bike started.
+enjoy your bike ride.
+bike stopped.
+</pre>

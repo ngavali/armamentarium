@@ -1,0 +1,119 @@
+<h3><a href="#go" onclick="_().loadContent(this,'go','ContentBody');" >Go Programming Language</a> - gRPC</h3></p>
+Read <a href="#go/protobuff" onclick="_().loadContent(this,'go/protobuff','ContentBody');">Protocol Buffers</a> before proceeding.
+<h4>Example</h4>
+Invoke RPC to find sum of numbers.
+<h4>Message format and Service definition</h4>
+File: numberservice/sum.proto
+<pre>
+syntax = "proto3";
+package numberservice;
+
+message numbers {
+    repeated int64 num = 1;
+}
+
+message number {
+    int64 sum = 1;
+}
+
+service NumberService {
+    rpc Sum(numbers) returns (number);
+}
+</pre>
+Generate protobuff/sum.pb.go
+<pre>
+cd protobuff/
+protoc -I=numberservice/ numberservice/sum.proto --go_out=plugins=grpc:numberservice
+</pre>
+protobuff/numberservice/encoderProtoBuff.go
+<pre>
+package main
+
+import (
+        "context"
+        pb "gRPC/protobuf/numberservice"
+        "log"
+        "net"
+
+        "google.golang.org/grpc"
+)
+
+const (
+        ADDR = ":8666"
+)
+
+type server struct {
+        pb.UnimplementedNumberServiceServer
+}
+
+func (s *server) Sum(ctx context.Context, nums *pb.Numbers) (*pb.Number, error) {
+        var sum int64
+        log.Printf("Received numbers: %v", nums.GetNum())
+        for _, v := range nums.GetNum() {
+                sum += v
+        }
+        return &pb.Number{Sum: sum}, nil
+}
+
+func main() {
+        conn, _err := net.Listen("tcp4", ADDR)
+        if _err != nil {
+                log.Fatalf("Couldnt listen on address: %s. Error: %v", ADDR, _err)
+        }
+        s := grpc.NewServer()
+        pb.RegisterNumberServiceServer(s, &server{})
+        if _err := s.Serve(conn); _err != nil {
+                log.Fatalf("Failed start gRPC service: %v", _err)
+        }
+}
+</pre>
+Client
+<pre>
+package main
+
+import (
+        "context"
+        "log"
+        "time"
+
+        pb "gRPC/protbuf/numberservice"
+
+        "google.golang.org/grpc"
+)
+
+const (
+        ADDR = ":8666"
+)
+
+func main() {
+        conn, _err := grpc.Dial(ADDR, grpc.WithInsecure(), grpc.WithBlock())
+        if _err != nil {
+                log.Fatalf("Couldnt connect to gRPC server: %s. Error: %v", ADDR, _err)
+        }
+        defer conn.Close()
+        c := pb.NewNumberServiceClient(conn)
+
+        nums := []int64{5, 8, 3}
+        numbers := &pb.Numbers{
+                Num: nums,
+        }
+        ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+        defer cancel()
+        r, _err := c.Sum(ctx, numbers)
+        if _err != nil {
+                log.Fatalf("Error while running sum. Error: %v", _err)
+        }
+        log.Printf("Sum of %v = %d", nums, r.GetSum())
+}
+</pre>
+Server terminal
+<pre>
+$ go run server.go
+2019/06/06 01:38:55 Received numbers: [5 8 3]
+^Csignal: interrupt
+</pre>
+Client terminal
+<pre>
+$ go run client.go
+2018/05/06 01:38:55 Sum of [5 8 3] = 16
+</pre>

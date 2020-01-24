@@ -1,0 +1,94 @@
+<h3>
+<a href="#go" onclick="_().loadContent(this,'go','ContentBody');">Go Programming Language</a> - 
+<a href="#go/patterns" onclick="_().loadContent(this,'go/patterns','ContentBody');" > Design Patterns</a> - Chain of responsibility</h3>
+
+<!--
+Consider, how a simple http server handles a particular request it first Accepts a request, AuthN user, AuthN user, finally generate and Send an approriate response. But final response is based on the decisions made in each step.</p>
+-->
+Taking a detour? To stop or not to stop</br>
+
+A simple ETL process example. To know more about ETL see <a target="_" href="https://en.wikipedia.org/wiki/Extract,_transform,_load">here</a>.</br>
+Code
+<pre>
+//
+// Chain of responsibility pattern - tweaked
+//
+
+package main
+
+import "fmt"
+
+type Processor interface {
+        Next() Processor
+        SetNext(Processor)
+        Do()
+}
+
+type processor struct {
+        next Processor
+}
+
+func (p *processor) Next() Processor {
+        return p.next
+}
+
+func (p *processor) SetNext(next Processor) {
+        p.next = next
+}
+
+func (p *processor) Do() {
+        if p.Next() != nil {
+                p.Next().Do()
+        }
+}
+
+type extract struct {
+        processor
+}
+
+func (e *extract) Do() {
+        fmt.Println("Processing extract")
+        e.processor.Do()
+}
+
+type transform struct {
+        processor
+}
+
+func (t *transform) Do() {
+        fmt.Println("Processing transform")
+        t.processor.Do()
+}
+
+type load struct {
+        processor
+}
+
+func (l *load) Do() {
+        fmt.Println("Processing load")
+        l.processor.Do()
+}
+
+type Map struct {
+}
+
+type Reduce struct {
+}
+
+func main() {
+
+        var proc1, proc2, proc3 Processor
+        proc1 = &extract{}
+        proc2 = &transform{}
+        proc3 = &load{}
+        proc1.SetNext(proc2)
+        proc2.SetNext(proc3)
+        proc1.Do()
+
+}</pre>
+Output
+<pre>
+Processing extract
+Processing transform
+Processing load
+</pre>

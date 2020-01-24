@@ -1,0 +1,10 @@
+<h3>Database</h3>
+I see databases as one of the fascinating piece of software ever built and SQL being a very powerful analytical tool for manipulating and crunching the data.</p>
+Below is the collection of articles that will help you get familiarize with important concepts of the database world and build your SQL vocabulary with a concrete understanding.</p>
+<a href="#db/joins" onclick="_().loadContent(this,'db/joins','ContentBody');">Joins</a></br>
+<a href="#db/normalization" onclick="_().loadContent(this,'db/normalization','ContentBody');">Normalization</a></br>
+<a href="#db/cte" onclick="_().loadContent(this,'db/cte','ContentBody');">Fibonacci</a> and <a href="#db/ncte" onclick="_().loadContent(this,'db/ncte','ContentBody');">Non-recursive CTE</a></br>
+<a href="#db/consistency" onclick="_().loadContent(this,'db/consistency','ContentBody');">Isolation levels</a> for transations.</br>
+<a href="#db/2pc" onclick="_().loadContent(this,'db/2pc','ContentBody');">2PC - Two Phase Commit</a></br>
+<a href="#db/jobScheduler" onclick="_().loadContent(this,'db/jobScheduler','ContentBody');">Simple job scheduler</a></br>
+<a href="#db/graphsrdbms" onclick="_().loadContent(this,'db/graphsrdbms','ContentBody');">Oh My(SQL) Graph</a>

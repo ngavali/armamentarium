@@ -1,0 +1,43 @@
+<h3><a href="#ds" onclick="_().loadContent(this,'ds','ContentBody');" >Distributed Systems</a> - CAP, simplified</h3>
+While dealing with distributed systems, you would definitely come across the CAP theorem. When I first heard about it, I went through plethora of articles across internet to understand it, but found only long convoluted explainations, some argued about its correctness, applicability and blah blah blah!. In this article, I have tried to put it in my own simple words. Hope it will useful to you.</p>
+So first, let us take a look at desired properties of a distributed system defined by CAP theorem and later we will see an illustration to understand these properties and implications of CAP theorem.</p>
+<dl>
+<dt><h4>1. Consistency<h4></dt>
+<dd><i>
+Every read would get you the most recent write. i.e., any read operation that begins after a write operation completes, must return that value, or the result of a later write operation.</i>
+</dd>
+</p>
+<dt><h4>2. Availability</h4></dt>
+<dd><i>Every request received by a non-failing node in the system must result in a response.</i></dd></p>
+<dt><h4>3. Partition tolerance</h4></dt>
+<dd><i>The network will be allowed to lose arbitrarily many messages sent from one node to another. i.e., System is functional even if nodes are separated by network partition</i></dd></p>
+</dl>
+According to CAP theorem a distributed system cannot have all properties at once, it has to let go any one of them. i.e, it can be either CP or AP or CA.</p>And for practical distributed systems, it is simply CP vs AP!</p>
+<h3>Illustration</h3>
+Consider a distributed system consisting of 3 nodes, all maintaining a state, say of a variable <r><r>z</r></r>. All 3 nodes are connected to each other and communicate their state with the rest. Initially, say the value of <r><r>z</r></r> is 1. Depicted below, in Fig.1.</p>
+<center>
+<img src="/images/cap1.svg" width="240px"/><b>Fig.1.</b>
+</center></p>
+The above system is said to be -</p>
+	&emsp;<i><b>Consistent</b></i>, if all read operations must result in same value of <r><r>z</r></r>[=1] or result of latest write operation</br>
+	&emsp;<i><b>Available</b></i>, if all non-failing nodes respond and</br>
+	&emsp;<i><b>Partition tolerant</b></i>, if above two properties are honored even under network partition.</p>
+Now, let us try to play around with our distributed system by writing a new value into <r><r>z</r></r> on node 1. The entire change flow [steps] is depicted below, in Fig.2.</p>
+<center>
+<img src="/images/cap_w.svg" width="650px" ><b>Fig.2.</b>
+</center></p>
+Reading the value of <r><r>z</r></r> from any of the nodes at the end of this change flow, we got 2 voila! consistency. And availability too as all nodes have responded back with right results.</p>
+<h3>A small detour</h3>
+What if the write operation was concluded right after Step 2, while change is still propagating to other nodes. We would have then gotten <r><r>z</r></r>=1 on those nodes, which is an <i><b>inconsistency</b></i> (<r><r>z</r></r>=2 in node 1</i>). So, we must block all read operations until change is propagated to other nodes or respond back with the last successful write value for a given node, preferrably the later case</i>. Now, ack will also take some time to reach back to the node 1, so new reader on node 1 will see <r>z</r>=1 while on others <r>z</r>=2 (step 3). Thus, there will be a finite moment no matter how small it is where system is in in-consistent state. However, do you think it is practical to have a very strong consistency wherein write are immediately visible on other nodes and each read resulting in same result? when <i><b>latency</b></i> is inevitable. Before this gets complicating, for now let us ignore it by assuming that the change propagates almost instanteneouly on all nodes <i>or</i> all nodes will be <e>eventually</e> in a consistent state (Step 4).</p>
+<center>
+<img src="/images/cap_reads.svg" width="850px" /><b>Fig.3.</b>
+</center></p>
+<h3>Back again and the implications</h3>
+Now, let us worsen the situation by creating the network partitioning. Wherein node 2 is unable to communicate with the rest of the nodes in the cluster. However, client can connect to any of them.</p>
+<center>
+<img src="/images/cap_np.svg" width="240px" /><b>Fig.4.</b>
+</center></p>
+Here comes the twist, can you now still have both consistency and complete availability at the same time? Had you chosen the consistency, you have to let go availability or the other way round i.e. let go consistency, had availability been chosen.</p>
+I am leaving it as an exercise for the reader!<p>
+That's all folks!</p>
+Thanks</p>

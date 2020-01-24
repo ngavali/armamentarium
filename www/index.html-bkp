@@ -1,0 +1,30 @@
+<html>
+<link rel="stylesheet" href="/css/style.css">
+<link rel="stylesheet" href="/css/code.css">
+<script src="/js/menu.js" type="text/javascript"></script>
+<body>
+<div id="menubar" >
+<table id="menu" style="table-layout:fixed;" align="center" >
+<tr>
+<td width="180px"><a href="/"><logo style="display:inline;color: rgb(84, 84, 84)">The</br><span class="logo">Rational Bear</span></logo></a></td>
+<td align="right"><div id="menuitem"></div></td>
+</tr>
+</table>
+</div>
+<div id="bodyTopic">
+<center>
+<table id="topicContent">
+<tr>
+	<td>
+		<div id="ContentBody">
+		Collection of useful resources that I gathered, while learning various software technologies!
+		</p>
+		<i>To be better today than yesterday, with a plan to become even better tomorrow.</i>
+		</div>
+	</td>
+</tr>
+</table>
+</center>
+</div>
+</body>
+</html>

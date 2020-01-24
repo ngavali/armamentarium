@@ -1,0 +1,18 @@
+<tr><td>
+<h3><a href="#linux" onclick="_().loadContent(this,'linux','ContentBody');" >Linux</a> - HAProxy - SNI implementation - Capturing the client IP</h3></p>
+<r>[ Work in progress, stay tuned! ]</r></p>
+In the previous article [<a href="#linux" onclick="_().loadContent(this,'linux/snihaproxy','ContentBody');" >HAProxy - SNI implementation</a>], we saw SNI implementation using HAproxy talking to multiple SSL enabled web servers in the backend. However, that setup and configuration comes with a limitation. That is we are unable to capture the actual Client IP who is making request for the backend web server.</p>
+Instead, HAProxy host IP will show up in the apache logs. This is because HAproxy is talking to backend apache server on behalf of the client to complete the request. This is not desirable in application which require Client IP.</p>
+
+So, let us take a look at one of the options to capture the client IP in the backend apache server. The Proxy Protocol header helps you identify the IP address of a client when you use a load balancer configured for TCP/SSL connections.
+ 
+
+</p>
+That's all folks! </br>
+Thanks
+</td></tr>
+</table>
+<div>
+<center>
+</body>
+</html>

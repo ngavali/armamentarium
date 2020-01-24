@@ -1,0 +1,13 @@
+<tr><td>
+	<h3><a href="#db" onclick="_().loadContent(this,'db','ContentBody');" >Database</a> - Non-recursive CTE</h3>
+CTE know as Common Table Expressions. It is a standard SQL feature and recently support was added in mariadb database.</p>
+You can think of them as a named result set, which can refer to itself and optionally be excuted recursively.</p>
+
+They are of two kind viz., Non-recursive and Recursive.</p>
+Here, we will explore Non-recursive nature of CTE. Which is simpler than the other kind ( <a href="/sql/cte.html"> recursive </a> ).</p>
+</td></tr>
+</table>
+<div>
+<center>
+</body>
+</html>

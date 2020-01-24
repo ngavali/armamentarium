@@ -1,0 +1,37 @@
+Go testing package
+<pre>
+go test
+go test -v
+go test -v -run specificTest
+go test <i>test_file</i>.go [<i>dependent_file(s)</i>.go ...]
+go test -v ./testing/ 	#run test in the given path
+go test -v ./..		#test all packages in this module
+go test -v -count=1	#avoid using cache
+go clean -testcache [<i>Package path</i> ...]	#clean test cache or set <code>GOCACHE</code> environment variable to <code>off</code>
+</pre>
+Create testdata directory which is ignored by <code>go run</code>/<code>build</code></p>
+Colorize your go test result output</br>
+<code>gotest</code> instead of <code>go test</code>
+<pre>
+go get -u github.com/rakyll/gotest
+export GOTEST_PALETTE="red,cyan"
+gotest -v
+</pre>
+Code coverage
+<pre>
+gotest -cover #test coverage
+gotest -v -coverprofile=cover.txt
+go tool cover -html=cover.txt -o cover.html
+</pre>
+Create test binary
+<pre>
+go test -c
+./testing.test -test.v
+</pre>
+Misc
+<pre>
+#list go files in the given package
+go list -f={{.GoFiles}} net/http
+#list go test files in the given package
+go list -f={{.TestGoFiles}} net/http
+</pre>

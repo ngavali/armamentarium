@@ -1,0 +1,3 @@
+<h3><a href="#math" onclick="_().loadContent(this,'math','ContentBody');" >Mathematics</a> - Markov processes</a></h3>
+<r>[Draft version]</r></br>
+A system changes it state over time. At any given point of time future state only depends on the present state.

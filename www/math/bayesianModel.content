@@ -1,0 +1,59 @@
+<h3><a href="#math" onclick="_().loadContent(this,'math','ContentBody');" >Mathematics</a> - Bayesian Model</h3>
+<r>[Work in progress!]</r> Before going to Bayesian Model, you can do a gentle review of <a href="#math/probability" onclick="_().loadContent(this,'math/probability','ContentBody');">Probability</a> theory.</p>
+<h3>Bayes theorem</h3>
+<i>P</i>(A<sub>i</sub>|B) = <i>P</i>(B|A<sub>i</sub>) * <i>P</i>(A<sub>i</sub>) / <i>P</i>(B)</p>
+There are i mutually exclusive events A<sub>1</sub>, A<sub>2</sub>,..., and A<sub>i</sub></br>
+B is an event that can occur with these events.</p>
+[ According to the law of total probability : <i>P</i>(B) = ∑<sub>i</sub> <i>P</i>(B|A<sub>i</sub>)*<i>P</i>(A<sub>i</sub>) ]</p>
+You try to find the probabilty of happening of event A<sub>i</sub> when event B occurs. You update your belief on observing certain event.</br>
+</p>
+<h4>Illustration</h4>
+Let us see an example wherein you have to determine whether it rains or not on any given day of a year and should you carry your umbrella or not. Simplest thing would be to start off by looking at the probability of rain happening on a given day.</br>Say, it is 20% in your city.</p>
+<center>
+    <img src="/images/bayesTB.svg" height="150px" /></p>
+</center>
+But your not convinced, you look for some sort of evidences, you look out for weather conditions (Say cloudy, windy, birds flying etc...)</br>
+And you decided to rely on cloud conditions and probability that clouds are seen on any given day is 16%.</p>
+<center>
+    <img src="/images/bayesTBC.svg" height="150px" /></p>
+</center>
+Still not convinced. Finally, you look for relation between clouds and rain i.e., the probability that is was a cloudy day when it rained is 70%.</br> ( You can see there is very high degree of connection between rain and cloud. )</br>
+Now, let us come back to our original question. What is the probabilty that it will rain given you observe clouds, do you still think it is 20%? or does your belief needs an update.</p>
+<center>
+    <img src="/images/bayesTm.svg" height="260px" /></p>
+</center>
+</p>
+<i>P</i>(R=Rain) = 20/100, P</i>(C=Cloudy) = 16/100 and <i>P</i>(C=Cloudy|R=Rain) = 70/100</p>
+<i>P</i>(Rain|Cloudy) = <i>P</i>(R|C) = <i>P</i>(C|R) * <i>P</i>(R) / <i>P</i>(C) = (70/100) * (20/100) / (16/100) = (70/100) * (1.25) = 87.5%</p>
+Indicates, that rain is very likely to happen given you observe cloud on a given day. Definitely, it is time to carry an umbrella.</p>
+<center>
+    <img src="/images/bayesTA.svg" height="250px" /></p>
+</center>
+In nutshell, what we have calculated is the fraction that represents Rain in Cloudy sample space. This becomes our new P(Rain) in the universe full of clouds. And again with new evidences we keep updating our universe and over the time improve our estimation for P(R|C).
+<dl>
+<dt><h3>Bayesian Model</h3></dt>
+<dd>
+<table>
+<tr><td width="100px">Posterior</td><td>= <i>P</i>(A|B)</td></tr>
+<tr><td>Prior    </td><td>= <i>P</i>(A)</td></tr> 
+<tr><td>Likelihood</td><td>= <i>P</i>(B|A)</td></tr>
+<tr><td>Evidence</td><td>= <i>P</i>(B)</td></tr>
+</table></br>
+Posterior = Likelihood * Prior / Evidence</p>
+For above ex.
+<table>
+<tr><td width="100px">Posterior</td><td>= <i>P</i>(Rain|Cloudy)</td></tr>
+<tr><td>Prior    </td><td>= <i>P</i>(Rain)</td></tr> 
+<tr><td>Likelihood</td><td>= <i>P</i>(Cloudy|Rain)</td></tr>
+<tr><td>Evidence</td><td>= <i>P</i>(Cloudy)</td></tr>
+</table></br>
+</p>
+</dd>
+<dt><h3>Model update</h3></dt>
+<dd>
+To start with we set prior on assumptions.</br>
+Posterior is evaluated in the presence of acquired likelihood and evidences.</br>
+We perform multiple iterations. Posterior from the current iteration becomes prior in the next.</br>
+Belief is updated in the presence of newly acquired likelihood and evidences...
+</dd>
+</dl>
