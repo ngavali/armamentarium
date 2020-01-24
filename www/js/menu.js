@@ -1,4 +1,4 @@
-var menuikey = [ "Go", "DB", "Rust" , "DS", "Linux", "Math", "About" ];
+var menuikey = [ "Go", "Rust", "DB" , "DS", "Linux", "Math", "About" ];
 var menuitem = { "Go":"go", "Rust":"rust", "DB":"db", "DS":"dist. systems", "Linux":"linux", "Math":"math", "About":"about" };
 //var menuikey = [ "Go", "Rust", "DB" , "DS", "Linux", "Math", "About" ];
 //var menuitem = { "Go":"go", "Rust":"rust", "DB":"db", "DS":"dist. systems", "Linux":"linux", "Math":"math", "About":"about" };
