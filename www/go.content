@@ -22,3 +22,4 @@ Unblocking the channel with a <a href="#go/queues" onclick="_().loadContent(this
 Process sychronization using a <a href="#go/dblocks" onclick="_().loadContent(this,'go/dblocks','ContentBody');">DB lock</a></br>
 <a href="#go/auth" onclick="_().loadContent(this,'go/auth','ContentBody');">OAuth and SAML</a></br>
 <a href="#go/git" onclick="_().loadContent(this,'go/git','ContentBody');">GIT</a></br>
+<a href="#go/testing" onclick="_().loadContent(this,'go/testing','ContentBody');">Testing</a>
