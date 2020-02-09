@@ -1,5 +1,7 @@
 <h3>Go Programming Language</h3>
 My musings with Go</p>
+<h4>Performance</h4>
+<a href="#go/wti" onclick="_().loadContent(this,'go/wti','ContentBody');">Tip of the iceberg</a>
 <h4>Data Structures</h4>
 <a href="#go/tree" onclick="_().loadContent(this,'go/tree','ContentBody');">Tree</a>,
 <a href="#go/trie" onclick="_().loadContent(this,'go/trie','ContentBody');">Trie</a>,
