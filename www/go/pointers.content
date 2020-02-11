@@ -26,3 +26,44 @@ Output
 ABCDEFG
 AEDCBFG
 </pre>
+Reflection
+<pre>
+package main
+
+import (
+        "fmt"
+        "reflect"
+)
+
+func main() {
+        var a int
+        var i *int
+        i = &a
+        inc(&i)
+        fmt.Println(a, &a, i, &i)
+        inc(&a)
+        fmt.Println(a, &a, i, &i)
+}
+
+func inc(v interface{}) {
+        fmt.Println(reflect.ValueOf(v).Kind())
+        fmt.Println(reflect.ValueOf(v).Type())
+        switch reflect.ValueOf(v).Type().String() {
+        case "**int":
+                **v.(**int)++
+        case "*int":
+                *v.(*int)++
+        default:
+                panic("Unexpected input")
+        }
+}
+</pre>
+Output
+<pre>
+ptr
+**int
+1 0xc000012080 0xc000012080 0xc00000e030
+ptr
+*int
+2 0xc000012080 0xc000012080 0xc00000e030
+</pre>
