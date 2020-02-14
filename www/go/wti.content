@@ -1,13 +1,17 @@
 <h3><a href="#go" onclick="_().loadContent(this,'go','ContentBody');">Go Programming Language</a> - Tip of the iceberg</h3>
+<i><r>Work in progress</r></i>
 <h4>Go performance</h4>
 Tools - <a href="https://github.com/google/pprof">pprof</a> and benchmark are your friends</br>
 A debugger - <a href="https://github.com/go-delve/delve">delve</a>
 <ul>
-Slice
-<li>Careful while assigning from slices, may be copy is a good option.</li>
-<li>Append, try allocating memory first.</li>
-Object
-<li>Sync pool.</li>
+<li>Slice</li>
+Careful while assigning from slices, may be copy is a good option.</br>
+Reusing slices can be possible? [filtering etc.]</br>
+Using append, try allocating memory first if there are going to be lots of them.
+<li>Object</li>
+See if you can use Sync pool.</br>
+<li>Minimize allocations</li>
+Benchmark is your friend. Try to reduce pressure on GC.
 </ul>
 </p>
 <!--pre>

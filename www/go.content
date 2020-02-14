@@ -20,6 +20,7 @@ Simple <a href="#go/httpserver" onclick="_().loadContent(this,'go/httpserver','C
 <h4>Design patterns</h4>
 <a href="#go/patterns" onclick="_().loadContent(this,'go/patterns','ContentBody');">Design patterns</a>
 <h4>General</h4>
+<a href="#go/binary" onclick="_().loadContent(this,'go/binary','ContentBody');">A Go Program</a></br>
 Unblocking the channel with a <a href="#go/queues" onclick="_().loadContent(this,'go/queues','ContentBody');">Queue</a></br>
 Process sychronization using a <a href="#go/dblocks" onclick="_().loadContent(this,'go/dblocks','ContentBody');">DB lock</a></br>
 <a href="#go/auth" onclick="_().loadContent(this,'go/auth','ContentBody');">OAuth and SAML</a></br>
@@ -27,4 +28,3 @@ Process sychronization using a <a href="#go/dblocks" onclick="_().loadContent(th
 <a href="#go/testing" onclick="_().loadContent(this,'go/testing','ContentBody');">Testing</a>
 <h4>Good Reads</h4>
 <a hred="https://www.ardanlabs.com/blog/2017/05/language-mechanics-on-stacks-and-pointers.html" target="_">Stacks and Pointers</a>
-

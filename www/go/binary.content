@@ -1,0 +1,78 @@
+<h3><a href="#go" onclick="_().loadContent(this,'go','ContentBody');" >Go Programming Language</a> - A Go Program</h3></p>
+Code
+<pre>
+package main
+
+func main() {
+        example(make([]string, 2, 4), "Panic", 10)
+}
+
+//go:noinline
+func example(slice []string, str string, i int) {
+        panic("Panicing...")
+}
+</pre>
+Output
+<pre>
+:~/golang/src/learn$ go build example1.go
+:~/golang/src/learn$ ./example1.go
+panic: Panic
+
+goroutine 1 [running]:
+main.example(0xc000030710, 0x2, 0x4, 0x47365d, 0x5, 0xa)
+        /home/ngavali/golang/src/learn/example1.go:13 +0x39
+main.main()
+        /home/ngavali/golang/src/learn/example1.go:8 +0x72
+exit status 2
+:~/golang/src/learn$ go tool objdump -S -s "main.example" ./example1
+TEXT main.example(SB) /home/ngavali/golang/src/learn/example1.go
+func example(slice []string, str string, i int) {
+  0x452630              64488b0c25f8ffffff      MOVQ FS:0xfffffff8, CX
+  0x452639              483b6110                CMPQ 0x10(CX), SP
+  0x45263d              762b                    JBE 0x45266a
+  0x45263f              4883ec18                SUBQ $0x18, SP
+  0x452643              48896c2410              MOVQ BP, 0x10(SP)
+  0x452648              488d6c2410              LEAQ 0x10(SP), BP
+        panic("Want stack trace")
+  0x45264d              488d05ccc00000          LEAQ 0xc0cc(IP), AX
+  0x452654              48890424                MOVQ AX, 0(SP)
+  0x452658              488d05a1f40200          LEAQ 0x2f4a1(IP), AX
+  0x45265f              4889442408              MOVQ AX, 0x8(SP)
+  0x452664              e84720fdff              CALL runtime.gopanic(SB)
+<r>  0x452669              90                      NOPL</r>				<name><< Instruction Pointer=0x39</name>
+func example(slice []string, str string, i int) {
+  0x45266a              e8817affff              CALL runtime.morestack_noctxt(SB)
+  0x45266f              ebbf                    JMP main.example(SB)
+:~/golang/src/learn$ go tool objdump -S -s "main.main" ./example1
+TEXT main.main(SB) /home/ngavali/golang/src/learn/example1.go
+func main() {
+  0x4525a0              64488b0c25f8ffffff      MOVQ FS:0xfffffff8, CX
+  0x4525a9              483b6110                CMPQ 0x10(CX), SP
+  0x4525ad              766d                    JBE 0x45261c
+  0x4525af              4883ec78                SUBQ $0x78, SP
+  0x4525b3              48896c2470              MOVQ BP, 0x70(SP)
+  0x4525b8              488d6c2470              LEAQ 0x70(SP), BP
+        example(make([]string, 2, 4), "hello", 10)
+  0x4525bd              0f57c0                  XORPS X0, X0
+  0x4525c0              0f11442430              MOVUPS X0, 0x30(SP)
+  0x4525c5              0f11442440              MOVUPS X0, 0x40(SP)
+  0x4525ca              0f11442450              MOVUPS X0, 0x50(SP)
+  0x4525cf              0f11442460              MOVUPS X0, 0x60(SP)
+  0x4525d4              488d442430              LEAQ 0x30(SP), AX
+  0x4525d9              48890424                MOVQ AX, 0(SP)
+  0x4525dd              48c744240802000000      MOVQ $0x2, 0x8(SP)
+  0x4525e6              48c744241004000000      MOVQ $0x4, 0x10(SP)
+  0x4525ef              488d05a7100200          LEAQ 0x210a7(IP), AX
+  0x4525f6              4889442418              MOVQ AX, 0x18(SP)
+  0x4525fb              48c744242005000000      MOVQ $0x5, 0x20(SP)
+  0x452604              48c74424280a000000      MOVQ $0xa, 0x28(SP)
+  0x45260d              e81e000000              CALL main.example(SB)
+}
+<r>  0x452612              488b6c2470              MOVQ 0x70(SP), BP</r>		<name><< Instruction Pointer=0x72</name>
+  0x452617              4883c478                ADDQ $0x78, SP
+  0x45261b              c3                      RET
+func main() {
+  0x45261c              e8cf7affff              CALL runtime.morestack_noctxt(SB)
+  0x452621              e97affffff              JMP main.main(SB)
+:~/golang/src/learn$
+</pre>
