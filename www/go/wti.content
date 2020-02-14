@@ -11,7 +11,8 @@ Using append, try allocating memory first if there are going to be lots of them.
 <li>Object</li>
 See if you can use Sync pool.</br>
 <li>Minimize allocations</li>
-Benchmark is your friend. Try to reduce pressure on GC.
+Escape analysis and Benchmark are your friends. Try to reduce pressure on GC.</br>
+go build -gcflags "-m -m" to see what escapes.
 </ul>
 </p>
 <!--pre>
