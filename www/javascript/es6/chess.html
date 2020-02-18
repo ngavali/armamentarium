@@ -1,0 +1,162 @@
+<html>
+	<head>
+	<style>
+		.chessboard {
+			height: 400px;
+			width: 400px;
+			border: 10px #000 SOLID;
+		}
+
+		.blackSquare {
+			background: #8aa;
+			height: 50px;
+			width: 50px;
+			float: left;
+		}
+
+		.whiteSquare {
+			background: #eee;
+			height: 50px;
+			width: 50px;
+			float: left;
+		}
+
+		.whiteSquareSelected {
+			background: #aaa;
+			height: 50px;
+			width: 50px;
+			float: left;
+		}
+
+		.blackSquareSelected {
+			background: #699;
+			height: 50px;
+			width: 50px;
+			float: left;
+		}
+	</style>
+		<script type="text/javascript">
+			document.onreadystatechange = () => {
+				if ( document.readyState === "complete" ) {
+					myfunction("Loaded")
+				}
+			}
+
+			myfunction = (msg) => {
+				console.log(msg)
+
+				var selectedSquare = new Array()
+
+				//Event handler onClick for squares on chessboard
+				selectEventHandler = (selectedSquareObject) => {
+					const squareColor = { false: "Square" , true: "SquareSelected"} 
+						if (selectedSquare.length != 0) { 
+							const os = selectedSquare.pop()
+							if (os !== selectedSquareObject) {
+								os.elem.removeAttribute("class")
+								os.isSelected = false
+								os.elem.setAttribute("class", os.color+squareColor[os.isSelected])
+							}
+						}
+						selectedSquare.push(selectedSquareObject)
+						selectedSquareObject.isSelected = !selectedSquareObject.isSelected
+						selectedSquareObject.elem.removeAttribute("class")
+						selectedSquareObject.elem.setAttribute("class", selectedSquareObject.color+squareColor[selectedSquareObject.isSelected])
+						console.log(selectedSquareObject)
+				}
+
+				const c = new Chessboard("mychessboard")
+				c.render()
+				//Attach click events to squares
+				c.squareSelectedEvent(selectEventHandler)
+			}
+
+			//This is cleaner. Remove element if it already exists.
+			class Renderer {
+				render(id) {
+					let e = document.getElementById(id)
+					if ( e !== null ) {
+						e.parentNode.removeChild(e);
+					}
+				}
+			}
+
+			class Square extends Renderer {
+				id
+				color
+				isSelected
+				elem
+
+				constructor(id, color) {
+					super()
+					this.id = id
+					this.color = color
+					this.isSelected = false
+				}
+
+				render(c) {
+					//Places square inside container element c ( which is chessboard here)
+					super.render("square#"+this.id)
+					let s = document.createElement("div")
+					s.setAttribute("id", "square#"+this.id)
+					s.setAttribute("class", this.color+"Square")
+					c.appendChild(s)
+					this.elem = s
+
+				}
+
+				selectedEvent(selectEventHandler) {
+					this.elem.onclick = () => {
+						selectEventHandler(this)
+					}
+				}
+
+			}
+
+			class Chessboard extends Renderer {
+				id
+				squares
+
+				constructor(id) {
+					super()
+					this.id = id
+					this.squares = new Array()
+					let c = [ "white", "black" ]
+					//Add squares to chessboard in right order, let css take care of placement.
+					for ( let i = 7 ; i >= 0 ; i-- ) {
+						for ( let j = 1 ; j <= 8 ; j++ ) {
+						this.squares.push(new Square(i*8+j, c[(j+i%2)%2]))
+						}
+					}
+				}
+
+				render() {
+
+					//Create chessboard and place squares in it.
+					super.render(this.id)
+					let c = document.createElement("div")
+					c.setAttribute("id", this.id)
+					c.setAttribute("class", "chessboard")
+
+					for ( let s of this.squares ) {
+						s.render(c)
+					}
+
+					c.onclick = () => {
+					}
+					document.body.appendChild(c)
+
+				}
+
+				squareSelectedEvent(selectEventHandler) {
+					for ( let s of this.squares ) {
+						s.selectedEvent(selectEventHandler)
+					}
+				}
+			}
+
+		</script>
+	</head>
+	<body>
+	</body>
+</html>
