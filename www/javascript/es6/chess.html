@@ -1,6 +1,13 @@
 <html>
 	<head>
 	<style>
+		.helpBox {
+			padding: 20px;
+			float: left;
+			height: 40px;
+			width: 400px;
+			outline: none;
+		}
 		.chessboard {
 			height: 400px;
 			width: 400px;
@@ -38,70 +45,61 @@
 		<script type="text/javascript">
 			document.onreadystatechange = () => {
 				if ( document.readyState === "complete" ) {
-					myfunction("Loaded")
+					myApp("Chessboard")
 				}
-			}
-
-			myfunction = (msg) => {
-				console.log(msg)
-
-				var selectedSquare = new Array()
-
-				//Event handler onClick for squares on chessboard
-				selectEventHandler = (selectedSquareObject) => {
-					const squareColor = { false: "Square" , true: "SquareSelected"} 
-						if (selectedSquare.length != 0) { 
-							const os = selectedSquare.pop()
-							if (os !== selectedSquareObject) {
-								os.elem.removeAttribute("class")
-								os.isSelected = false
-								os.elem.setAttribute("class", os.color+squareColor[os.isSelected])
-							}
-						}
-						selectedSquare.push(selectedSquareObject)
-						selectedSquareObject.isSelected = !selectedSquareObject.isSelected
-						selectedSquareObject.elem.removeAttribute("class")
-						selectedSquareObject.elem.setAttribute("class", selectedSquareObject.color+squareColor[selectedSquareObject.isSelected])
-						console.log(selectedSquareObject)
-				}
-
-				const c = new Chessboard("mychessboard")
-				c.render()
-				//Attach click events to squares
-				c.squareSelectedEvent(selectEventHandler)
 			}
 
 			//This is cleaner. Remove element if it already exists.
-			class Renderer {
-				render(id) {
-					let e = document.getElementById(id)
-					if ( e !== null ) {
-						e.parentNode.removeChild(e);
-					}
-				}
-			}
+			class DOMElement {
 
-			class Square extends Renderer {
-				id
-				color
-				isSelected
+				attr
+				elemType
 				elem
 
+				constructor(e, a) {
+					this.attr = a
+					this.elem = document.createElement(e)
+				}
+
+				attachTo(c) {
+
+					if ( this.elem !== null ) {
+						let e = this.elem
+						if ( e.parentNode !== null ) {
+							e.parentNode.removeChild(e)
+						}
+						for ( let prop in this.attr ) {
+							e.setAttribute(prop, this.attr[prop])
+						}
+						//Finally attach element
+						c.elem.appendChild(e)
+					}
+
+				}
+
+				refresh(attr) {
+					for ( let prop in attr ) {
+						this.elem.removeAttribute(prop)
+						this.elem.setAttribute(prop, attr[prop])
+						this.attr[prop] = attr[prop]
+					}
+				}
+
+			}
+
+			class Square extends DOMElement {
+				color
+				isSelected
+
 				constructor(id, color) {
-					super()
-					this.id = id
+					super("div", { "id" : "square#"+id, "class" : color+"Square" })
 					this.color = color
 					this.isSelected = false
 				}
 
-				render(c) {
+				attachTo(c) {
 					//Places square inside container element c ( which is chessboard here)
-					super.render("square#"+this.id)
-					let s = document.createElement("div")
-					s.setAttribute("id", "square#"+this.id)
-					s.setAttribute("class", this.color+"Square")
-					c.appendChild(s)
-					this.elem = s
+					super.attachTo(c)
 
 				}
 
@@ -113,14 +111,16 @@
 
 			}
 
-			class Chessboard extends Renderer {
+			class Chessboard extends DOMElement {
 				id
 				squares
+				helpBox
 
 				constructor(id) {
-					super()
+					super("div", { id: id, class : "chessboard" })
 					this.id = id
 					this.squares = new Array()
+					this.helpBox = new HelpBox("helpBox")
 					let c = [ "white", "black" ]
 					//Add squares to chessboard in right order, let css take care of placement.
 					for ( let i = 7 ; i >= 0 ; i-- ) {
@@ -130,32 +130,75 @@
 					}
 				}
 
-				render() {
+				attachTo(c) {
 
 					//Create chessboard and place squares in it.
-					super.render(this.id)
-					let c = document.createElement("div")
-					c.setAttribute("id", this.id)
-					c.setAttribute("class", "chessboard")
+					super.attachTo(c)
 
+					//Render squares
 					for ( let s of this.squares ) {
-						s.render(c)
+						s.attachTo(this)
 					}
 
-					//No events as of now on chessboard.
-					c.onclick = () => {
+					//Add helper box
+					this.helpBox.attachTo(this)
+					//No action defined yet
+					this.elem.onclick = () => {
 					}
-
-					document.body.appendChild(c)
 
 				}
 
 				squareSelectedEvent(selectEventHandler) {
-					//Attach select events on squares
 					for ( let s of this.squares ) {
 						s.selectedEvent(selectEventHandler)
 					}
 				}
+			}
+
+			class HelpBox extends DOMElement {
+
+				value
+
+				constructor(id) {
+					super("div", { id: id, class: "helpBox", disabled: true })
+					this.value = "Click to select or unselect square"
+					this.elem.innerHTML = this.value
+				}
+
+				attachTo(c) {
+					super.attachTo(c)
+				}
+			}
+
+			const myApp = (msg) => {
+				console.log(msg+" creating...")
+
+				var selectedSquare = new Array()
+
+				//Event handler onClick for squares on chessboard
+				selectEventHandler = (selectedSquareObject) => {
+					const squareColor = { false: "Square" , true: "SquareSelected"} 
+						if (selectedSquare.length != 0) { 
+							const previousSelectedSquareObject = selectedSquare.pop()
+							if (previousSelectedSquareObject !== selectedSquareObject) {
+								previousSelectedSquareObject.isSelected = false
+								previousSelectedSquareObject.refresh({class : previousSelectedSquareObject.color+squareColor[previousSelectedSquareObject.isSelected]})
+							}
+						}
+						selectedSquare.push(selectedSquareObject)
+						//Toggle selected state
+						selectedSquareObject.isSelected = !selectedSquareObject.isSelected
+						//selectedSquareObject.elem.removeAttribute("class")
+						//selectedSquareObject.elem.setAttribute("class", selectedSquareObject.color+squareColor[selectedSquareObject.isSelected])
+					selectedSquareObject.refresh({class: selectedSquareObject.color+squareColor[selectedSquareObject.isSelected]})
+				}
+
+				const c = new Chessboard("mychessboard")
+				c.attachTo({ elem : document.body })
+				c.attachTo({ elem : document.body })
+				//Attach click events to squares
+				c.squareSelectedEvent(selectEventHandler)
+				console.log(msg+" created...")
 			}
 
 		</script>
