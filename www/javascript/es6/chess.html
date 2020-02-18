@@ -1,6 +1,71 @@
 <html>
 	<head>
 	<style>
+		.chessPiece {
+			float: left;
+			display: block;
+		}
+		.whiteQueen {
+			height: 45px;
+			width: 45px;
+			background: url('piecesSprite.svg') -45px 0;
+		}
+		.whitePawn {
+			height: 45px;
+			width: 45px;
+			background: url('piecesSprite.svg') 45px 0;
+		}
+		.whiteKing {
+			height: 45px;
+			width: 45px;
+			background: url('piecesSprite.svg') 0 0;
+		}
+		.whiteBishop {
+			height: 45px;
+			width: 45px;
+			background: url('piecesSprite.svg') -90px 0;
+		}
+		.whiteKnight {
+			height: 45px;
+			width: 45px;
+			background: url('piecesSprite.svg') -135px 0;
+		}
+		.whiteRook {
+			height: 45px;
+			width: 45px;
+			background: url('piecesSprite.svg') 90px 0;
+		}
+		.blackQueen {
+            height: 45px;
+            width: 45px;
+            background: url('piecesSprite.svg') -45px -45px;
+        }
+        .blackPawn {
+            height: 45px;
+            width: 45px;
+            background: url('piecesSprite.svg') 45px -45px;
+        }
+        .blackKing {
+            height: 45px;
+            width: 45px;
+            background: url('piecesSprite.svg') 0 -45px;
+        }
+        .blackBishop {
+            height: 45px;
+            width: 45px;
+            background: url('piecesSprite.svg') -90px -45px;
+        }
+        .blackKnight {
+            height: 45px;
+            width: 45px;
+            background: url('piecesSprite.svg') -135px -45px;
+        }
+        .blackRook {
+			z-index: 1;
+            height: 45px;
+            width: 45px;
+            background: url('piecesSprite.svg') 90px -45px;
+        }
 		.helpBox {
 			padding: 20px;
 			float: left;
@@ -9,36 +74,36 @@
 			outline: none;
 		}
 		.chessboard {
-			height: 400px;
-			width: 400px;
+			height: 361px;
+			width: 361px;
 			border: 10px #000 SOLID;
 		}
 
 		.blackSquare {
 			background: #8aa;
-			height: 50px;
-			width: 50px;
+			height: 45px;
+			width: 45px;
 			float: left;
 		}
 
 		.whiteSquare {
-			background: #eee;
-			height: 50px;
-			width: 50px;
+			ackground: #eee;
+			height: 45px;
+			width: 45px;
 			float: left;
 		}
 
 		.whiteSquareSelected {
 			background: #aaa;
-			height: 50px;
-			width: 50px;
+			height: 45px;
+			width: 45px;
 			float: left;
 		}
 
 		.blackSquareSelected {
 			background: #699;
-			height: 50px;
-			width: 50px;
+			height: 45px;
+			width: 45px;
 			float: left;
 		}
 	</style>
@@ -62,21 +127,21 @@
 				}
 
 				attachTo(c) {
+					//console.log(c.constructor.name)
 
-					if ( this.elem !== null ) {
-						let e = this.elem
-						if ( e.parentNode !== null ) {
-							e.parentNode.removeChild(e)
-						}
-						for ( let prop in this.attr ) {
-							e.setAttribute(prop, this.attr[prop])
-						}
-						//Finally attach element
-						c.elem.appendChild(e)
+					let parent = this.elem.parentNode
+					if ( parent !== null ) {
+						parent.removeChild(this.elem)
+					} 
+
+					for ( let prop in this.attr ) {
+						this.elem.setAttribute(prop, this.attr[prop])
 					}
+					c.elem.appendChild(this.elem)
 
 				}
 
+				//Refresh object based on changes in the attr
 				refresh(attr) {
 					for ( let prop in attr ) {
 						this.elem.removeAttribute(prop)
@@ -85,6 +150,22 @@
 					}
 				}
 
+			}
+
+			class chessPiece extends DOMElement {
+				name
+				color
+				position
+
+				constructor(name, color) {
+					super("div",{ class: color+name })
+					this.name = name
+					this.color = color
+				}
+
+				place(s) {
+					super.attachTo(s)
+				}
 			}
 
 			class Square extends DOMElement {
@@ -98,9 +179,7 @@
 				}
 
 				attachTo(c) {
-					//Places square inside container element c ( which is chessboard here)
 					super.attachTo(c)
-
 				}
 
 				selectedEvent(selectEventHandler) {
@@ -108,12 +187,13 @@
 						selectEventHandler(this)
 					}
 				}
-
 			}
 
 			class Chessboard extends DOMElement {
 				id
 				squares
+				blackPieces
+				whitePieces
 				helpBox
 
 				constructor(id) {
@@ -128,17 +208,54 @@
 						this.squares.push(new Square(i*8+j, c[(j+i%2)%2]))
 						}
 					}
+					this.blackPieces = new Array()
+					this.whitePieces = new Array()
+
+					this.blackPieces.push(new chessPiece("Rook", "black"))
+					this.blackPieces.push(new chessPiece("Knight", "black"))
+					this.blackPieces.push(new chessPiece("Bishop", "black"))
+					this.blackPieces.push(new chessPiece("Queen", "black"))
+					this.blackPieces.push(new chessPiece("King", "black"))
+					this.blackPieces.push(new chessPiece("Bishop", "black"))
+					this.blackPieces.push(new chessPiece("Knight", "black"))
+					this.blackPieces.push(new chessPiece("Rook", "black"))
+					this.blackPieces.push(new chessPiece("Pawn", "black"))
+					this.blackPieces.push(new chessPiece("Pawn", "black"))
+					this.blackPieces.push(new chessPiece("Pawn", "black"))
+					this.blackPieces.push(new chessPiece("Pawn", "black"))
+					this.blackPieces.push(new chessPiece("Pawn", "black"))
+					this.blackPieces.push(new chessPiece("Pawn", "black"))
+					this.blackPieces.push(new chessPiece("Pawn", "black"))
+					this.blackPieces.push(new chessPiece("Pawn", "black"))
+
+					this.whitePieces.push(new chessPiece("Pawn", "white"))
+					this.whitePieces.push(new chessPiece("Pawn", "white"))
+					this.whitePieces.push(new chessPiece("Pawn", "white"))
+					this.whitePieces.push(new chessPiece("Pawn", "white"))
+					this.whitePieces.push(new chessPiece("Pawn", "white"))
+					this.whitePieces.push(new chessPiece("Pawn", "white"))
+					this.whitePieces.push(new chessPiece("Pawn", "white"))
+					this.whitePieces.push(new chessPiece("Pawn", "white"))
+					this.whitePieces.push(new chessPiece("Rook", "white"))
+					this.whitePieces.push(new chessPiece("Knight", "white"))
+					this.whitePieces.push(new chessPiece("Bishop", "white"))
+					this.whitePieces.push(new chessPiece("Queen", "white"))
+					this.whitePieces.push(new chessPiece("King", "white"))
+					this.whitePieces.push(new chessPiece("Bishop", "white"))
+					this.whitePieces.push(new chessPiece("Knight", "white"))
+					this.whitePieces.push(new chessPiece("Rook", "white"))
+
 				}
 
 				attachTo(c) {
 
+					//Render squares
+					this.squares.map( item => {
+						item.attachTo(this)
+					}) 
 					//Create chessboard and place squares in it.
 					super.attachTo(c)
 
-					//Render squares
-					for ( let s of this.squares ) {
-						s.attachTo(this)
-					}
 
 					//Add helper box
 					this.helpBox.attachTo(this)
@@ -146,12 +263,21 @@
 					this.elem.onclick = () => {
 					}
 
+					//Place black pieces
+					this.blackPieces.map((item, k) => {
+						item.place(this.squares[k])
+					})
+					//Place white pieces
+					this.whitePieces.map((item, k) => {
+						item.place(this.squares[k+48])
+					})
+
 				}
 
 				squareSelectedEvent(selectEventHandler) {
-					for ( let s of this.squares ) {
-						s.selectedEvent(selectEventHandler)
-					}
+					this.squares.map( item => {
+						item.selectedEvent(selectEventHandler)
+					})
 				}
 			}
 
@@ -173,7 +299,7 @@
 			const myApp = (msg) => {
 				console.log(msg+" creating...")
 
-				var selectedSquare = new Array()
+				const selectedSquare = new Array()
 
 				//Event handler onClick for squares on chessboard
 				selectEventHandler = (selectedSquareObject) => {
@@ -188,14 +314,13 @@
 						selectedSquare.push(selectedSquareObject)
 						//Toggle selected state
 						selectedSquareObject.isSelected = !selectedSquareObject.isSelected
-						//selectedSquareObject.elem.removeAttribute("class")
-						//selectedSquareObject.elem.setAttribute("class", selectedSquareObject.color+squareColor[selectedSquareObject.isSelected])
-					selectedSquareObject.refresh({class: selectedSquareObject.color+squareColor[selectedSquareObject.isSelected]})
+						selectedSquareObject.refresh({class: selectedSquareObject.color+squareColor[selectedSquareObject.isSelected]})
 				}
 
 				const c = new Chessboard("mychessboard")
 				c.attachTo({ elem : document.body })
-				c.attachTo({ elem : document.body })
+				//c.attachTo({ elem : document.body }) //Run this multiple times to see side-effects and you have handled rendering and objects properly
+				//c.attachTo({ elem : document.body })
 				//Attach click events to squares
 				c.squareSelectedEvent(selectEventHandler)
 				console.log(msg+" created...")
