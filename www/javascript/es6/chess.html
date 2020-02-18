@@ -142,13 +142,16 @@
 						s.render(c)
 					}
 
+					//No events as of now on chessboard.
 					c.onclick = () => {
 					}
+
 					document.body.appendChild(c)
 
 				}
 
 				squareSelectedEvent(selectEventHandler) {
+					//Attach select events on squares
 					for ( let s of this.squares ) {
 						s.selectedEvent(selectEventHandler)
 					}
