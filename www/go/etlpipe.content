@@ -1,6 +1,5 @@
-<h3><a href="#go" onclick="_().loadContent(this,'go','ContentBody');" >Go Programming Language</a> - Jatayu, ETL Pipeline</h3></p>
+<h3><a href="#go" onclick="_().loadContent(this,'go','ContentBody');" >Go Programming Language</a> - Quikflow, ETL Pipeline</h3></p>
 Coming soon!</p>
-Jatayu, in hindu mythology <a href="https://en.wikipedia.org/wiki/Jatayu"> Know more!</a>
 <!--
 <h4>Jatayu Service Layers</h4>
 <center>
@@ -15,8 +14,9 @@ Jatayu, in hindu mythology <a href="https://en.wikipedia.org/wiki/Jatayu"> Know 
 	<img src="/images/jatayu_dataStore_layer.svg" width="600px" /></p><b>Fig.3. </b>Datastore
 </center>
 </p>
-<h4>ETL Worflow</h4>
-<center>
-	<img src="/images/etlWorkflow.svg" width="500px" /></p><b>Fig.4. </b>ETL workflow
-</center>
 -->
+Workflow
+<center>
+	<img src="/images/etlWorkflow.svg" width="500px" /></p><b>Fig.1. </b>ETL workflow
+</center>
+<a href="https://github.com/ngavali/rationalbear/tree/master/etl" target="_">Gitrepo link</a>
