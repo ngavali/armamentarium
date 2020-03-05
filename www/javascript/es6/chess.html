@@ -67,15 +67,22 @@
             background: url('piecesSprite.svg') 90px -45px;
         }
 		.helpBox {
-			padding: 20px;
+			padding-top: 20px;
+			float: left;
+			height: 40px;
+			width: 400px;
+			outline: none;
+		}
+		.moveDisplay {
+			padding-top: 20px;
 			float: left;
 			height: 40px;
 			width: 400px;
 			outline: none;
 		}
 		.chessboard {
-			height: 361px;
-			width: 361px;
+			height: 360px;
+			width: 360px;
 			border: 10px #000 SOLID;
 		}
 
@@ -141,6 +148,15 @@
 
 				}
 
+				detachFrom(c) {
+					if ( this.elem.parentNode === c.elem ) {
+						console.log("Removing from destination")
+				    	c.elem.removeChild(this.elem)
+						return true
+					}
+					return false
+				}
+
 				//Refresh object based on changes in the attr
 				refresh(attr) {
 					for ( let prop in attr ) {
@@ -164,18 +180,33 @@
 				}
 
 				place(s) {
+					let res = false
+					if ( s.has ) {
+						res = s.has.remove(s)
+					}
+					s.has = this
 					super.attachTo(s)
+					return res
+				}
+
+				remove(s) {
+					let res = super.detachFrom(s)
+					s.has = undefined
+					return res
 				}
 			}
 
 			class Square extends DOMElement {
 				color
+				position
 				isSelected
+				has
 
-				constructor(id, color) {
+				constructor(id, color, pos) {
 					super("div", { "id" : "square#"+id, "class" : color+"Square" })
 					this.color = color
 					this.isSelected = false
+					this.position = pos
 				}
 
 				attachTo(c) {
@@ -187,6 +218,16 @@
 						selectEventHandler(this)
 					}
 				}
+
+				select() {
+						this.isSelected = !this.isSelected
+						this.refresh({class: this.color+"SquareSelected"})
+				}
+
+				unselect() {
+						this.isSelected = !this.isSelected
+						this.refresh({class: this.color+"Square"})
+				}
 			}
 
 			class Chessboard extends DOMElement {
@@ -195,17 +236,20 @@
 				blackPieces
 				whitePieces
 				helpBox
+				MoveDisplay
 
 				constructor(id) {
+					var horAxis = ["a", "b", "c", "d", "e", "f", "g", "h"];
 					super("div", { id: id, class : "chessboard" })
 					this.id = id
 					this.squares = new Array()
 					this.helpBox = new HelpBox("helpBox")
+					this.MoveDisplay = new MoveDisplay("stepDisplay")
 					let c = [ "white", "black" ]
 					//Add squares to chessboard in right order, let css take care of placement.
 					for ( let i = 7 ; i >= 0 ; i-- ) {
 						for ( let j = 1 ; j <= 8 ; j++ ) {
-						this.squares.push(new Square(i*8+j, c[(j+i%2)%2]))
+						this.squares.push(new Square(i*8+j, c[(j+i%2)%2], horAxis[j-1]+(i+1)))
 						}
 					}
 					this.blackPieces = new Array()
@@ -259,6 +303,8 @@
 
 					//Add helper box
 					this.helpBox.attachTo(this)
+					//Add move display
+					this.MoveDisplay.attachTo(this)
 					//No action defined yet
 					this.elem.onclick = () => {
 					}
@@ -276,7 +322,7 @@
 
 				squareSelectedEvent(selectEventHandler) {
 					this.squares.map( item => {
-						item.selectedEvent(selectEventHandler)
+						item.selectedEvent(selectEventHandler, this.MoveDisplay)
 					})
 				}
 			}
@@ -296,25 +342,61 @@
 				}
 			}
 
+			class MoveDisplay extends DOMElement {
+
+				value
+
+				constructor(id) {
+					super("div", { id: id, class: "moveDisplay", disabled: true })
+					this.value = "Moves: "
+					this.elem.innerHTML = this.value
+				}
+
+				attachTo(c) {
+					super.attachTo(c)
+				}
+
+				refresh(step) {
+					this.value = step
+					this.elem.innerHTML = this.value
+				}
+			}
+
 			const myApp = (msg) => {
 				console.log(msg+" creating...")
 
-				const selectedSquare = new Array()
+				//const selectedSquare = new Array()
+				let selectedSquare
+				const squareColor = { false: "Square" , true: "SquareSelected"} 
+
+				movePiece = (From, To) => {
+					Ex = { true : "x" , false : "" }
+					if ( From.has != undefined ) {
+						isEx = From.has.place(To)
+						From.has.remove(From)
+						c.MoveDisplay.refresh(c.MoveDisplay.value + " " + To.has.name.charAt(0).toUpperCase()+Ex[isEx]+To.position)
+						return true
+					}
+					return false
+				}
 
 				//Event handler onClick for squares on chessboard
 				selectEventHandler = (selectedSquareObject) => {
-					const squareColor = { false: "Square" , true: "SquareSelected"} 
-						if (selectedSquare.length != 0) { 
-							const previousSelectedSquareObject = selectedSquare.pop()
-							if (previousSelectedSquareObject !== selectedSquareObject) {
-								previousSelectedSquareObject.isSelected = false
-								previousSelectedSquareObject.refresh({class : previousSelectedSquareObject.color+squareColor[previousSelectedSquareObject.isSelected]})
-							}
-						}
-						selectedSquare.push(selectedSquareObject)
-						//Toggle selected state
-						selectedSquareObject.isSelected = !selectedSquareObject.isSelected
-						selectedSquareObject.refresh({class: selectedSquareObject.color+squareColor[selectedSquareObject.isSelected]})
+					//Allow move if only a square with piece has been selected
+					if ( selectedSquare !== undefined ) {
+						//Not a same square
+						if ( selectedSquare !== selectedSquareObject ) {
+							movePiece(selectedSquare, selectedSquareObject)
+						} 
+						selectedSquare.unselect()
+						selectedSquare = undefined //unselect square now
+						return
+					}
+					//Allow select only square which has a piece
+					if ( selectedSquareObject.has !== undefined ) {
+						selectedSquare = selectedSquareObject
+						selectedSquareObject.select()
+					}
 				}
 
 				const c = new Chessboard("mychessboard")
