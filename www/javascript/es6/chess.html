@@ -3,7 +3,6 @@
 	<style>
 		.chessPiece {
 			float: left;
-			display: block;
 		}
 		.whiteQueen {
 			height: 45px;
@@ -83,32 +82,32 @@
 		.chessboard {
 			height: 360px;
 			width: 360px;
-			border: 10px #000 SOLID;
+			border: 5px #3C3744 SOLID;
 		}
 
 		.blackSquare {
-			background: #8aa;
+			background: #D8B4A0;
 			height: 45px;
 			width: 45px;
 			float: left;
 		}
 
 		.whiteSquare {
-			background: #eea;
+			background: #EFF1F3;
 			height: 45px;
 			width: 45px;
 			float: left;
 		}
 
 		.whiteSquareSelected {
-			background: #cc8;
+			background: #DBD3D8;
 			height: 45px;
 			width: 45px;
 			float: left;
 		}
 
 		.blackSquareSelected {
-			background: #699;
+			background: #D77A61;
 			height: 45px;
 			width: 45px;
 			float: left;
@@ -367,15 +366,24 @@
 
 				//const selectedSquare = new Array()
 				let selectedSquare
+				let player = { true : "white", false : "black" }
+				let whoPlayes = true
 				const squareColor = { false: "Square" , true: "SquareSelected"} 
+
+				isValidMove = (From, To) => {
+					//To be implemented
+					return true
+				}
 
 				movePiece = (From, To) => {
 					Ex = { true : "x" , false : "" }
-					if ( From.has != undefined ) {
-						isEx = From.has.place(To)
-						From.has.remove(From)
-						c.MoveDisplay.refresh(c.MoveDisplay.value + " " + To.has.name.charAt(0).toUpperCase()+Ex[isEx]+To.position)
-						return true
+					if ( isValidMove(From, To) ) {
+						if ( From.has != undefined ) {
+							isEx = From.has.place(To)
+							From.has.remove(From)
+							c.MoveDisplay.refresh(c.MoveDisplay.value + " " + To.has.name.charAt(0).toUpperCase()+Ex[isEx]+To.position)
+							return true
+						}
 					}
 					return false
 				}
@@ -386,14 +394,16 @@
 					if ( selectedSquare !== undefined ) {
 						//Not a same square
 						if ( selectedSquare !== selectedSquareObject ) {
-							movePiece(selectedSquare, selectedSquareObject)
+							if ( movePiece(selectedSquare, selectedSquareObject) ) {
+								whoPlayes = !whoPlayes
+							}
 						} 
 						selectedSquare.unselect()
 						selectedSquare = undefined //unselect square now
 						return
 					}
 					//Allow select only square which has a piece
-					if ( selectedSquareObject.has !== undefined ) {
+					if ( selectedSquareObject.has !== undefined && selectedSquareObject.has.color === player[whoPlayes] ) {
 						selectedSquare = selectedSquareObject
 						selectedSquareObject.select()
 					}
