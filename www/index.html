@@ -1,12 +1,14 @@
 <html>
+<head>
 <link rel="stylesheet" href="/css/style.css">
 <link rel="stylesheet" href="/css/code.css">
 <script src="/js/menu.js" type="text/javascript"></script>
+</head>
 <body>
 <div id="menubar">
 <table id="menu" style="table-layout:fixed;" align="center" >
 <tr>
-	<td width="300px"><a href="/"><logo>Armamentarium</logo></a></td>
+<td width="300px"><a href="/"><logo>Armamentarium</logo></a></td>
 <td align="right"><div id="menuitem"></div>
 <!--span style="float:right;padding-right:5px;padding-top:10px;cursor:pointer;font-size:26px;"><nv onclick="_().rollContent(-1);"> &#8249; </nv><nv onclick="_().rollContent(0);"> - </nv><nv alt="next" onclick="_().rollContent(1);"> &#8250; </nv></span-->
 </td>
@@ -19,14 +21,16 @@
 <tr>
 	<td>
 	    <div id="ContentBody" style="text-align:justify">
-            <div style="position:absolute;bottom:0px;left:0px;right:0px;">
-            <center>
-                <i style="font-size:14px;">An apple falling on the ground, as observed from a fixed point on earth's rotational axis.</br> - Considering earth's rotation, ignoring all other heavenly motions and forces.<!--Do you still believe it's falling down straight towards the earth?--></i></p>
+            <div style="position:absolute;top:100px;left:0px;right:0px;">
+            <center><!--
+				<i style="font-size:14px;">An apple falling on the ground, as observed from a fixed point on earth's rotational axis.</br> - Considering earth's rotation, ignoring all other heavenly motions and forces. </br>Do you still believe it's falling down straight towards the earth</i></p>
                 This is not a physics blog. But discovering and understanding things as they are, matters!</p>
-            <img src="images/gravity.svg" width="1500px">
-                </center>
-            </div>
+				<img src="images/gravity.svg" width="1500px">-->
 			<!--img style="display:block;padding-top:15px;align:left" width="1000px" src="/images/SK.jpg" /></p-->
+			Just for fun!!! Chess with Pure Javscript ES6 ( Work in progress!!! )</p>
+			<div id="ChessApp">
+            </center>
+            </div>
 		</div>
 	</td>
 </tr>
@@ -35,3 +39,412 @@
 </div>
 </body>
 </html>
+<style>
+                .chessPiece {
+                        float: left;
+                }
+                .whiteQueen {
+                        height: 45px;
+                        width: 45px;
+                        background: url('piecesSprite.svg') -45px 0;
+                }
+                .whitePawn {
+                        height: 45px;
+                        width: 45px;
+                        background: url('piecesSprite.svg') 45px 0;
+                }
+                .whiteKing {
+                        height: 45px;
+                        width: 45px;
+                        background: url('piecesSprite.svg') 0 0;
+                }
+                .whiteBishop {
+                        height: 45px;
+                        width: 45px;
+                        background: url('piecesSprite.svg') -90px 0;
+                }
+                .whiteKnight {
+                        height: 45px;
+                        width: 45px;
+                        background: url('piecesSprite.svg') -135px 0;
+                }
+                .whiteRook {
+                        height: 45px;
+                        width: 45px;
+                        background: url('piecesSprite.svg') 90px 0;
+                }
+                .blackQueen {
+            height: 45px;
+            width: 45px;
+            background: url('piecesSprite.svg') -45px -45px;
+        }
+        .blackPawn {
+            height: 45px;
+            width: 45px;
+            background: url('piecesSprite.svg') 45px -45px;
+        }
+        .blackKing {
+            height: 45px;
+            width: 45px;
+            background: url('piecesSprite.svg') 0 -45px;
+        }
+        .blackBishop {
+            height: 45px;
+            width: 45px;
+            background: url('piecesSprite.svg') -90px -45px;
+        }
+        .blackKnight {
+            height: 45px;
+            width: 45px;
+            background: url('piecesSprite.svg') -135px -45px;
+        }
+        .blackRook {
+                        z-index: 1;
+            height: 45px;
+            width: 45px;
+            background: url('piecesSprite.svg') 90px -45px;
+        }
+                .helpBox {
+                        padding-top: 20px;
+                        float: left;
+                        height: 40px;
+                        width: 400px;
+                        outline: none;
+                }
+                .moveDisplay {
+                        loat: left;
+                        height: 40px;
+                        width: 400px;
+                        outline: none;
+						text-align: left;
+                }
+                .chessboard {
+                        height: 360px;
+                        width: 360px;
+                        border: 5px #3C3744 SOLID;
+                }
+
+                .blackSquare {
+                        background: #D8B4A0;
+                        height: 45px;
+                        width: 45px;
+                        float: left;
+                }
+
+                .whiteSquare {
+                        background: #EFF1F3;
+                        height: 45px;
+                        width: 45px;
+                        float: left;
+                }
+
+                .whiteSquareSelected {
+                        background: #DBD3D8;
+                        height: 45px;
+                        width: 45px;
+                        float: left;
+                }
+
+                .blackSquareSelected {
+                        background: #D77A61;
+                        height: 45px;
+                        width: 45px;
+                        float: left;
+                }
+        </style>
+                <script type="text/javascript">
+                        class DOMElement {
+
+                                attr
+                                elemType
+                                elem
+
+                                constructor(e, a) {
+                                        this.attr = a
+                                        this.elem = document.createElement(e)
+                                }
+
+                                attachTo(c) {
+                                        let parent = this.elem.parentNode
+                                        if ( parent !== null ) {
+                                                parent.removeChild(this.elem)
+                                        }
+
+                                        for ( let prop in this.attr ) {
+                                                this.elem.setAttribute(prop, this.attr[prop])
+                                        }
+                                        c.elem.appendChild(this.elem)
+
+                                }
+
+                                detachFrom(c) {
+                                        if ( this.elem.parentNode === c.elem ) {
+                                                console.log("Removing from destination")
+                                        c.elem.removeChild(this.elem)
+                                                return true
+                                        }
+                                        return false
+                                }
+
+                                //Refresh object based on changes in the attr
+                                refresh(attr) {
+                                        for ( let prop in attr ) {
+                                                this.elem.removeAttribute(prop)
+                                                this.elem.setAttribute(prop, attr[prop])
+                                                this.attr[prop] = attr[prop]
+                                        }
+                                }
+
+                        }
+
+                        class chessPiece extends DOMElement {
+                                name
+                                color
+                                position
+
+                                constructor(name, color) {
+                                        super("div",{ class: color+name })
+                                        this.name = name
+                                        this.color = color
+                                }
+
+                                place(s) {
+                                        let res = false
+                                        if ( s.has ) {
+                                                res = s.has.remove(s)
+                                        }
+                                        s.has = this
+                                        super.attachTo(s)
+                                        return res
+                                }
+
+                                remove(s) {
+                                        let res = super.detachFrom(s)
+                                        s.has = undefined
+                                        return res
+                                }
+                        }
+
+                        class Square extends DOMElement {
+                                color
+                                position
+                                isSelected
+                                has
+
+                                constructor(id, color, pos) {
+                                        super("div", { "id" : "square#"+id, "class" : color+"Square" })
+                                        this.color = color
+                                        this.isSelected = false
+                                        this.position = pos
+                                }
+
+                                attachTo(c) {
+                                        super.attachTo(c)
+                                }
+
+                                selectedEvent(selectEventHandler) {
+                                        this.elem.onclick = () => {
+                                                selectEventHandler(this)
+                                        }
+                                }
+
+                                select() {
+                                                this.isSelected = !this.isSelected
+                                                this.refresh({class: this.color+"SquareSelected"})
+                                }
+
+                                unselect() {
+                                                this.isSelected = !this.isSelected
+                                                this.refresh({class: this.color+"Square"})
+                                }
+                        }
+
+                        class Chessboard extends DOMElement {
+                                id
+                                squares
+                                blackPieces
+                                whitePieces
+                                helpBox
+                                MoveDisplay
+
+                                constructor(id) {
+                                        var horAxis = ["a", "b", "c", "d", "e", "f", "g", "h"];
+                                        super("div", { id: id, class : "chessboard" })
+                                        this.id = id
+                                        this.squares = new Array()
+                                        this.helpBox = new HelpBox("helpBox")
+                                        this.MoveDisplay = new MoveDisplay("stepDisplay")
+                                        let c = [ "white", "black" ]
+                                        //Add squares to chessboard in right order, let css take care of placement.
+                                        for ( let i = 7 ; i >= 0 ; i-- ) {
+                                                for ( let j = 1 ; j <= 8 ; j++ ) {
+                                                this.squares.push(new Square(i*8+j, c[(j+i%2)%2], horAxis[j-1]+(i+1)))
+                                                }
+                                        }
+                                        this.blackPieces = new Array()
+                                        this.whitePieces = new Array()
+
+                                        this.blackPieces.push(new chessPiece("Rook", "black"))
+                                        this.blackPieces.push(new chessPiece("Knight", "black"))
+                                        this.blackPieces.push(new chessPiece("Bishop", "black"))
+                                        this.blackPieces.push(new chessPiece("Queen", "black"))
+                                        this.blackPieces.push(new chessPiece("King", "black"))
+                                        this.blackPieces.push(new chessPiece("Bishop", "black"))
+                                        this.blackPieces.push(new chessPiece("Knight", "black"))
+                                        this.blackPieces.push(new chessPiece("Rook", "black"))
+                                        this.blackPieces.push(new chessPiece("Pawn", "black"))
+                                        this.blackPieces.push(new chessPiece("Pawn", "black"))
+                                        this.blackPieces.push(new chessPiece("Pawn", "black"))
+                                        this.blackPieces.push(new chessPiece("Pawn", "black"))
+                                        this.blackPieces.push(new chessPiece("Pawn", "black"))
+                                        this.blackPieces.push(new chessPiece("Pawn", "black"))
+                                        this.blackPieces.push(new chessPiece("Pawn", "black"))
+                                        this.blackPieces.push(new chessPiece("Pawn", "black"))
+
+                                        this.whitePieces.push(new chessPiece("Pawn", "white"))
+                                        this.whitePieces.push(new chessPiece("Pawn", "white"))
+                                        this.whitePieces.push(new chessPiece("Pawn", "white"))
+                                        this.whitePieces.push(new chessPiece("Pawn", "white"))
+                                        this.whitePieces.push(new chessPiece("Pawn", "white"))
+                                        this.whitePieces.push(new chessPiece("Pawn", "white"))
+                                        this.whitePieces.push(new chessPiece("Pawn", "white"))
+                                        this.whitePieces.push(new chessPiece("Pawn", "white"))
+                                        this.whitePieces.push(new chessPiece("Rook", "white"))
+                                        this.whitePieces.push(new chessPiece("Knight", "white"))
+                                        this.whitePieces.push(new chessPiece("Bishop", "white"))
+                                        this.whitePieces.push(new chessPiece("Queen", "white"))
+                                        this.whitePieces.push(new chessPiece("King", "white"))
+                                        this.whitePieces.push(new chessPiece("Bishop", "white"))
+                                        this.whitePieces.push(new chessPiece("Knight", "white"))
+                                        this.whitePieces.push(new chessPiece("Rook", "white"))
+
+                                }
+
+                                attachTo(c) {
+
+                                        //Render squares
+                                        this.squares.map( item => {
+                                                item.attachTo(this)
+                                        })
+                                        //Create chessboard and place squares in it.
+                                        super.attachTo(c)
+
+
+                                        //Add helper box
+                                        this.helpBox.attachTo(this)
+                                        //Add move display
+                                        this.MoveDisplay.attachTo(this)
+                                        //No action defined yet
+                                        this.elem.onclick = () => {
+                                        }
+
+                                        //Place black pieces
+                                        this.blackPieces.map((item, k) => {
+                                                item.place(this.squares[k])
+                                        })
+                                        //Place white pieces
+                                        this.whitePieces.map((item, k) => {
+                                                item.place(this.squares[k+48])
+                                        })
+
+                                }
+
+                                squareSelectedEvent(selectEventHandler) {
+                                        this.squares.map( item => {
+                                                item.selectedEvent(selectEventHandler, this.MoveDisplay)
+                                        })
+                                }
+                        }
+
+                        class HelpBox extends DOMElement {
+
+                                value
+
+                                constructor(id) {
+                                        super("div", { id: id, class: "helpBox", disabled: true })
+                                        this.value = "Click to select or unselect square"
+                                        this.elem.innerHTML = this.value
+                                }
+
+                                attachTo(c) {
+                                        super.attachTo(c)
+                                }
+                        }
+
+                        class MoveDisplay extends DOMElement {
+
+                                value
+
+                                constructor(id) {
+                                        super("div", { id: id, class: "moveDisplay", disabled: true })
+                                        this.value = "Moves: "
+                                        this.elem.innerHTML = this.value
+                                }
+
+                                attachTo(c) {
+                                        super.attachTo(c)
+                                }
+
+                                refresh(step) {
+                                        this.value = step
+                                        this.elem.innerHTML = this.value
+                                }
+                        }
+
+                        const myApp = (msg) => {
+                                console.log(msg+" creating...")
+
+                                let selectedSquare
+                                let player = { true : "white", false : "black" }
+                                let whoPlayes = true
+                                const squareColor = { false: "Square" , true: "SquareSelected"}
+
+                                isValidMove = (From, To) => {
+                                        //To be implemented
+                                        return true
+                                }
+
+                                movePiece = (From, To) => {
+                                        Ex = { true : "x" , false : "" }
+                                        if ( isValidMove(From, To) ) {
+                                                if ( From.has != undefined ) {
+                                                        isEx = From.has.place(To)
+                                                        From.has.remove(From)
+                                                        c.MoveDisplay.refresh(c.MoveDisplay.value + " " + To.has.name.charAt(0).toUpperCase()+Ex[isEx]+To.position)
+                                                        return true
+                                                }
+                                        }
+                                        return false
+                                }
+
+                                //Event handler onClick for squares on chessboard
+                                selectEventHandler = (selectedSquareObject) => {
+                                        //Allow move if only a square with piece has been selected
+                                        if ( selectedSquare !== undefined ) {
+                                                //Not a same square
+                                                if ( selectedSquare !== selectedSquareObject ) {
+                                                        if ( movePiece(selectedSquare, selectedSquareObject) ) {
+                                                                whoPlayes = !whoPlayes  //Switch players is move has been made
+                                                        }
+                                                }
+                                                selectedSquare.unselect()
+                                                selectedSquare = undefined //unselect square now
+                                                return
+                                        }
+                                        //Allow select only square which has a piece
+                                        if ( selectedSquareObject.has !== undefined && selectedSquareObject.has.color === player[whoPlayes] ) {
+                                                selectedSquare = selectedSquareObject
+                                                selectedSquareObject.select()
+                                        }
+                                }
+
+                                const c = new Chessboard("ChessApp")
+                                c.attachTo({ elem : document.getElementById("ChessApp") })
+                                //Attach click events to squares
+                                c.squareSelectedEvent(selectEventHandler)
+                                console.log(msg+" created...")
+                        }
+
+						myApp("Chessboard")
+
+                </script>
