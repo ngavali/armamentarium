@@ -350,10 +350,16 @@
 								}
 						*/
 								flip = () => {
+										const a = this
 										let squares = new Array()
+										let to = 1
 										this.square = this.squares.reverse()
 										this.squares.map( item => {
-											item.attachTo(this)
+											const m = function() {
+												item.attachTo(a) 
+											}
+											setTimeout( m, to)
+											to+=2
 										})
 								}
 
@@ -504,7 +510,7 @@
                                                         }
                                                         whoPlayes = !whoPlayes  //Switch players is move has been made
                                                         moved = false
-														setTimeout(c.flip, 200)
+														c.flip()
                                                 }
                                                 c.ErrorDisplay.refresh(player[whoPlayes].charAt(0).toUpperCase() + player[whoPlayes].slice(1) + " plays...")
                                                 selectedSquare.unselect()
