@@ -28,7 +28,8 @@
 				<img src="images/gravity.svg" width="1500px">-->
 			<!--img style="display:block;padding-top:15px;align:left" width="1000px" src="/images/SK.jpg" /></p-->
 			Just for fun!!! Chess with Pure Javscript ES6 ( Work in progress!!! )</p>
-			<div id="ChessApp">
+			<div id="ChessApp"></div>
+			<div id="ChessAppLegend"></div>
             </center>
             </div>
 		</div>
@@ -39,9 +40,12 @@
 </div>
 </body>
 </html>
-<style>
+        <style>
                 .chessPiece {
                         float: left;
+                }
+                r {
+                        color: red;
                 }
                 .whiteQueen {
                         height: 45px;
@@ -111,6 +115,14 @@
                         width: 400px;
                         outline: none;
                 }
+                .errorDisplay {
+                        padding-top: 20px;
+                        loat: left;
+                        height: 40px;
+                        width: 400px;
+                        outline: none;
+						text-align: left;
+                }
                 .moveDisplay {
                         loat: left;
                         height: 40px;
@@ -121,11 +133,10 @@
                 .chessboard {
                         height: 360px;
                         width: 360px;
-                        border: 5px #3C3744 SOLID;
+                        border: 3px #393D3F SOLID;
                 }
-
                 .blackSquare {
-                        background: #D8B4A0;
+                        background: #8693AB;
                         height: 45px;
                         width: 45px;
                         float: left;
@@ -146,13 +157,21 @@
                 }
 
                 .blackSquareSelected {
-                        background: #D77A61;
+                        background: #637074;
                         height: 45px;
                         width: 45px;
                         float: left;
                 }
         </style>
                 <script type="text/javascript">
+						/*
+                        document.onreadystatechange = () => {
+                                if ( document.readyState === "complete" ) {
+                                        myApp("Chessboard")
+                                }
+                        }
+						*/
+                        //This is cleaner. Remove element if it already exists.
                         class DOMElement {
 
                                 attr
@@ -165,16 +184,15 @@
                                 }
 
                                 attachTo(c) {
+                                        //console.log(c.constructor.name)
                                         let parent = this.elem.parentNode
                                         if ( parent !== null ) {
                                                 parent.removeChild(this.elem)
                                         }
-
                                         for ( let prop in this.attr ) {
                                                 this.elem.setAttribute(prop, this.attr[prop])
                                         }
                                         c.elem.appendChild(this.elem)
-
                                 }
 
                                 detachFrom(c) {
@@ -266,20 +284,22 @@
                                 whitePieces
                                 helpBox
                                 MoveDisplay
+                                ErrorDisplay
 
                                 constructor(id) {
                                         var horAxis = ["a", "b", "c", "d", "e", "f", "g", "h"];
                                         super("div", { id: id, class : "chessboard" })
                                         this.id = id
                                         this.squares = new Array()
-                                        this.helpBox = new HelpBox("helpBox")
+//                                      this.helpBox = new HelpBox("helpBox")
                                         this.MoveDisplay = new MoveDisplay("stepDisplay")
+                                        this.ErrorDisplay = new ErrorDisplay("errorDisplay")
                                         let c = [ "white", "black" ]
                                         //Add squares to chessboard in right order, let css take care of placement.
                                         for ( let i = 7 ; i >= 0 ; i-- ) {
-                                                for ( let j = 1 ; j <= 8 ; j++ ) {
+                                        	for ( let j = 1 ; j <= 8 ; j++ ) {
                                                 this.squares.push(new Square(i*8+j, c[(j+i%2)%2], horAxis[j-1]+(i+1)))
-                                                }
+                                            }
                                         }
                                         this.blackPieces = new Array()
                                         this.whitePieces = new Array()
@@ -320,20 +340,36 @@
 
                                 }
 
+						/*
+								sleep(ms) {
+									const date = Date.now()
+									let currentDate = null
+									do {
+										currentDate = Date.now()
+									} while (currentDate - date < ms)
+								}
+						*/
+								flip = () => {
+										let squares = new Array()
+										this.square = this.squares.reverse()
+										this.squares.map( item => {
+											item.attachTo(this)
+										})
+								}
+
                                 attachTo(c) {
 
                                         //Render squares
                                         this.squares.map( item => {
                                                 item.attachTo(this)
                                         })
-                                        //Create chessboard and place squares in it.
-                                        super.attachTo(c)
-
 
                                         //Add helper box
-                                        this.helpBox.attachTo(this)
+                                        //this.helpBox.attachTo(this)
+                                        //Add error display
+										this.ErrorDisplay.attachTo({ elem : document.getElementById("ChessAppLegend") })
                                         //Add move display
-                                        this.MoveDisplay.attachTo(this)
+										this.MoveDisplay.attachTo({ elem : document.getElementById("ChessAppLegend") })
                                         //No action defined yet
                                         this.elem.onclick = () => {
                                         }
@@ -346,6 +382,9 @@
                                         this.whitePieces.map((item, k) => {
                                                 item.place(this.squares[k+48])
                                         })
+
+                                        //Create chessboard and place squares in it.
+                                        super.attachTo(c)
 
                                 }
 
@@ -371,13 +410,13 @@
                                 }
                         }
 
-                        class MoveDisplay extends DOMElement {
+                        class ErrorDisplay extends DOMElement {
 
                                 value
 
                                 constructor(id) {
-                                        super("div", { id: id, class: "moveDisplay", disabled: true })
-                                        this.value = "Moves: "
+                                        super("div", { id: id, class: "errorDisplay", disabled: true })
+                                        this.value = "White plays ... Click to select or unselect square"
                                         this.elem.innerHTML = this.value
                                 }
 
@@ -389,18 +428,47 @@
                                         this.value = step
                                         this.elem.innerHTML = this.value
                                 }
+
+                        }
+
+                        class MoveDisplay extends DOMElement {
+
+                                value
+
+                                constructor(id) {
+                                        super("div", { id: id, class: "moveDisplay", disabled: true })
+                                        this.value = "<b>Moves: </b>"
+                                        this.elem.innerHTML = this.value
+                                }
+
+                                attachTo(c) {
+                                        super.attachTo(c)
+                                }
+
+                                refresh(step) {
+                                        this.value = step
+                                        this.elem.innerHTML = this.value
+                                }
+
                         }
 
                         const myApp = (msg) => {
                                 console.log(msg+" creating...")
 
+                                //const selectedSquare = new Array()
                                 let selectedSquare
                                 let player = { true : "white", false : "black" }
                                 let whoPlayes = true
+                                let moved = false
                                 const squareColor = { false: "Square" , true: "SquareSelected"}
 
                                 isValidMove = (From, To) => {
                                         //To be implemented
+                                        if ( To.has !== undefined ) {
+                                                if ( From.has.color === To.has.color ) {
+                                                        return false
+                                                }
+                                        }
                                         return true
                                 }
 
@@ -414,6 +482,7 @@
                                                         return true
                                                 }
                                         }
+                                        c.ErrorDisplay.refresh("<r>Illegal Move!!!</r>")
                                         return false
                                 }
 
@@ -423,10 +492,21 @@
                                         if ( selectedSquare !== undefined ) {
                                                 //Not a same square
                                                 if ( selectedSquare !== selectedSquareObject ) {
-                                                        if ( movePiece(selectedSquare, selectedSquareObject) ) {
-                                                                whoPlayes = !whoPlayes  //Switch players is move has been made
+                                                        moved = movePiece(selectedSquare, selectedSquareObject)
+                                                        if ( !moved ) { //Either illegal move, retain selection unless unselected.
+                                                                if ( selectedSquare.has.color === selectedSquareObject.has.color ) {
+                                                                        selectedSquare.unselect()
+                                                                        selectedSquare = selectedSquareObject
+                                                                        selectedSquareObject.select()
+                                                                        c.ErrorDisplay.refresh(player[whoPlayes].charAt(0).toUpperCase() + player[whoPlayes].slice(1) + " plays...")
+                                                                }
+                                                                return
                                                         }
+                                                        whoPlayes = !whoPlayes  //Switch players is move has been made
+                                                        moved = false
+														setTimeout(c.flip, 200)
                                                 }
+                                                c.ErrorDisplay.refresh(player[whoPlayes].charAt(0).toUpperCase() + player[whoPlayes].slice(1) + " plays...")
                                                 selectedSquare.unselect()
                                                 selectedSquare = undefined //unselect square now
                                                 return
@@ -438,13 +518,16 @@
                                         }
                                 }
 
-                                const c = new Chessboard("ChessApp")
+                                const c = new Chessboard(msg)
                                 c.attachTo({ elem : document.getElementById("ChessApp") })
+                                //c.attachTo({ elem : document.body }) //Run this multiple times to see side-effects and you have handled rendering and objects properly
+                                //c.attachTo({ elem : document.body })
                                 //Attach click events to squares
                                 c.squareSelectedEvent(selectEventHandler)
                                 console.log(msg+" created...")
+
                         }
 
-						myApp("Chessboard")
+						myApp("chessboard")
 
                 </script>
