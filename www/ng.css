@@ -1,0 +1,121 @@
+                .chessPiece {
+                        float: left;
+                }
+                error {
+                        color: red;
+                }
+                .whiteQueen {
+                        height: 45px;
+                        width: 45px;
+                        background: url('piecesSprite.svg') -45px 0;
+                }
+                .whitePawn {
+                        height: 45px;
+                        width: 45px;
+                        background: url('piecesSprite.svg') 45px 0;
+                }
+                .whiteKing {
+                        height: 45px;
+                        width: 45px;
+                        background: url('piecesSprite.svg') 0 0;
+                }
+                .whiteBishop {
+                        height: 45px;
+                        width: 45px;
+                        background: url('piecesSprite.svg') -90px 0;
+                }
+                .whiteKnight {
+                        height: 45px;
+                        width: 45px;
+                        background: url('piecesSprite.svg') -135px 0;
+                }
+                .whiteRook {
+                        height: 45px;
+                        width: 45px;
+                        background: url('piecesSprite.svg') 90px 0;
+                }
+                .blackQueen {
+            height: 45px;
+            width: 45px;
+            background: url('piecesSprite.svg') -45px -45px;
+        }
+        .blackPawn {
+            height: 45px;
+            width: 45px;
+            background: url('piecesSprite.svg') 45px -45px;
+        }
+        .blackKing {
+            height: 45px;
+            width: 45px;
+            background: url('piecesSprite.svg') 0 -45px;
+        }
+        .blackBishop {
+            height: 45px;
+            width: 45px;
+            background: url('piecesSprite.svg') -90px -45px;
+        }
+        .blackKnight {
+            height: 45px;
+            width: 45px;
+            background: url('piecesSprite.svg') -135px -45px;
+        }
+        .blackRook {
+                        z-index: 1;
+            height: 45px;
+            width: 45px;
+            background: url('piecesSprite.svg') 90px -45px;
+        }
+                .helpBox {
+                        padding-top: 20px;
+                        float: left;
+                        height: 40px;
+                        width: 400px;
+                        outline: none;
+                }
+                .errorDisplay {
+                        padding-top: 20px;
+                        loat: left;
+                        height: 40px;
+                        width: 400px;
+                        outline: none;
+						text-align: left;
+                }
+                .moveDisplay {
+                        loat: left;
+                        height: 40px;
+                        width: 400px;
+                        outline: none;
+						text-align: left;
+                }
+                .chessboard {
+                        height: 360px;
+                        width: 360px;
+                        border: 3px #393D3F SOLID;
+                }
+                .blackSquare {
+                        background: #8693AB;
+                        height: 45px;
+                        width: 45px;
+                        float: left;
+                }
+
+                .whiteSquare {
+                        background: #EFF1F3;
+                        height: 45px;
+                        width: 45px;
+                        float: left;
+                }
+
+                .whiteSquareSelected {
+                        background: #DBD3D8;
+                        height: 45px;
+                        width: 45px;
+                        float: left;
+                }
+
+                .blackSquareSelected {
+                        background: #637074;
+                        height: 45px;
+                        width: 45px;
+                        float: left;
+                }
