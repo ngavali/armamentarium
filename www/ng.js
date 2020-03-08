@@ -29,30 +29,6 @@ class DOMElement {
 		return true
     }
 
-    attachTo(c) {
-        //console.log(c.constructor.name)
-
-        let parent = this.elem.parentNode
-        if (parent !== null) {
-            parent.removeChild(this.elem)
-        }
-
-        for (let prop in this.attr) {
-            this.elem.setAttribute(prop, this.attr[prop])
-        }
-        c.elem.appendChild(this.elem)
-
-    }
-
-    detachFrom(c) {
-        if (this.elem.parentNode === c.elem) {
-            console.log("Removing from destination")
-            c.elem.removeChild(this.elem)
-            return true
-        }
-        return false
-    }
-
     //Refresh object based on changes in the attr
     refresh(attr) {
         for (let prop in attr) {

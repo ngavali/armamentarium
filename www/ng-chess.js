@@ -26,9 +26,7 @@ class chessPiece extends DOMElement {
     place(s) {
         s.add(this)
         this.positionX = s.positionX
-        //parseInt(s.position.slice(0),10)
         this.positionY = s.positionY
-        //parseInt(s.position.slice(1),10)
     }
 
 }
@@ -59,7 +57,8 @@ class Square extends DOMElement {
     }
 
     remove(c) {
-        this.has = undefined
+        //this.has = undefined
+		delete this.has
         return super.remove(c)
     }
 
@@ -318,6 +317,16 @@ const myApp = () => {
 		//Castling		King, Rook
 		//King under check
 		
+		if (chessPiece.name === "Knight") {
+			if ( 
+				!(( chessPiece.positionX+2 === To.positionX || chessPiece.positionX-2 === To.positionX ) 
+					&& (chessPiece.positionY+1 == To.positionY || chessPiece.positionY-1 == To.positionY))
+				&& !(( chessPiece.positionX+1 === To.positionX || chessPiece.positionX-1 === To.positionX ) 
+					&& (chessPiece.positionY+2 == To.positionY || chessPiece.positionY-2 == To.positionY))
+			) {
+				return false
+			}
+		}
 		if (chessPiece.name === "Queen") {
 			//To be done
 			//1. Validate if jumping over the pieces while moving diagonally
@@ -338,22 +347,25 @@ const myApp = () => {
 					}
 				}
 			} //Diagonal move
-			else if( Math.abs(To.positionX - chessPiece.positionX) === Math.abs(To.positionY - chessPiece.positionY)) {
-				console.log("Moved diagonal")	
+			else if( !(Math.abs(To.positionX - chessPiece.positionX) === Math.abs(To.positionY - chessPiece.positionY)) ) {
+				return false
 			} //Illegal movement as in both direction
+			/*
 			else {
 				return false
-			}
+			}*/
 		}
 		if (chessPiece.name === "Bishop") {
 			//To be done
 			//1. Validate if jumping over the pieces while moving diagonally
-			if( Math.abs(To.positionX - chessPiece.positionX) === Math.abs(To.positionY - chessPiece.positionY)) {
+			if( !(Math.abs(To.positionX - chessPiece.positionX) === Math.abs(To.positionY - chessPiece.positionY)) ) {
 				console.log("Moved diagonal")	
+				return false
 			} //Illegal movement as in both direction
+			/*
 			else {
 				return false
-			}
+			}*/
 		}
 		if (chessPiece.name === "King") {
 			if (
@@ -464,6 +476,7 @@ const myApp = () => {
             }
             c.ErrorDisplay.refresh(player[whoPlayes].charAt(0).toUpperCase() + player[whoPlayes].slice(1) + " plays...")
             selectedSquare.unselect()
+			//delete selectedSquare
             selectedSquare = undefined //unselect square now
             return
         }
@@ -478,13 +491,9 @@ const myApp = () => {
     ChessApp.add(c)
     ChessApp.add(c.ErrorDisplay)
     ChessApp.add(c.MoveDisplay)
-    //document.body = ChessApp.elem
     //Attach click events to squares
     c.squareSelectedEvent(selectEventHandler)
     console.log("App created...")
-
-    //document.body.appendChild(c.elem)
-    //documentChessApp.add({ elem: document.createElement("div")})
 
 }
 
