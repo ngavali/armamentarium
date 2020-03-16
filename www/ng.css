@@ -81,7 +81,6 @@
 						text-align: left;
                 }
                 .moveDisplay {
-                        loat: left;
                         height: 40px;
                         width: 400px;
                         outline: none;
@@ -119,3 +118,8 @@
                         width: 45px;
                         float: left;
                 }
+				.moveTracker {
+					display: inline-block;
+					float:left;
+					width: 100px;
+				}

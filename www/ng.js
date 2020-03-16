@@ -37,7 +37,6 @@ class DOMElement {
 				this.elem.classList.add(attr[prop])
 				continue
 			}
-			console.log("a")
             this.elem.removeAttribute(prop)
             this.elem.setAttribute(prop, attr[prop])
             this.attr[prop] = attr[prop]
