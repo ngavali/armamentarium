@@ -24,12 +24,12 @@ class chessPiece extends DOMElement {
 		this.moveNum = 0
     }
 
+	/*
     place(s) {
         s.add(this)
         this.positionX = s.positionX
         this.positionY = s.positionY
-    }
-
+    }*/
 }
 
 class Square extends DOMElement {
@@ -63,7 +63,8 @@ class Square extends DOMElement {
     }
 
     selectedEvent(selectEventHandler) {
-        this.elem.onclick = () => {
+		//this.elem.addEventListener("click", () => { console.log(this); selectEventHandler(this) }, true)
+ 		 this.elem.onclick = () => {
             selectEventHandler(this)
         }
     }
@@ -80,7 +81,10 @@ class Square extends DOMElement {
         }
 		*/
         this.has = c
-        c.place(this)
+		this.has.positionX = this.positionX
+		this.has.positionY = this.positionY
+		this.add(c)
+        //c.place(this)
         //return res
 		return true
     }
@@ -188,11 +192,13 @@ class Chessboard extends DOMElement {
 
         //Place black pieces
         this.blackPieces.map((item, k) => {
-            item.place(this.squares[k])
+			this.squares[k].place(item)
+            //item.place(this.squares[k])
         })
         //Place white pieces
         this.whitePieces.map((item, k) => {
-            item.place(this.squares[k + 48])
+			this.squares[k+48].place(item)
+            //item.place(this.squares[k + 48])
         })
 
     }
@@ -241,7 +247,7 @@ class HelpBox extends DOMElement {
             class: "helpBox",
             disabled: true
         })
-        this.value = "Click to select or unselect square"
+        this.value = "Click square to move or release piece"
         this.elem.innerHTML = this.value
     }
 
@@ -261,7 +267,7 @@ class ErrorDisplay extends DOMElement {
             class: "errorDisplay",
             disabled: true
         })
-        this.value = "White plays ... Click to select or unselect square"
+        this.value = "White plays ... Click square to move or release piece"
         this.elem.innerHTML = this.value
     }
 
@@ -353,6 +359,7 @@ const myApp = () => {
     const c = new Chessboard("ChessBoard")
     //const selectedSquare = new Array()
     let selectedSquare
+	let isCastling = false
     let player = {
         true: "white",
         false: "black"
@@ -401,28 +408,40 @@ const myApp = () => {
 	}
 
 	diagonalMoveValidator = (FromLocation, ToLocation) => {
-		if( !(Math.abs(ToLocation.positionX - FromLocation.positionX) === Math.abs(ToLocation.positionY - FromLocation.positionY)) ) {
-			return false
-		} //Illegal movement as in both direction
-		return true
+		//If diagonal move process
+		if(Math.abs(ToLocation.positionX - FromLocation.positionX) === Math.abs(ToLocation.positionY - FromLocation.positionY)) {
+			//Check if no piece in between
+			let X = ToLocation.positionX < FromLocation.positionX ? -1 : 1
+			let Y = ToLocation.positionY < FromLocation.positionY ? -1 : 1
+			let x = FromLocation.positionX+X
+			let y = FromLocation.positionY+Y
+			for ( ; x != ToLocation.positionX; x+=X, y+=Y ) {
+				if (hasPiece(x, y)) {
+					return false
+				}
+			}
+			return true
+		} 
+		//Illegal movement
+		return false
 	}
 
 	//Handle special case 2.c below in valid moves
 	castlingMoveValidator = (FromLocation, ToLocation) => {
-		if ( FromLocation.positionY === ToLocation.positionY ) {
-			if ( 2 === Math.abs(FromLocation.positionX-ToLocation.positionX) ) {
 				let rookX = (Math.round(ToLocation.positionX/7))*7+1
 				let rookY = ToLocation.positionY
 				let rookSquare = c.getSquareAt(rookX, rookY)
-				let [src, dst] = FromLocation.positionX > rookX ? [rookX, FromLocation.positionX] : [FromLocation.positionX, rookX]
-				for ( let p = src+1; p < dst; p++) {
-					if (hasPiece(p, FromLocation.positionY)) {
-						return false
+	if ( rookSquare.has !== undefined && rookSquare.has.name === "Rook" && rookSquare.has.moveNum === 0 && FromLocation.moveNum === 0 ) {
+		if ( FromLocation.positionY === ToLocation.positionY ) {
+			if ( 2 === Math.abs(FromLocation.positionX-ToLocation.positionX) ) {
+				//If only, rook and king never moved out of their position
+					let [src, dst] = FromLocation.positionX > rookX ? [rookX, FromLocation.positionX] : [FromLocation.positionX, rookX]
+					for ( let p = src+1; p < dst; p++) {
+						if (hasPiece(p, FromLocation.positionY)) {
+							return false
+						}
 					}
-				}
-				//If has rook and if not then it has moved and cannot castle
-				//Nothing has ever moved from there position
-				if ( rookSquare.has !== undefined && rookSquare.has.name === "Rook" && rookSquare.has.moveNum === 0 && FromLocation.moveNum === 0 ) {
+					isCastling = true
 					return true
 				}
 			}
@@ -441,6 +460,11 @@ const myApp = () => {
 	attachValidations()
 
     ValidMoves = (From, To) => {
+		//If destination is of same color return immediately
+		if ( To.has !== undefined && From.has.color === To.has.color ) {
+			return false
+		}
+
 		let chessPiece = From.has
 		//Todo
 		//1. Any further scope of reusing the validations
@@ -483,8 +507,10 @@ const myApp = () => {
 		if (chessPiece.name === "King") {
 			if (!(
 				//Moves around one step
-				(( chessPiece.positionY-1<= To.positionY && chessPiece.positionY+1 >= To.positionY ) 
-					&& ( chessPiece.positionX-1 <= To.positionX && chessPiece.positionX+1 >= To.positionX )) ||
+				//(( chessPiece.positionY-1<= To.positionY && chessPiece.positionY+1 >= To.positionY ) 
+				//	&& ( chessPiece.positionX-1 <= To.positionX && chessPiece.positionX+1 >= To.positionX )) ||
+				//	updated with new condition, if has not moved more than 2 steps in any direction
+				( Math.abs(chessPiece.positionY-To.positionY) < 2 && Math.abs(chessPiece.positionX-To.positionX) < 2 ) ||
 				(castlingMoveValidator(chessPiece, To))
 				))
 			{
@@ -493,11 +519,18 @@ const myApp = () => {
 			}
 		}
 		if (chessPiece.name === "Knight") {
-			if ( 
+			if (/* 
+				!( ( Math.abs(chessPiece.positionX-To.positionX) <=2 && Math.abs(chessPiece.positionY-To.positionY) <= 2 )
+				&& ( Math.abs(chessPiece.positionX-To.positionX)+Math.abs(chessPiece.positionY-To.positionY) === 3 ) 
+				&& ( Math.abs(chessPiece.positionX-To.positionX) !== Math.abs(chessPiece.positionY-To.positionY) ) )
+*/
+				!(( Math.abs(chessPiece.positionX-To.positionX) === 1 && Math.abs(chessPiece.positionY-To.positionY) === 2 )
+				|| ( Math.abs(chessPiece.positionX-To.positionX) === 2 && Math.abs(chessPiece.positionY-To.positionY) === 1 ))
+/*
 				!(( chessPiece.positionX+2 === To.positionX || chessPiece.positionX-2 === To.positionX ) 
 					&& (chessPiece.positionY+1 == To.positionY || chessPiece.positionY-1 == To.positionY))
 				&& !(( chessPiece.positionX+1 === To.positionX || chessPiece.positionX-1 === To.positionX ) 
-					&& (chessPiece.positionY+2 == To.positionY || chessPiece.positionY-2 == To.positionY))
+					&& (chessPiece.positionY+2 == To.positionY || chessPiece.positionY-2 == To.positionY))*/
 			) {
 				return false
 			}
@@ -523,19 +556,6 @@ const myApp = () => {
         return true
     }
 
-    isValidMove = (From, To) => {
-        //To be implemented
-        if (!ValidMoves(From, To)) {
-            return false
-        }
-        if (To.has !== undefined) {
-            if (From.has.color === To.has.color) {
-                return false
-            }
-        }
-        return true
-    }
-
 	//Handle moving pieces
 	//Todo 
 	//1. Move tracking to some class
@@ -543,44 +563,59 @@ const myApp = () => {
 		//Todo
 		//do Castling		King, Rook
 		//do enpassant		Pawns
-        const Ex = {
-            true: "x",
-            false: ""
-        }
-        if (isValidMove(From, To)) {
+
+        if (ValidMoves(From, To)) {
 			c.Moves.push(new Move(player[whoPlayes], From, To))
 			//c.MoveDisplay.value = "<b>Moves: </b>"
 			let move = c.Moves[c.lastMoveNum]
-			if ( move.playedBy === "white" ) {
-				c.WhiteMoveTracker.refresh(c.WhiteMoveTracker.value + "</br>" + (c.lastMoveNum+1) + "." + aliases[move.src.has.name] + move.isCaptured + horAxis[move.dst.positionX-1] + move.dst.positionY)
-			} else {
-				c.BlackMoveTracker.refresh(c.BlackMoveTracker.value + "</br>" + (c.lastMoveNum+1) + "." + aliases[move.src.has.name] + move.isCaptured + horAxis[move.dst.positionX-1] + move.dst.positionY)
-			}
-            //c.MoveDisplay.refresh(c.MoveDisplay.value + "</br>" + (c.lastMoveNum+1) + "." + move.playedBy + " played " + aliases[move.src.has.name] + move.isCaptured + horAxis[move.dst.positionX] + move.dst.positionY)
 			//Todo
 			//1. Handle special cases mentioned above
 			//2. Handle moving pieces
-			
-			//Handle normal move
-            //if (From.has != undefined) {
-			let isEx = false
+
+			let sym = "O-O" //Kingside castling...
+			let moveTracker = { "white" : c.WhiteMoveTracker, "black" : c.BlackMoveTracker }
+
+			if ( !isCastling ) {
+				moveTracker[move.playedBy].refresh(moveTracker[move.playedBy].value + "</br>" + (c.lastMoveNum+1) + "." + aliases[move.src.has.name] + move.isCaptured + horAxis[move.dst.positionX-1] + move.dst.positionY)
+			} else {
+				if ( (From.positionX+To.positionX)/2 === 4 ) {
+					//Queenside castling...
+					sym+="-O"
+				}
+				moveTracker[move.playedBy].refresh(moveTracker[move.playedBy].value + "</br>" + (c.lastMoveNum+1) + "." + sym)
+			}
+
 			From.has.moveNum++
 			c.lastMoveNum++
-
-			//Normal Move!!!
+				//Normal Move!!!
 				//Capture piece
 				//If To has a chessPiece then remove it
-				if ( To.has !== undefined ) {
-					To.remove(To.has)
-					isEx = true
+			if ( move.isCaptured ) {
+				To.remove(To.has)
+			}
+			//perform the movement
+            To.place(From.has)
+            From.remove(From.has)
+				
+			//Additional step for special moves
+			//1. Castling	Rook movement
+			//To be done 2. Enpassant???? piece removal
+				if ( isCastling ) {
+					let rookX = (Math.round(To.positionX/7))*7+1
+					let rookY = To.positionY
+					let srcRookSquare = c.getSquareAt(rookX, rookY)
+					//console.log(`${From.positionX}, ${To.positionX}, ${(From.positionX+To.positionX)/2}`)
+					let destRookSquare = c.getSquareAt((From.positionX+To.positionX)/2,rookY)
+					destRookSquare.place(srcRookSquare.has)
+					srcRookSquare.remove(srcRookSquare.has)
+					isCastling = !isCastling
 				}
-                To.place(From.has)
                 //From.has.place(To)
-                From.remove(From.has)
                 //c.MoveDisplay.refresh(c.MoveDisplay.value + " " + aliases[To.has.name] + Ex[isEx] + horAxis[To.positionX] + To.positionY)
-                return true
+            return true
             //}
         }
+		//Illegal move
         c.ErrorDisplay.refresh("<error>Illegal Move!!!</error>")
         return false
     }
