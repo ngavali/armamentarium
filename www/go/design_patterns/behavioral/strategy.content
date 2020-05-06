@@ -1,0 +1,100 @@
+<h3>
+<a href="#go" onclick="_().loadContent(this,'go','ContentBody');">Go Programming Language</a> - 
+<a href="#go/patterns" onclick="_().loadContent(this,'go/patterns','ContentBody');" > Design Patterns</a> - Strategy</h3>
+<r>Work in progress ...</r></p>
+Think of a reverse proxy. It accepts client connection and forward requests to backend server.</br>
+Let us say we have multiple backend servers. Various strategies can be used to select backend server.</br>
+1. Least connection time </br>
+2. Round Robin </br>
+<h4>Proxy code</h4>
+<pre>
+package wormhole
+
+import (
+        "fmt"
+        "io"
+        "net"
+        "sort"
+        "sync"
+        "time"
+
+        "github.com/pkg/errors"
+)
+
+var wormholes map[string]wormhole
+
+type wormhole struct {
+        name            string
+        port            uint
+        beChan          chan destination
+        algo            SelectionAlgo
+        destinationList []destination
+        checkCycle      int
+}
+</pre>
+<h4>Backend selection strategy</h4>
+<pre>
+package wormhole
+
+import (
+        "github.com/pkg/errors"
+)
+
+const (
+        CLOSEST int = iota
+        ROUNDROBIN
+)
+
+var algoName = map[int]string{CLOSEST: "Closest", ROUNDROBIN: "Round Robin"}
+
+type SelectionAlgo interface {
+        Select([]destination, chan destination)
+        Type() int
+}
+
+type algoClosest struct {
+}
+
+func (a *algoClosest) Type() int {
+        return CLOSEST
+}
+
+func (a *algoClosest) Select(beList []destination, be chan destination) {
+        for {
+                for _, b := range beList {
+                        if b.isAlive {
+                                be <- b
+                                break
+                        }
+                }
+        }
+}
+
+type algoRoundRobin struct {
+}
+
+func (a *algoRoundRobin) Type() int {
+        return ROUNDROBIN
+}
+
+func (a *algoRoundRobin) Select(beList []destination, be chan destination) {
+        for {
+                for _, b := range beList {
+                        if b.isAlive {
+                                be <- b
+                        }
+                }
+        }
+}
+
+func NewSelectionAlgo(algoType int) SelectionAlgo {
+        switch algoType {
+        case CLOSEST:
+                return new(algoClosest)
+        case ROUNDROBIN:
+                return new(algoRoundRobin)
+        default:
+                panic(errors.Errorf("Unsupported algorithm: %d", algoType))
+        }
+}
+</pre>

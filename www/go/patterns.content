@@ -6,3 +6,4 @@
 <h4>Behavioral</h4>
 <a href="#go/design_patterns/behavioral/chainOfResponsibility" onclick="_().loadContent(this,'go/design_patterns/behavioral/chainOfResponsibility','ContentBody');">Chain of responsibility</a></br>
 <a href="#go/design_patterns/behavioral/observer" onclick="_().loadContent(this,'go/design_patterns/behavioral/observer','ContentBody');">Observer</a></br>
+<a href="#go/design_patterns/behavioral/strategy" onclick="_().loadContent(this,'go/design_patterns/behavioral/strategy','ContentBody');">Strategy</a></br>
