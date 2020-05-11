@@ -30,3 +30,20 @@ error: Could not compile `variables`.
 
 To learn more, run the command again with --verbose.
 </pre>
+Allow mutation using <name>mut</name> keyword
+<pre>
+fn main() {
+    let <name>mut</name> x = 1;
+    println!("{}", x);
+    <v>x = 2;</v>
+    println!("{}", x);
+}
+</pre>
+Output of Cargo run
+<pre>
+   Compiling variables v0.1.0 (/external/application/rust/variables)
+    Finished dev [unoptimized + debuginfo] target(s) in 0.32s
+     Running `target/debug/variables`
+1
+2
+</pre>

@@ -4,7 +4,7 @@ Having series of changes on the same variable without using <code><v>mut</v></co
 fn main() {
     let x = 1;
     println!("{}", x);
-    let x = x * 10;
+    let x = x * 10;			//Note the usage of <c>let</c> twice
     println!("{}", x);
 }
 </pre>

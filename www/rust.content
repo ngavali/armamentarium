@@ -3,4 +3,6 @@ My musings with Rust</p>
 <a href="#rust/hello" onclick="_().loadContent(this,'rust/hello','ContentBody');">Say Hello, Rust!</a>
 <h4>Basics</h4>
 <a href="#rust/mutable" onclick="_().loadContent(this,'rust/mutable','ContentBody');">Mutability</a></br>
-<a href="#rust/shadow" onclick="_().loadContent(this,'rust/shadow','ContentBody');">Shadowing</a>
+<a href="#rust/shadow" onclick="_().loadContent(this,'rust/shadow','ContentBody');">Shadowing</a></br>
+<h4>Long reads</h4>
+<a href="#rust/opr" onclick="_().loadContent(this,'rust/opr','ContentBody');">One Page Rust</a>
