@@ -1,2 +1,291 @@
 <h3><a href="#rust" onclick="_().loadContent(this,'rust','ContentBody');" >Rust Programming Language</a> - One Page Rust!</h3></p>
 <r>Work in progress!!!</r>
+<h4>Casting</h4>
+<pre>
+fn main() {
+    let x = 1;
+    println!("{:10.3}", x);
+    let x = 3;
+    println!("{:10.3}", x as f32);
+}
+</pre>
+Output
+<pre>
+         1
+     3.000
+</pre>
+<h4>Match, If let, While let</h4>
+<pre>
+fn main() {
+    let a = 10;
+    match a {
+        10 => println!("Ten"),
+        1..=9 => println!("Less than Ten"),
+        100 => println!("Hundred"),
+        _ => println!("Something else"),
+    };
+    //match expression
+    let b = match a {
+        10 => "Ten",
+        1..=9 => "Less than Ten",
+        100 => "Hundred",
+        _ => "Some number",
+    };
+    println!("b => {}", b);
+    let pair = (0, -3);
+    match pair {
+        (0, y) => println!("y: {}", y),
+        (x, -3) => println!("x: {}", x),
+        _ => println!("No match"),
+    };
+
+    match pair {
+        (x, y) if y == -3 && x == 0 => println!("Exact match"),
+        _ => println!("No match found"),
+    };
+
+    let mut s = Some(10);
+    match s {
+        Some(c) if c < 100 => println!("{}", c),
+        None => println!("none"),
+        _ => println!("No matches"),
+    };
+
+    //Using if as match, you dont need match all cases
+    if let Some(c) = s {
+        println!("{}", c);
+    }
+
+	//Using while as match
+    while let Some(c) = s {
+        if c < 20 {
+            println!("{}", c);
+            s = Some(c + 1)
+        } else {
+            println!("Stop");
+            s = None
+        }
+    }
+
+    let n = match a {
+        n @ 1..=10 => n + 1,
+        _ => 0,
+    };
+
+    println!("{} {}", n, a)
+}
+</pre>
+Output
+<pre>
+Ten
+b => Ten
+y: -3
+Exact match
+10
+10
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+Stop
+11 10
+</pre>
+<h4>Enums</h4>
+<pre>
+enum Shape {
+    Square(f32),
+    Circle(f64),
+    Rectangle { width: u32, height: u32 },
+}
+
+impl Shape {
+    fn area(&self) -> f64 {
+        match self {
+            Shape::Rectangle { width, height } => (width * height) as f64,
+            Shape::Circle(r) => 3.14 * (r * r),
+            Shape::Square(s) => (s * s) as f64,
+        }
+    }
+}
+
+fn main() {
+    let r = Shape::Rectangle {
+        width: 10,
+        height: 8,
+    };
+    let c = Shape::Circle(2.5);
+    let s = Shape::Square(5.1);
+
+    let mut a = r.area();
+    println!("{:10.4}", a);
+    a = c.area();
+    println!("{:10.4}", a);
+    a = s.area();
+    println!("{:10.4}", a);
+}
+</pre>
+Ouput
+<pre>
+   80.0000
+   19.6250
+   26.0100
+</pre>
+<h4>Result</h4>
+<pre>
+use std::fs::File;
+
+fn main() {
+    let f = File::open("file.txt");
+
+    let f = match f {
+        Ok(file) => file,
+        Err(error) => panic!("Error while opening file. Error=> {}", error),
+    };
+
+    println!("{:#?}", f)
+}
+</pre>
+Output</br>
+File is present:
+<pre>
+File {
+    fd: 3,
+    path: "/home/ngavali/rust/results/file.txt",
+    read: true,
+    write: false,
+}
+</pre>
+File is missing:
+<pre>
+thread 'main' panicked at 'Error while opening file. Error=> No such file or directory (os error 2)', src/main.rs:8:23
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+</pre>
+<h4>Option</h4>
+How to store nil/null?
+<pre>
+fn divide(x: f64, y: f64) -> Option<f64> {
+    if y != 0.0 {
+        Some(x / y)
+    } else {
+        None
+    }
+}
+
+fn show_value(o: Option<f64>) {
+    match o {
+        Some(x) => println!("value is {}", x),
+        None => println!("value is Undefined"),
+    }
+}
+
+fn main() {
+    let r = divide(1.0, 0.0);
+    show_value(r);
+    let r = divide(1.0, 2.0);
+    show_value(r);
+}
+</pre>
+Output
+<pre>
+value is Undefined
+value is 0.5
+</pre>
+<h4>Vectors</h4>
+Let us also introduce "destruct" as well.
+<pre>
+#[derive(Debug)]
+enum Shape {
+    Square(f32),
+    Circle(f64),
+    Rectangle { width: u32, height: u32 },
+}
+
+impl Shape {
+    fn area(&self) -> f64 {
+        match self {
+            Shape::Rectangle { width, height } => (width * height) as f64,
+            Shape::Circle(r) => 3.14 * (r * r),
+            Shape::Square(s) => (s * s) as f64,
+        }
+    }
+}
+
+impl Shape {
+    fn destruct(&self) -> String {
+        match self {
+            Shape::Circle(_) => String::from("Circle"),
+            Shape::Square(..) => String::from("Square"),
+            Shape::Rectangle { .. } => String::from("Rectangle"),
+        }
+    }
+}
+
+fn main() {
+    let mut v = Vec::new();
+
+    let r = Shape::Rectangle {
+        width: 10,
+        height: 8,
+    };
+    let c = Shape::Circle(2.5);
+    let s = Shape::Square(5.1);
+
+    v.push(r);
+    v.push(c);
+    v.push(s);
+
+    for i in &v {
+        println!("{:10} has area: {:10.4}", i.destruct(), i.area());
+    }
+}
+</pre>
+Output
+<pre>
+Rectangle  has area:    80.0000
+Circle     has area:    19.6250
+Square     has area:    26.0100
+</pre>
+<h4>Generics</h4>
+<pre>
+#[derive(Debug)]
+struct Square<T> {
+    x: T,
+}
+
+fn main() {
+    let is = Square { x: 10 };
+    let fs = Square { x: 10.2 };
+    let ss = Square { x: "square" };
+    let cs = Square { x: 'c' };
+    println!("{:#?}", is);
+    println!("{:#?}", fs);
+    println!("{:#?}", ss);
+    println!("{:#?}", cs);
+
+    let a = || 1;
+    println!("{}", a());
+}
+</pre>
+Wooo, what kind of expression is that.</br>
+Output
+<pre>
+Square {
+    x: 10,
+}
+Square {
+    x: 10.2,
+}
+Square {
+    x: "square",
+}
+Square {
+    x: 'c',
+}
+1
+</pre>

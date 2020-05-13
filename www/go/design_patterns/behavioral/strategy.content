@@ -1,11 +1,11 @@
 <h3>
 <a href="#go" onclick="_().loadContent(this,'go','ContentBody');">Go Programming Language</a> - 
 <a href="#go/patterns" onclick="_().loadContent(this,'go/patterns','ContentBody');" > Design Patterns</a> - Strategy</h3>
-<r>Work in progress ...</r></p>
-Think of a reverse proxy. It accepts client connection and forward requests to backend server.</br>
-Let us say we have multiple backend servers. Various strategies can be used to select backend server.</br>
-1. Least connection time </br>
-2. Round Robin </br>
+<r><h5>Draft!</h5></r></p>
+Think of a reverse proxy. It accepts client connection and forwards requests to backend server and responses from backend server back to the client.</br>
+Let a proxy be represented by an object, say Wormhole. (Using some fancy terminology, A wormhole is a tunnel between two separate points in spacetime)</br>
+And a backend server that client wants to reach, say Destination.</br>
+In our proxy example here, wormhole receives the connection from a client and tunnels traffic to a backend server. Makes client feel that it's talking to the backend server.</br>
 <h4>Proxy code</h4>
 <pre>
 package wormhole
@@ -33,6 +33,12 @@ type wormhole struct {
 }
 </pre>
 <h4>Backend selection strategy</h4>
+Let us say we have a set of backend servers that we can connect a client to. </br>
+Possibly, shortest path</br>
+1. Thats is, backend with Least connection time </br>
+Or say any backend</br>
+2. In Round Robin </br>
+Thus, we have two strategies to reach a backend or select a backend to connect a client. ( Various strategies can be used to select backend server, here we consider these two).</br>
 <pre>
 package wormhole
 
