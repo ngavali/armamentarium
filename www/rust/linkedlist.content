@@ -1,0 +1,163 @@
+<h3><a href="#rust" onclick="_().loadContent(this,'rust','ContentBody');" >Rust Programming Language</a> - One Page Rust!</h3></p>
+<r>Work in progress!!!</r>
+My first hand experience with linked list in rust.
+<h4>Unsafe!!!</h4>
+<pre>
+#[derive(Debug)]
+struct Node {
+    value: i32,
+    next: Option<*mut Node>,
+}
+
+#[derive(Debug)]
+struct LinkedList {
+    head: Option<*mut Node>,
+}
+
+impl LinkedList {
+    fn add(&self, value: i32) {
+        let mut a: Option<*mut Node> = self.head;
+        loop {
+            unsafe {
+                (*a.unwrap()).value += value;
+                a = (*a.unwrap()).next;
+            }
+            if a == None {
+                break;
+            }
+        }
+    }
+}
+
+fn main() {
+    let n1 = &mut Node {
+        value: 3,
+        next: None,
+    };
+
+    let n2 = &mut Node {
+        value: 2,
+        next: Some(n1),
+    };
+
+    let n3 = &mut Node {
+        value: 1,
+        next: Some(n2),
+    };
+
+    let linked_list = LinkedList { head: Some(n3) };
+
+    let mut a: Option<*mut Node> = linked_list.head;
+
+    linked_list.add(1);
+
+    loop {
+        unsafe {
+            println!("=>\n -Node {:?}\n -My address {:?}\n", *(a.unwrap()), a);
+            a = (*a.unwrap()).next;
+        }
+        if a == None {
+            break;
+        }
+    }
+
+    println!("{:?}", linked_list);
+}
+</pre>
+Output:
+<pre>
+=>
+ -Node Node { value: 2, next: Some(0x7ffe02fee450) }
+ -My address Some(0x7ffe02fee478)
+
+=>
+ -Node Node { value: 3, next: Some(0x7ffe02fee428) }
+ -My address Some(0x7ffe02fee450)
+
+=>
+ -Node Node { value: 4, next: None }
+ -My address Some(0x7ffe02fee428)
+
+LinkedList { head: Some(0x7ffe02fee478) }
+</pre>
+
+<h4>Boxed</h4>
+
+<pre>
+#[derive(Debug, Clone)]
+struct Node {
+    value: i32,
+    next: Option<Box<Node>>,
+}
+
+#[derive(Debug, Clone)]
+struct LinkedList {
+    head: Option<Box<Node>>,
+}
+
+impl LinkedList {
+    fn add(&mut self, value: i32) {
+        let mut a = &mut self.head;
+        loop {
+            match a {
+                Some(x) => {
+                    x.value += value;
+                    a = &mut x.next;
+                }
+                None => break,
+            }
+        }
+    }
+}
+
+fn main() {
+    let n1 = Box::new(Node {
+        value: 3,
+        next: None,
+    });
+
+    let n2 = Box::new(Node {
+        value: 2,
+        next: Some(n1),
+    });
+
+    let n3 = Box::new(Node {
+        value: 1,
+        next: Some(n2),
+    });
+
+    let mut linked_list = LinkedList { head: Some(n3) };
+
+    linked_list.add(1);
+    let mut a: Option<Box<Node>> = linked_list.head;
+
+    //allow move here
+    loop {
+        match a {
+            Some(x) => {
+                println!("=>\n -Node {:?}\n -My address {:p}\n", x, x);
+                a = x.next;
+            }
+            None => break,
+        }
+    }
+    //here linked_list doesnt exists as everything has moved by now
+    //    println!("{:?}", linked_list);
+}
+</pre>
+
+Output
+
+<pre>
+=>
+ -Node Node { value: 2, next: Some(Node { value: 3, next: Some(Node { value: 4, next: None }) }) }
+ -My address 0x56121638e170
+
+=>
+ -Node Node { value: 3, next: Some(Node { value: 4, next: None }) }
+ -My address 0x56121638e150
+
+=>
+ -Node Node { value: 4, next: None }
+ -My address 0x56121638e130
+</pre>

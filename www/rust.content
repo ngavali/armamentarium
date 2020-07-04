@@ -6,3 +6,5 @@ My musings with Rust</p>
 <a href="#rust/shadow" onclick="_().loadContent(this,'rust/shadow','ContentBody');">Shadowing</a></br>
 <h4>Long reads</h4>
 <a href="#rust/opr" onclick="_().loadContent(this,'rust/opr','ContentBody');">One Page Rust</a>
+<h4>Linked List</h4>
+<a href="#rust/linkedlist" onclick="_().loadContent(this,'rust/linkedlist','ContentBody');">Linked List</a>
