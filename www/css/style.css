@@ -1,8 +1,5 @@
-/*@import url('https://fonts.googleapis.com/css?family="Droid Sans", Arima, "Source Sans Pro"');
-/*@import url('https://fonts.googleapis.com/css?family=Arial|Yantramanav');
-@import url('https://fonts.googleapis.com/css?family=Droid+Sans');
-@import url('https://fonts.googleapis.com/css?family="Droid Sans", Arima, "Source Sans Pro"|Libre+Franklin|Noto+Sans+JP|Patrick+Hand|Alegreya+Sans:300|Playfair+Display');*/
-
+/*@import url('https://fonts.googleapis.com/css?family="Droid Sans", Arima, "Source Sans Pro"|Libre+Franklin|Noto+Sans+JP|Patrick+Hand|Alegreya+Sans:300|Playfair+Display');*/
+*/
 html { overflow-y: scroll; }
 
 div#ContentBody {    
@@ -36,7 +33,7 @@ div#menubar {
 logo {
 	font-size: 22px;
 	font-weight: normal;
-	font-family: Arial;
+	font-family: "Times New Roman";
 }
 
 k3 {
@@ -93,7 +90,7 @@ table#topicContent {
 }
 
 body {
-	font-family: Arial;
+	font-family: "Times New Roman";
 	font-size: 17px;
 	color: #444;
 	color: #000;
@@ -104,7 +101,7 @@ body {
 }
 
 table#topicContent tr td {
-	font-family: Arial;
+	font-family: "Times New Roman";
 	font-size: 17px;
 }
 
@@ -113,7 +110,7 @@ table#menu tr td a {
 	text-decoration: none;
 	color: rgb( 100, 100, 100 );
 	color: #000;
-	font-family: Arial;
+	font-family: "Times New Roman";
 }
 
 table#menu tr td a {
