@@ -1,4 +1,5 @@
 <h3><a href="#rust" onclick="_().loadContent(this,'rust','ContentBody');" >Rust Programming Language</a> - Mutability</h3></p>
+Rust variables are immutable by default.</br>
 Version 1
 <pre>
 fn main() {
@@ -45,5 +46,54 @@ Output of Cargo run
     Finished dev [unoptimized + debuginfo] target(s) in 0.32s
      Running `target/debug/variables`
 1
+2
+</pre>
+References</br>
+<ul>
+The Rules of References
+<li>At any given time, <i>you can have either one mutable reference</i> or <i>any number of immutable references</i>.</li>
+<li>References must always be valid.</li>
+</ul>
+Let us understand the first rule through following example. Read through comments.
+<pre>
+fn main() {
+    let x = 1;
+    //you can have any number of immutable references
+    let y = &x;
+    let z = &x;
+    println!("{}", x);
+    println!("{}", y);
+    println!("{}", z);
+
+    /*
+    let mut x = 10;
+    let y = &mut x;
+    //at any given time, you can have only one mutable reference
+    let z = &mut x; >>> here is the problem
+    let c = &x; >>> even this is a problem
+    println!("{}", y);
+    println!("{}", z);
+    */
+
+    let mut x = 1;
+    let y = &mut x;
+    *y += 1;
+    println!("{}", y);
+    //at this point y gets drop. So, the reference no longer exists
+    //we can take a mutable reference to x again
+    let z = &mut x;
+    println!("{}", z);
+}
+</pre>
+Output
+<pre>
+$ cargo run
+   Compiling pointers v0.1.0 (/home/ngavali/rust/pointers)
+    Finished dev [unoptimized + debuginfo] target(s) in 0.36s
+     Running `target/debug/pointers`
+1
+1
+1
+2
 2
 </pre>
