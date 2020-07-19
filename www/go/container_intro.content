@@ -1,5 +1,6 @@
 <h3><a href="#go" onclick="_().loadContent(this,'go','ContentBody');" >Go Programming Language</a> - Containers - Introduction</h3></p>
-<r>Draft</r>
+<r>Draft</r></p>
+In Linux, namespaces are used to create isolated environments for processes.</p>
 <ul>
 Namespaces
 <li>UTS</li>
@@ -9,7 +10,7 @@ Namespaces
 <li>UTS</li>
 <li>USER</li>
 </ul>
-Network setup
+Networking in namespaces.
 <pre>
 ##Setup bridge interface
 ip link add name brahma type bridge
