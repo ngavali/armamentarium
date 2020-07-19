@@ -9,4 +9,21 @@ Namespaces
 <li>UTS</li>
 <li>USER</li>
 </ul>
+Network setup
+<pre>
+##Setup bridge interface
+ip link add name brahma type bridge
+##Create virtual link pair. Move one of them in the Namespace identified by pid
+ip link add veth0 type veth peer name veth1 netns <pid>
+##Assign address to the bridge link
+ip addr add 192.168.1.10/24 brd + dev brahma
+##Make bridge as master for veth0
+ip link set veth0 master brahma
+##Assign address to the peer link inside the container running in Namespace
+ip addr add 192.168.1.12/24 dev veth1
+##Bring up the links
+ip link set brahma up
+ip link set veth0 up
+##This is from inside the container running in Namespace
+ip link set veth1 up
 </pre>

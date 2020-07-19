@@ -1,7 +1,8 @@
 <h3>Go Programming Language</h3>
 My musings with Go</p>
 <h4>Containers</h4>
-<a href="#go/container_intro" onclick="_().loadContent(this,'go/container_intro','ContentBody');">Introduction</a>
+<a href="#go/container_intro" onclick="_().loadContent(this,'go/container_intro','ContentBody');">Introduction</a></br>
+<a href="#go/container_write" onclick="_().loadContent(this,'go/container_write','ContentBody');">Container from scratch</a>
 <h4>Performance</h4>
 <a href="#go/wti" onclick="_().loadContent(this,'go/wti','ContentBody');">Tip of the iceberg</a>
 <h4>Data Structures</h4>
