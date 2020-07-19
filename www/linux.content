@@ -4,4 +4,6 @@ HAProxy - <a href="#linux/snihaproxy" onclick="_().loadContent(this,'linux/sniha
 HAProxy - SNI implementation - <a href="#linux/snitransparenthaproxy" onclick="_().loadContent(this,'linux/snitransparenthaproxy','ContentBody');">Capturing the client IP</a></br>
 OpenSSL <a href="#linux/openssl" onclick="_().loadContent(this,'linux/openssl','ContentBody');">commands</a></br>
 <h4>Javascript</h4>
-Chess in <a href="#es6/chess" onclick="_().loadContent(this,'es6/chess','ContentBody');">ES6</a></br>
+Chess app using <a href="#es6/chess" onclick="_().loadContent(this,'es6/chess','ContentBody');">ES6</a></br>
+<h4>GIT</h4>
+<a href="#linux/git" onclick="_().loadContent(this,'linux/git','ContentBody');">Basics</a></br>

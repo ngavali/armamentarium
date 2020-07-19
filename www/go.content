@@ -1,5 +1,7 @@
 <h3>Go Programming Language</h3>
 My musings with Go</p>
+<h4>Containers</h4>
+<a href="#go/container_intro" onclick="_().loadContent(this,'go/container_intro','ContentBody');">Introduction</a>
 <h4>Performance</h4>
 <a href="#go/wti" onclick="_().loadContent(this,'go/wti','ContentBody');">Tip of the iceberg</a>
 <h4>Data Structures</h4>
@@ -24,7 +26,6 @@ Simple <a href="#go/httpserver" onclick="_().loadContent(this,'go/httpserver','C
 Unblocking the channel with a <a href="#go/queues" onclick="_().loadContent(this,'go/queues','ContentBody');">Queue</a></br>
 Process sychronization using a <a href="#go/dblocks" onclick="_().loadContent(this,'go/dblocks','ContentBody');">DB lock</a></br>
 <a href="#go/auth" onclick="_().loadContent(this,'go/auth','ContentBody');">OAuth and SAML</a></br>
-<a href="#go/git" onclick="_().loadContent(this,'go/git','ContentBody');">GIT</a></br>
 <a href="#go/testing" onclick="_().loadContent(this,'go/testing','ContentBody');">Testing</a>
 <h4>Good Reads</h4>
 <a hred="https://www.ardanlabs.com/blog/2017/05/language-mechanics-on-stacks-and-pointers.html" target="_">Stacks and Pointers</a>
