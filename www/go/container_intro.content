@@ -11,19 +11,35 @@ Namespaces
 <li>USER</li>
 </ul>
 Networking in namespaces.
+<center>
+<image src="/images/vlinks.svg" width="330px">
+Create eth pair and bridge</p>
+</center>
 <pre>
 ##Setup bridge interface
-ip link add name brahma type bridge
+ip link add name vbridge type bridge
 ##Create virtual link pair. Move one of them in the Namespace identified by pid
 ip link add veth0 type veth peer name veth1 netns <pid>
+</pre>
+<center>
+<image src="/images/veth_pair.svg" width="330px">
+Link veth0 with the bridge</p>
+</center>
+<pre>
 ##Assign address to the bridge link
-ip addr add 192.168.1.10/24 brd + dev brahma
+ip addr add 192.168.1.10/24 brd + dev vbridge
 ##Make bridge as master for veth0
-ip link set veth0 master brahma
+ip link set veth0 master vbridge
+</pre>
+<center>
+<image src="/images/veth_pair_ns.svg" width="330px">
+Move veth1 to NS, using the pid belongs to NS</p>
+</center>
+<pre>
 ##Assign address to the peer link inside the container running in Namespace
 ip addr add 192.168.1.12/24 dev veth1
 ##Bring up the links
-ip link set brahma up
+ip link set vbridge up
 ip link set veth0 up
 ##This is from inside the container running in Namespace
 ip link set veth1 up
