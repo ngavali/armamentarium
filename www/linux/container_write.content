@@ -215,8 +215,6 @@ extern "C" fn setup_ns(data: *mut Cmd) -> libc::c_int {
     println!("Go for a short sleep ... find a mechanism to synchronize..."); //MPSC channels dont work!!!
     thread::sleep(Duration::new(5, 0));
 
-    create_namespace_mapping();
-
     let program = CString::new("/proc/self/exe")
         //CString::new("/home/ngavali/rust/container/target/debug/container")
         .unwrap();
@@ -283,14 +281,9 @@ fn main() {
                     println!("CN RESULT -> {}", pid);
                     println!("CN ERROR WHILE RUNNING -> {:?}", Error::last_os_error());
 
-                    println!("CLONE will not move ahead until wakeup signal is sent...");
-                    match tx.send(1u8) {
-                        Ok(_) => println!("message send"),
-                        Err(_err) => println!("Send error -> {}", _err),
-                    }
-                    drop(tx);
+                    /* block child and do ns mapping here and then unblock child*/
+                    create_namespace_mapping();
 
-                    println!("Sleep done!!! {}", pid);
                     let mut rusage: libc::rusage = std::mem::MaybeUninit::uninit().assume_init(); //std::mem::MaybeUninit::zeroed().assume_init();
                     let mut status: i32 = 0;
                     let options: i32 = 0;
