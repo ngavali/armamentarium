@@ -1,0 +1,205 @@
+<h3><a href="#linux" onclick="_().loadContent(this,'linux','ContentBody');" >Containers</a> - Let's build one</h3></p>
+<r>Working on it. Coming soon!!!</r></p>
+In case you want to have a look at namespaces basic click <a href="#linux/container_intro" onclick="_().loadContent(this,'linux/container_intro','ContentBody');">introduction</a>.</p>
+Example uses hindu mythological names</br>
+Brahma the creator of all Lokas (different worlds)</br>
+<*>Loka is an analogy for the container.</br>
+<*>Brahma is the container spawner</p>
+Have a linux filesystem structure created under /containerfs directory (accessible via user executing this binary). Which will have all the essential utilities such as bash and other per your need.
+
+<h3>Go</h3>
+<pre>
+package main
+
+import (
+        "fmt"
+        "os"
+        "os/exec"
+        "syscall"
+)
+
+func main() {
+        switch os.Args[1] {
+        case "run":
+                run()
+        case "loka":
+                loka()
+        default:
+                fmt.Println("Usage: ./brahma run command")
+        }
+}
+
+func run() {
+        fmt.Printf("Creating Loka for %v\n", os.Args[2:])
+        cmd := exec.Command("/proc/self/exe", append([]string{"loka"}, os.Args[2:]...)...)
+        cmd.Stdin = os.Stdin
+        cmd.Stdout = os.Stdout
+        cmd.Stderr = os.Stderr
+        cmd.SysProcAttr = &syscall.SysProcAttr{
+                Cloneflags: syscall.CLONE_NEWNS |
+                        syscall.CLONE_NEWUTS |
+                        syscall.CLONE_NEWIPC |
+                        syscall.CLONE_NEWPID |
+                        syscall.CLONE_NEWNET |
+                        syscall.CLONE_NEWUSER,
+                //Map UID
+                UidMappings: []syscall.SysProcIDMap{
+                        {
+                                HostID:      os.Getuid(), //UID of current program to be mapped with
+                                ContainerID: 0,           //UID in container
+                                Size:        1,
+                        },
+                },
+                //Map GID
+                GidMappings: []syscall.SysProcIDMap{
+                        {
+                                HostID:      os.Getgid(), //GID of current program to be mapped with
+                                ContainerID: 0,           //GID in container
+                                Size:        1,
+                        },
+                },
+        }
+        _err := cmd.Start()
+        if _err != nil {
+                fmt.Println("Error while creating Loka ->", _err)
+        } else {
+                fmt.Println("Loka created successfully!!!")
+        }
+        if _err := cmd.Wait(); _err != nil {
+                fmt.Println("Error while in Loka ->", _err)
+        }
+        fmt.Println("Loka distroyed!!!")
+}
+
+func loka() {
+        fmt.Printf("Preparing %v in new Loka\n", os.Args[2:])
+        syscall.Sethostname([]byte("my-loka"))
+        syscall.Chroot("/containerfs")               //New root for the Loka container
+        syscall.Chdir("/")                           //Change directory
+        syscall.Mount("proc", "proc", "proc", 0, "") //Mount new proc
+        //Replace the current process. Leaving no trace of the parent /proc/self/exe
+        _err := syscall.Exec(os.Args[2], os.Args[3:], nil)
+        if _err != nil {
+                fmt.Println("Loka error ->", _err)
+        }
+        fmt.Println("I am dying!!!")
+}
+</pre>
+<h3>Rust</h3>
+Working on moving to using libc!!!
+<pre>
+extern crate unshare;
+use nix::unistd::*;
+use std::env;
+use std::ffi::{CStr, CString};
+use std::io::Error;
+use unshare::{Command, Namespace};
+extern crate libc;
+
+fn ns(command: String) {
+    let mut cmd = Command::new(command);
+    /*
+    cmd.chroot_dir("/containerfs/");
+    cmd.current_dir("/");
+    match cmd.spawn() {
+        Ok(mut child) => {
+            println!("cmd started... {:?}", child);
+            match child.wait() {
+                Ok(res) => println!("command result -> {:?}", res),
+                Err(_err) => println!("error -> {}", _err),
+            }
+        }
+        Err(_err) => println!("error -> {}", _err),
+    }
+    */
+    println!("Spawning /bin/bash");
+    //const NONE: Option<&'static [u8]> = None; //VOID...
+    unsafe {
+        //        libc::chroot(CStr::from_ptr(b"/containerfs/".align_to));
+        let res = libc::chroot(CString::new("/containerfs/").unwrap().as_ptr());
+        println!("CHROOT -> {}", res);
+    }
+    unsafe {
+        let res = libc::chdir(CString::new("/").unwrap().as_ptr());
+        println!("CHDIR -> {}", res);
+    }
+    unsafe {
+        let res = libc::mount(
+            CString::new("").unwrap().as_ptr(),
+            CString::new("/proc").unwrap().as_ptr(),
+            CString::new("proc").unwrap().as_ptr(),
+            //CStr::from_bytes_with_nul(b"\0").unwrap().as_ptr(),
+            //CStr::from_bytes_with_nul(b"/proc\0").unwrap().as_ptr(),
+            //CStr::from_bytes_with_nul(b"proc\0").unwrap().as_ptr(),
+            0u64,
+            CString::new("").unwrap().as_ptr() as *const libc::c_void,
+        );
+        println!("{:?}", Error::last_os_error());
+        println!("MOUNT -> {}", res);
+    }
+
+    let exec_cstr: CString = CString::new("/bin/bash".as_bytes()).unwrap();
+    let prog: *const libc::c_char = exec_cstr.as_ptr();
+
+    let mut args: Vec<CString> = Vec::with_capacity(3);
+    args.push(CString::new(b"/bin/bash".as_ref()).unwrap());
+    //args.push(CString::new(b"-c".as_ref()).unwrap());
+    //args.push(CString::new(b"/bin/sleep 2s".as_ref()).unwrap());
+
+    let mut args_raw: Vec<*const libc::c_char> = args.iter().map(|arg| arg.as_ptr()).collect();
+    args_raw.push(std::ptr::null());
+
+    println!("command --> {:?} args --> {:?}", exec_cstr, args_raw);
+    let argsv: *const *const libc::c_char = args_raw.as_ptr();
+
+    unsafe {
+        let pid = libc::execv(prog, argsv);
+        //&CString::new(args).unwrap().as_ptr(),
+        //    & CStr::from_bytes_with_nul(b"\0").unwrap().as_ptr(),
+        println!("ERROR WHILE RUNNING -> {:?}", Error::last_os_error());
+        println!("PID --> {}", pid);
+    }
+}
+
+fn main() {
+    let args: Vec<String> = env::args().collect();
+    let opt = &args[1];
+    match opt.as_ref() {
+        "run" => {
+            let mut namespaces = Vec::<Namespace>::new();
+            namespaces.push(Namespace::Pid);
+            namespaces.push(Namespace::Mount);
+            namespaces.push(Namespace::Uts);
+            namespaces.push(Namespace::Net);
+            namespaces.push(Namespace::User);
+            namespaces.push(Namespace::Ipc);
+            let uid_map = vec![unshare::UidMap {
+                inside_uid: 0,
+                outside_uid: 1000,
+                count: 1,
+            }];
+            let gid_map = vec![unshare::GidMap {
+                inside_gid: 0,
+                outside_gid: 1000,
+                count: 1,
+            }];
+            let mut cmd = Command::new("/proc/self/exe");
+            cmd.args(&["ns", "/bin/bash"]);
+            cmd.set_id_maps(uid_map, gid_map);
+            cmd.unshare(&namespaces);
+            match cmd.spawn() {
+                Ok(mut res) => {
+                    println!("spawned self. {:#?}", res);
+                    match res.wait() {
+                        Ok(res) => println!("wait successful on self spawn. {}", res),
+                        Err(_err) => println!("wait failed on self spawn. {}", _err),
+                    }
+                }
+                Err(_err) => println!("self spawn to ns error. Error -> {}", _err),
+            }
+        }
+        "ns" => ns(String::from("/bin/bash")),
+        _ => println!("Unknown option"),
+    }
+}
+</pre>

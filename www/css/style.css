@@ -66,7 +66,6 @@ table#menu {
 	padding-bottom:5px;
 	border-bottom:#aae 1px dashed;
 	background: rgb(255,255,255);
-	font-size: 16px;
 	height: 70px;
 }
 
@@ -115,7 +114,7 @@ table#menu tr td a {
 }
 
 table#menu tr td a {
-	font-size: 17px;
+	font-size: 18px;
 }
 
 a {
