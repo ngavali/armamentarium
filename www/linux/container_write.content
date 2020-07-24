@@ -89,53 +89,37 @@ func loka() {
 Working on moving to using libc!!!
 <pre>
 extern crate unshare;
-use nix::unistd::*;
 use std::env;
-use std::ffi::{CStr, CString};
+use std::ffi::CString;
 use std::io::Error;
 use unshare::{Command, Namespace};
+extern crate clap;
 extern crate libc;
+use clap::{App, Arg};
 
 fn ns(command: String) {
-    let mut cmd = Command::new(command);
-    /*
-    cmd.chroot_dir("/containerfs/");
-    cmd.current_dir("/");
-    match cmd.spawn() {
-        Ok(mut child) => {
-            println!("cmd started... {:?}", child);
-            match child.wait() {
-                Ok(res) => println!("command result -> {:?}", res),
-                Err(_err) => println!("error -> {}", _err),
-            }
-        }
-        Err(_err) => println!("error -> {}", _err),
-    }
-    */
     println!("Spawning /bin/bash");
     //const NONE: Option<&'static [u8]> = None; //VOID...
     unsafe {
-        //        libc::chroot(CStr::from_ptr(b"/containerfs/".align_to));
         let res = libc::chroot(CString::new("/containerfs/").unwrap().as_ptr());
         println!("CHROOT -> {}", res);
+        println!("ERROR WHILE RUNNING -> {:?}", Error::last_os_error());
     }
     unsafe {
         let res = libc::chdir(CString::new("/").unwrap().as_ptr());
         println!("CHDIR -> {}", res);
+        println!("ERROR WHILE RUNNING -> {:?}", Error::last_os_error());
     }
     unsafe {
         let res = libc::mount(
             CString::new("").unwrap().as_ptr(),
             CString::new("/proc").unwrap().as_ptr(),
             CString::new("proc").unwrap().as_ptr(),
-            //CStr::from_bytes_with_nul(b"\0").unwrap().as_ptr(),
-            //CStr::from_bytes_with_nul(b"/proc\0").unwrap().as_ptr(),
-            //CStr::from_bytes_with_nul(b"proc\0").unwrap().as_ptr(),
             0u64,
             CString::new("").unwrap().as_ptr() as *const libc::c_void,
         );
-        println!("{:?}", Error::last_os_error());
         println!("MOUNT -> {}", res);
+        println!("ERROR WHILE RUNNING -> {:?}", Error::last_os_error());
     }
 
     let exec_cstr: CString = CString::new("/bin/bash".as_bytes()).unwrap();
@@ -143,29 +127,52 @@ fn ns(command: String) {
 
     let mut args: Vec<CString> = Vec::with_capacity(3);
     args.push(CString::new(b"/bin/bash".as_ref()).unwrap());
-    //args.push(CString::new(b"-c".as_ref()).unwrap());
-    //args.push(CString::new(b"/bin/sleep 2s".as_ref()).unwrap());
 
     let mut args_raw: Vec<*const libc::c_char> = args.iter().map(|arg| arg.as_ptr()).collect();
     args_raw.push(std::ptr::null());
 
-    println!("command --> {:?} args --> {:?}", exec_cstr, args_raw);
     let argsv: *const *const libc::c_char = args_raw.as_ptr();
 
     unsafe {
-        let pid = libc::execv(prog, argsv);
-        //&CString::new(args).unwrap().as_ptr(),
-        //    & CStr::from_bytes_with_nul(b"\0").unwrap().as_ptr(),
+        libc::execv(prog, argsv);
         println!("ERROR WHILE RUNNING -> {:?}", Error::last_os_error());
-        println!("PID --> {}", pid);
     }
 }
 
+fn parse_args() -> (bool, bool, String) {
+    let matches = App::new("brahma")
+        .version("1.0")
+        .author("Nilesh Gavali")
+        .arg(
+            Arg::with_name("run")
+                .short("r")
+                .long("run")
+                .takes_value(false),
+        )
+        .arg(
+            Arg::with_name("namespace")
+                .short("n")
+                .long("namespace")
+                .takes_value(false),
+        )
+        .arg(
+            Arg::with_name("entry point")
+                .short("e")
+                .long("entry")
+                .takes_value(true)
+                .required(true),
+        )
+        .get_matches();
+    let is_run_command = matches.is_present("run");
+    let is_ns_command = matches.is_present("namespace");
+    let entry_point = matches.value_of("entry point").unwrap();
+    (is_run_command, is_ns_command, entry_point.to_string())
+}
+
 fn main() {
-    let args: Vec<String> = env::args().collect();
-    let opt = &args[1];
-    match opt.as_ref() {
-        "run" => {
+    match parse_args() {
+        (_, true, command) => ns(command),
+        (true, _, command) => {
             let mut namespaces = Vec::<Namespace>::new();
             namespaces.push(Namespace::Pid);
             namespaces.push(Namespace::Mount);
@@ -184,7 +191,7 @@ fn main() {
                 count: 1,
             }];
             let mut cmd = Command::new("/proc/self/exe");
-            cmd.args(&["ns", "/bin/bash"]);
+            cmd.args(&["--namespace", "--entry", command.as_ref()]);
             cmd.set_id_maps(uid_map, gid_map);
             cmd.unshare(&namespaces);
             match cmd.spawn() {
@@ -198,8 +205,7 @@ fn main() {
                 Err(_err) => println!("self spawn to ns error. Error -> {}", _err),
             }
         }
-        "ns" => ns(String::from("/bin/bash")),
-        _ => println!("Unknown option"),
+        (_, _, _) => println!("Don't know what to do!!! Please check usage."),
     }
 }
 </pre>
