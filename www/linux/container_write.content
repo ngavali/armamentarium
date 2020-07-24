@@ -86,19 +86,37 @@ func loka() {
 }
 </pre>
 <h3>Rust</h3>
-Working on moving to using libc!!!
+Incomplete version, I am still working on it!!!</br>
+Here you will see what is exactly happening under the hood.
 <pre>
+use std::thread;
+use std::time::Duration;
 extern crate unshare;
-use std::env;
+//use std::env;
 use std::ffi::CString;
 use std::io::Error;
-use unshare::{Command, Namespace};
 extern crate clap;
-extern crate libc;
+//extern crate libc;
 use clap::{App, Arg};
+use libc;
+use libc::{
+    CLONE_NEWIPC, CLONE_NEWNET, CLONE_NEWNS, CLONE_NEWPID, CLONE_NEWUSER, CLONE_NEWUTS, SIGCHLD,
+};
+
+struct Cmd {
+    path: String,
+    args: Vec<CString>,
+    //    wakeup: future implementation,
+}
+
+impl Cmd {
+    fn new(path: String, args: Vec<CString>) -> Cmd {
+        Cmd { path, args }
+    }
+}
 
 fn ns(command: String) {
-    println!("Spawning /bin/bash");
+    println!("Spawning {}", command);
     //const NONE: Option<&'static [u8]> = None; //VOID...
     unsafe {
         let res = libc::chroot(CString::new("/containerfs/").unwrap().as_ptr());
@@ -122,11 +140,11 @@ fn ns(command: String) {
         println!("ERROR WHILE RUNNING -> {:?}", Error::last_os_error());
     }
 
-    let exec_cstr: CString = CString::new("/bin/bash".as_bytes()).unwrap();
+    let exec_cstr: CString = CString::new(command.as_bytes()).unwrap();
     let prog: *const libc::c_char = exec_cstr.as_ptr();
 
     let mut args: Vec<CString> = Vec::with_capacity(3);
-    args.push(CString::new(b"/bin/bash".as_ref()).unwrap());
+    args.push(CString::new(command.as_bytes()).unwrap());
 
     let mut args_raw: Vec<*const libc::c_char> = args.iter().map(|arg| arg.as_ptr()).collect();
     args_raw.push(std::ptr::null());
@@ -139,7 +157,7 @@ fn ns(command: String) {
     }
 }
 
-fn parse_args() -> (bool, bool, String) {
+fn parse_args() -> (bool, bool, String, Option<String>) {
     let matches = App::new("brahma")
         .version("1.0")
         .author("Nilesh Gavali")
@@ -162,17 +180,134 @@ fn parse_args() -> (bool, bool, String) {
                 .takes_value(true)
                 .required(true),
         )
+        .arg(
+            Arg::with_name("arguments")
+                .short("a")
+                .long("args")
+                .takes_value(true),
+        )
         .get_matches();
     let is_run_command = matches.is_present("run");
     let is_ns_command = matches.is_present("namespace");
     let entry_point = matches.value_of("entry point").unwrap();
-    (is_run_command, is_ns_command, entry_point.to_string())
+    //    let args = matches.values_of("arguments").unwrap_or("");
+    (
+        is_run_command,
+        is_ns_command,
+        entry_point.to_string(),
+        //args.all,
+        None,
+    )
+}
+
+fn create_namespace_mapping() {}
+
+//extern "C" fn(_: *mut c_void) -> c_int {
+extern "C" fn setup_ns(data: *mut Cmd) -> libc::c_int {
+    //_: *mut libc::c_void) -> libc::c_int {
+    println!("inside setup_ns");
+    println!("Setting up namespace for entry point...");
+
+    let command: &Cmd = unsafe { &mut *data };
+    println!("Cmd Path -> {:?}", command.path);
+    println!("Cmd Args -> {:?}", command.args);
+
+    println!("Go for a short sleep ... find a mechanism to synchronize..."); //MPSC channels dont work!!!
+    thread::sleep(Duration::new(5, 0));
+
+    create_namespace_mapping();
+
+    let program = CString::new("/proc/self/exe")
+        //CString::new("/home/ngavali/rust/container/target/debug/container")
+        .unwrap();
+    let mut args: Vec<*const libc::c_char> = Vec::new();
+    let command_name = CString::new("lokad".as_bytes()).unwrap();
+    let namespace_switch = CString::new("--namespace").unwrap();
+    let entrypoint_switch = CString::new("--entry").unwrap();
+    let command = CString::new(command.path.as_bytes()).unwrap();
+    args.push(command_name.as_ptr());
+    args.push(namespace_switch.as_ptr());
+    args.push(entrypoint_switch.as_ptr());
+    args.push(command.as_ptr());
+    args.push(std::ptr::null());
+    println!("{:#?} {:#?}", program, args);
+    unsafe {
+        println!("CLONE PID = {}", libc::getpid());
+        let res = libc::execv(program.as_ptr(), args.as_ptr());
+
+        //In case unable to execute EXECV we shall reach here!!! or who knows where!!!
+        println!("EN RESULT -> {}", res);
+        println!("EN ERROR WHILE RUNNING -> {:?}", Error::last_os_error());
+    }
+    1
 }
 
 fn main() {
     match parse_args() {
-        (_, true, command) => ns(command),
-        (true, _, command) => {
+        (_, true, command, None) => ns(command),
+        (true, _, command, None) => {
+            //CLONE and EXEC
+            let mut command = Cmd::new(command, Vec::new());
+            unsafe {
+                /*
+                let pid = libc::fork();
+                println!("PID {}", pid);
+                if pid != 0 {
+                    let mut rusage: libc::rusage = std::mem::MaybeUninit::uninit().assume_init(); //std::mem::MaybeUninit::zeroed().assume_init();
+                    let mut status: i32 = 0;
+                    let options: i32 = 0;
+                    let res = libc::wait4(pid, &mut status, options, &mut rusage);
+                    println!("FORK RESULT -> {}", res);
+                    println!("FORK RUSAGE -> {:#?}", rusage);
+                    println!("FORK STATUS -> {}", status);
+                    println!("FORK ERROR WHILE RUNNING -> {:?}", Error::last_os_error());
+                } else {*/
+                //Exec process in child
+                let mut nstack = [0u8; 4096];
+                let ptr = nstack.as_mut_ptr().offset(nstack.len() as isize);
+                let ptr_aligned = ptr.offset((ptr as usize % 16) as isize * -1);
+                let pid = libc::clone(
+                    std::mem::transmute(setup_ns as extern "C" fn(*mut Cmd) -> libc::c_int),
+                    ptr_aligned as *mut libc::c_void,
+                    CLONE_NEWNS
+                        | CLONE_NEWUTS
+                        | CLONE_NEWIPC
+                        | CLONE_NEWUSER
+                        | CLONE_NEWPID
+                        | CLONE_NEWNET
+                        | SIGCHLD,
+                    &mut command as *mut _ as *mut libc::c_void,
+                    //&mut setup_ns as *mut _ as *mut libc::c_void,
+                );
+                if pid != 0 {
+                    println!("CN RESULT -> {}", pid);
+                    println!("CN ERROR WHILE RUNNING -> {:?}", Error::last_os_error());
+
+                    println!("CLONE will not move ahead until wakeup signal is sent...");
+                    match tx.send(1u8) {
+                        Ok(_) => println!("message send"),
+                        Err(_err) => println!("Send error -> {}", _err),
+                    }
+                    drop(tx);
+
+                    println!("Sleep done!!! {}", pid);
+                    let mut rusage: libc::rusage = std::mem::MaybeUninit::uninit().assume_init(); //std::mem::MaybeUninit::zeroed().assume_init();
+                    let mut status: i32 = 0;
+                    let options: i32 = 0;
+
+                    let res = libc::wait4(pid, &mut status, options, &mut rusage);
+                    println!("CN WAIT RESULT -> {}", res);
+                    println!("CN WAIT RUSAGE -> {:#?}", rusage);
+                    println!("CN WAIT STATUS -> {}", status);
+                    println!(
+                        "CN WAIT ERROR WHILE RUNNING -> {:?}",
+                        Error::last_os_error()
+                    );
+                }
+                println!("DONE WITH CLONE");
+                // }
+            }
+            /*
             let mut namespaces = Vec::<Namespace>::new();
             namespaces.push(Namespace::Pid);
             namespaces.push(Namespace::Mount);
@@ -204,8 +339,9 @@ fn main() {
                 }
                 Err(_err) => println!("self spawn to ns error. Error -> {}", _err),
             }
+            */
         }
-        (_, _, _) => println!("Don't know what to do!!! Please check usage."),
+        (..) => println!("Don't know what to do!!! Please check usage."),
     }
 }
 </pre>
