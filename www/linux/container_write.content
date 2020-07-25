@@ -86,78 +86,49 @@ func loka() {
 }
 </pre>
 <h3>Rust</h3>
-Incomplete version, I am still working on it!!!</br>
-Here you will see what is exactly happening under the hood.
+I am still working on it!!!</br>
+Here you will see exactly what is happening under the hood.
 <pre>
-use std::thread;
-use std::time::Duration;
-extern crate unshare;
-//use std::env;
-use std::ffi::CString;
-use std::io::Error;
 extern crate clap;
-//extern crate libc;
+extern crate libc;
 use clap::{App, Arg};
-use libc;
 use libc::{
     CLONE_NEWIPC, CLONE_NEWNET, CLONE_NEWNS, CLONE_NEWPID, CLONE_NEWUSER, CLONE_NEWUTS, SIGCHLD,
 };
+use std::ffi::CString;
+use std::fs::OpenOptions;
+use std::io::prelude::*;
+use std::io::Error;
 
+#[derive(Debug)]
 struct Cmd {
-    path: String,
+    path: CString,
+    chroot_path: CString,
+    map_uid: u16,
+    map_gid: u16,
     args: Vec<CString>,
-    //    wakeup: future implementation,
 }
 
 impl Cmd {
-    fn new(path: String, args: Vec<CString>) -> Cmd {
-        Cmd { path, args }
+    fn new(
+        path: CString,
+        chroot_path: CString,
+        map_uid: u16,
+        map_gid: u16,
+        args: Vec<CString>,
+    ) -> Cmd {
+        Cmd {
+            path,
+
+            chroot_path,
+            map_uid,
+            map_gid,
+            args,
+        }
     }
 }
 
-fn ns(command: String) {
-    println!("Spawning {}", command);
-    //const NONE: Option<&'static [u8]> = None; //VOID...
-    unsafe {
-        let res = libc::chroot(CString::new("/containerfs/").unwrap().as_ptr());
-        println!("CHROOT -> {}", res);
-        println!("ERROR WHILE RUNNING -> {:?}", Error::last_os_error());
-    }
-    unsafe {
-        let res = libc::chdir(CString::new("/").unwrap().as_ptr());
-        println!("CHDIR -> {}", res);
-        println!("ERROR WHILE RUNNING -> {:?}", Error::last_os_error());
-    }
-    unsafe {
-        let res = libc::mount(
-            CString::new("").unwrap().as_ptr(),
-            CString::new("/proc").unwrap().as_ptr(),
-            CString::new("proc").unwrap().as_ptr(),
-            0u64,
-            CString::new("").unwrap().as_ptr() as *const libc::c_void,
-        );
-        println!("MOUNT -> {}", res);
-        println!("ERROR WHILE RUNNING -> {:?}", Error::last_os_error());
-    }
-
-    let exec_cstr: CString = CString::new(command.as_bytes()).unwrap();
-    let prog: *const libc::c_char = exec_cstr.as_ptr();
-
-    let mut args: Vec<CString> = Vec::with_capacity(3);
-    args.push(CString::new(command.as_bytes()).unwrap());
-
-    let mut args_raw: Vec<*const libc::c_char> = args.iter().map(|arg| arg.as_ptr()).collect();
-    args_raw.push(std::ptr::null());
-
-    let argsv: *const *const libc::c_char = args_raw.as_ptr();
-
-    unsafe {
-        libc::execv(prog, argsv);
-        println!("ERROR WHILE RUNNING -> {:?}", Error::last_os_error());
-    }
-}
-
-fn parse_args() -> (bool, bool, String, Option<String>) {
+fn parse_args() -> (bool, bool, CString, Vec<CString>, CString) {
     let matches = App::new("brahma")
         .version("1.0")
         .author("Nilesh Gavali")
@@ -181,92 +152,159 @@ fn parse_args() -> (bool, bool, String, Option<String>) {
                 .required(true),
         )
         .arg(
+            Arg::with_name("chroot")
+                .short("c")
+                .long("chroot")
+                .takes_value(true)
+                .required(true),
+        )
+        .arg(
             Arg::with_name("arguments")
                 .short("a")
                 .long("args")
-                .takes_value(true),
+                .takes_value(true)
+                .multiple(true)
+                .required(false)
+                .empty_values(true)
+                .allow_hyphen_values(true)
+                .min_values(0),
         )
         .get_matches();
     let is_run_command = matches.is_present("run");
     let is_ns_command = matches.is_present("namespace");
-    let entry_point = matches.value_of("entry point").unwrap();
-    //    let args = matches.values_of("arguments").unwrap_or("");
+    let chroot_path = CString::new(matches.value_of("chroot").unwrap()).unwrap();
+    let entry_point = CString::new(matches.value_of("entry point").unwrap()).unwrap();
+    let args: Vec<CString> = match matches.values_of("arguments") {
+        Some(matches) => {
+            let mut args: Vec<CString> = Vec::new();
+            //push first argument as the entry point name itself, required for execv
+            args.push(CString::new(entry_point.clone()).unwrap());
+            for arg in matches {
+                args.push(CString::new(arg).unwrap());
+            }
+            args
+        }
+        None => Vec::new(),
+    };
     (
         is_run_command,
         is_ns_command,
-        entry_point.to_string(),
-        //args.all,
-        None,
+        entry_point,
+        args,
+        chroot_path,
     )
 }
 
-fn create_namespace_mapping() {}
-
-//extern "C" fn(_: *mut c_void) -> c_int {
-extern "C" fn setup_ns(data: *mut Cmd) -> libc::c_int {
-    //_: *mut libc::c_void) -> libc::c_int {
-    println!("inside setup_ns");
-    println!("Setting up namespace for entry point...");
-
-    let command: &Cmd = unsafe { &mut *data };
-    println!("Cmd Path -> {:?}", command.path);
-    println!("Cmd Args -> {:?}", command.args);
-
-    println!("Go for a short sleep ... find a mechanism to synchronize..."); //MPSC channels dont work!!!
-    thread::sleep(Duration::new(5, 0));
-
-    let program = CString::new("/proc/self/exe")
-        //CString::new("/home/ngavali/rust/container/target/debug/container")
+fn create_namespace_mapping(uid: u16, gid: u16) {
+    let pid = "self";
+    let setgroups_file = format!("/proc/{}/setgroups", pid);
+    let mut setgroups = OpenOptions::new()
+        .write(true)
+        .read(true)
+        .open(&setgroups_file)
         .unwrap();
-    let mut args: Vec<*const libc::c_char> = Vec::new();
-    let command_name = CString::new("lokad".as_bytes()).unwrap();
-    let namespace_switch = CString::new("--namespace").unwrap();
-    let entrypoint_switch = CString::new("--entry").unwrap();
-    let command = CString::new(command.path.as_bytes()).unwrap();
-    args.push(command_name.as_ptr());
-    args.push(namespace_switch.as_ptr());
-    args.push(entrypoint_switch.as_ptr());
-    args.push(command.as_ptr());
-    args.push(std::ptr::null());
-    println!("{:#?} {:#?}", program, args);
-    unsafe {
-        println!("CLONE PID = {}", libc::getpid());
-        let res = libc::execv(program.as_ptr(), args.as_ptr());
+    setgroups
+        .write_all(b"deny\n")
+        .expect("Unable to write to setgroups");
+    setgroups.flush().unwrap();
+    let uid_map_file = format!("/proc/{}/uid_map", pid);
+    let mut uid_map = OpenOptions::new()
+        .read(true)
+        .write(true)
+        .open(uid_map_file)
+        .unwrap();
+    let uid_map_content = format!("0 {} 1\n", uid);
+    uid_map
+        .write_all(uid_map_content.as_bytes())
+        .expect("Unable to write GID map");
+    uid_map.flush().unwrap();
+    drop(uid_map);
+    let gid_map_file = format!("/proc/{}/gid_map", pid);
+    let mut gid_map = OpenOptions::new()
+        .read(true)
+        .write(true)
+        .open(gid_map_file)
+        .unwrap();
+    let gid_map_content = format!("0 {} 1\n", gid);
+    gid_map
+        .write_all(gid_map_content.as_bytes())
+        .expect("Unable to write GID map");
+    gid_map.flush().unwrap();
+}
 
-        //In case unable to execute EXECV we shall reach here!!! or who knows where!!!
-        println!("EN RESULT -> {}", res);
-        println!("EN ERROR WHILE RUNNING -> {:?}", Error::last_os_error());
+fn setup_chroot_env(chroot_path: CString) {
+    unsafe {
+        let res = libc::chroot(chroot_path.as_ptr());
+        if res != 0 {
+            println!(
+                "chroot failed with an error -> {:?}",
+                Error::last_os_error()
+            );
+        }
+        let res = libc::chdir(CString::new("/").unwrap().as_ptr());
+        if res != 0 {
+            println!("chdir failed with an error -> {:?}", Error::last_os_error());
+        }
+        //Mount proc filesystem
+        let res = libc::mount(
+            CString::new("").unwrap().as_ptr(),
+            CString::new("/proc").unwrap().as_ptr(),
+            CString::new("proc").unwrap().as_ptr(),
+            0u64,
+            CString::new("").unwrap().as_ptr() as *const libc::c_void,
+        );
+        if res != 0 {
+            println!(
+                "proc mount failed with an error -> {:?}",
+                Error::last_os_error()
+            );
+        }
     }
-    1
+}
+
+fn exec_in_ns(command: &Cmd) -> libc::c_int {
+    unsafe {
+        let exec = &command.path;
+        let mut args: Vec<*const libc::c_char> =
+            command.args.iter().map(|arg| arg.as_ptr()).collect();
+        args.push(std::ptr::null()); //NULL terminated
+        let res = libc::execv(exec.as_ptr(), args.as_ptr());
+        if res != 0 {
+            println!(
+                "Entry point execution failed with an error -> {:?}",
+                Error::last_os_error()
+            );
+        }
+        res
+    }
+}
+
+extern "C" fn setup_ns(command: *mut Cmd) -> libc::c_int {
+    let command: &Cmd = unsafe { &mut *command };
+    //Do mappings UID and GID mappings
+    create_namespace_mapping(command.map_uid, command.map_gid);
+
+    //Chroot and Proc Mount
+    setup_chroot_env(command.chroot_path.clone());
+
+    //EXECV the entry point replacing the clone completely
+    exec_in_ns(command)
 }
 
 fn main() {
     match parse_args() {
-        (_, true, command, None) => ns(command),
-        (true, _, command, None) => {
-            //CLONE and EXEC
-            let mut command = Cmd::new(command, Vec::new());
+        (true, _, command, args, chroot_path) => {
+            //CLONE and then EXEC entry point in CLONE
             unsafe {
-                /*
-                let pid = libc::fork();
-                println!("PID {}", pid);
-                if pid != 0 {
-                    let mut rusage: libc::rusage = std::mem::MaybeUninit::uninit().assume_init(); //std::mem::MaybeUninit::zeroed().assume_init();
-                    let mut status: i32 = 0;
-                    let options: i32 = 0;
-                    let res = libc::wait4(pid, &mut status, options, &mut rusage);
-                    println!("FORK RESULT -> {}", res);
-                    println!("FORK RUSAGE -> {:#?}", rusage);
-                    println!("FORK STATUS -> {}", status);
-                    println!("FORK ERROR WHILE RUNNING -> {:?}", Error::last_os_error());
-                } else {*/
-                //Exec process in child
+                //To do: Move UID and GID to arguments
+                let mut command = Cmd::new(command, chroot_path, 1000, 1000, args);
                 let mut nstack = [0u8; 4096];
                 let ptr = nstack.as_mut_ptr().offset(nstack.len() as isize);
                 let ptr_aligned = ptr.offset((ptr as usize % 16) as isize * -1);
                 let pid = libc::clone(
                     std::mem::transmute(setup_ns as extern "C" fn(*mut Cmd) -> libc::c_int),
                     ptr_aligned as *mut libc::c_void,
+                    //CLONE FLAGS
                     CLONE_NEWNS
                         | CLONE_NEWUTS
                         | CLONE_NEWIPC
@@ -275,64 +313,28 @@ fn main() {
                         | CLONE_NEWNET
                         | SIGCHLD,
                     &mut command as *mut _ as *mut libc::c_void,
-                    //&mut setup_ns as *mut _ as *mut libc::c_void,
                 );
                 if pid != 0 {
-                    println!("CN RESULT -> {}", pid);
-                    println!("CN ERROR WHILE RUNNING -> {:?}", Error::last_os_error());
+                    println!("Entry point PID -> {}", pid);
 
-                    /* block child and do ns mapping here and then unblock child*/
-                    create_namespace_mapping();
-
-                    let mut rusage: libc::rusage = std::mem::MaybeUninit::uninit().assume_init(); //std::mem::MaybeUninit::zeroed().assume_init();
+                    let mut rusage: libc::rusage = std::mem::MaybeUninit::uninit().assume_init();
                     let mut status: i32 = 0;
                     let options: i32 = 0;
 
                     let res = libc::wait4(pid, &mut status, options, &mut rusage);
                     println!("CN WAIT RESULT -> {}", res);
-                    println!("CN WAIT RUSAGE -> {:#?}", rusage);
+                    println!("CN RUSAGE -> {:#?}", rusage);
                     println!("CN WAIT STATUS -> {}", status);
-                    println!(
-                        "CN WAIT ERROR WHILE RUNNING -> {:?}",
-                        Error::last_os_error()
-                    );
-                }
-                println!("DONE WITH CLONE");
-                // }
-            }
-            /*
-            let mut namespaces = Vec::<Namespace>::new();
-            namespaces.push(Namespace::Pid);
-            namespaces.push(Namespace::Mount);
-            namespaces.push(Namespace::Uts);
-            namespaces.push(Namespace::Net);
-            namespaces.push(Namespace::User);
-            namespaces.push(Namespace::Ipc);
-            let uid_map = vec![unshare::UidMap {
-                inside_uid: 0,
-                outside_uid: 1000,
-                count: 1,
-            }];
-            let gid_map = vec![unshare::GidMap {
-                inside_gid: 0,
-                outside_gid: 1000,
-                count: 1,
-            }];
-            let mut cmd = Command::new("/proc/self/exe");
-            cmd.args(&["--namespace", "--entry", command.as_ref()]);
-            cmd.set_id_maps(uid_map, gid_map);
-            cmd.unshare(&namespaces);
-            match cmd.spawn() {
-                Ok(mut res) => {
-                    println!("spawned self. {:#?}", res);
-                    match res.wait() {
-                        Ok(res) => println!("wait successful on self spawn. {}", res),
-                        Err(_err) => println!("wait failed on self spawn. {}", _err),
+                    if status != 0 {
+                        println!(
+                            "CN WAIT ERROR WHILE RUNNING -> {:?}",
+                            Error::last_os_error()
+                        );
                     }
+                } else {
+                    println!("DONE WITH CLONE");
                 }
-                Err(_err) => println!("self spawn to ns error. Error -> {}", _err),
             }
-            */
         }
         (..) => println!("Don't know what to do!!! Please check usage."),
     }
