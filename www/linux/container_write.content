@@ -131,13 +131,13 @@ Long version
 I am still working on it!!!</br>
 Here you will see exactly what is happening under the hood.
 <pre>
-extern crate clap;
 extern crate libc;
-use clap::{App, Arg};
 use libc::{
     CLONE_NEWIPC, CLONE_NEWNET, CLONE_NEWNS, CLONE_NEWPID, CLONE_NEWUSER, CLONE_NEWUTS, SIGCHLD,
 };
+use rustc_serialize::json;
 use std::ffi::CString;
+use std::fs::File;
 use std::fs::OpenOptions;
 use std::io::prelude::*;
 use std::io::Error;
@@ -155,6 +155,23 @@ impl Cmd {
 }
 
 #[derive(Debug, Clone)]
+struct MountBinds {
+    source: CString,
+    target: CString,
+    read_only: Option<bool>,
+}
+
+impl MountBinds {
+    fn new(source: String, target: String, read_only: Option<bool>) -> MountBinds {
+        MountBinds {
+            source: CString::new(source.as_bytes()).unwrap(),
+            target: CString::new(target.as_bytes()).unwrap(),
+            read_only,
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
 struct UserMap {
     uid: u16,
     gid: u16,
@@ -168,24 +185,45 @@ impl UserMap {
 
 #[derive(Debug, Clone)]
 struct NsConfig {
+    hostname: Option<CString>,
     command: Cmd,
-    chroot_path: CString,
     user_map: UserMap,
-    hostname: CString,
+    bind_map: Vec<MountBinds>,
+    chroot_path: CString,
 }
 
 impl NsConfig {
-    fn new(command: Cmd, chroot_path: CString, user_map: UserMap, hostname: CString) -> NsConfig {
+    fn from_json_config(ns_json_config: NsConfigJson) -> NsConfig {
+        let mut bind_map = Vec::new();
+        for bm in ns_json_config.mount_bindings {
+            bind_map.push(MountBinds::new(bm.source, bm.target, bm.read_only));
+        }
         NsConfig {
-            command,
-            chroot_path,
-            user_map,
-            hostname,
+            chroot_path: CString::new(ns_json_config.chroot.as_bytes()).unwrap(),
+            command: Cmd::new(
+                CString::new(ns_json_config.program.executable.as_bytes()).unwrap(),
+                Vec::new(),
+            ),
+            bind_map,
+            user_map: UserMap::new(ns_json_config.user_map.uid, ns_json_config.user_map.gid),
+            hostname: {
+                match ns_json_config.hostname {
+                    Some(hostname) => match CString::new(hostname.as_bytes()) {
+                        Ok(hostname) => Some(hostname),
+                        Err(_err) => panic!(_err),
+                    },
+                    None => None,
+                }
+            },
         }
     }
 
     fn entry_point(&self) -> Cmd {
         self.command.clone()
+    }
+
+    fn bind_map(&self) -> Vec<MountBinds> {
+        self.bind_map.clone()
     }
 
     fn user_map(&self) -> UserMap {
@@ -197,105 +235,50 @@ impl NsConfig {
     }
 }
 
-fn parse_args() -> NsConfig {
-    let matches = App::new("brahma")
-        .version("1.0")
-        .author("Nilesh Gavali")
-        .arg(
-            Arg::with_name("run")
-                .short("r")
-                .long("run")
-                .takes_value(false)
-                .required(false),
-        )
-        .arg(
-            Arg::with_name("namespace")
-                .short("n")
-                .long("namespace")
-                .takes_value(false)
-                .required(false),
-        )
-        .arg(
-            Arg::with_name("entry point")
-                .short("e")
-                .long("entry")
-                .takes_value(true)
-                .required(true),
-        )
-        .arg(
-            Arg::with_name("user id")
-                .short("u")
-                .long("uid")
-                .takes_value(true)
-                .required(false),
-        )
-        .arg(
-            Arg::with_name("group id")
-                .short("g")
-                .long("gid")
-                .takes_value(true)
-                .required(false)
-                .requires("user id"),
-        )
-        .arg(
-            Arg::with_name("chroot")
-                .short("c")
-                .long("chroot")
-                .takes_value(true)
-                .required(true)
-                .requires("entry point"),
-        )
-        .arg(
-            Arg::with_name("hostname")
-                .short("h")
-                .long("hostname")
-                .takes_value(true)
-                .required(false)
-                .requires("entry point"),
-        )
-        //args must the last argument
-        .arg(
-            Arg::with_name("arguments")
-                .short("a")
-                .long("args")
-                .takes_value(true)
-                .multiple(true)
-                .required(false)
-                .empty_values(true)
-                .allow_hyphen_values(true)
-                .min_values(0)
-                .requires("entry point"),
-        )
-        .get_matches();
-    let uid = matches.value_of("user id").unwrap().parse::<u16>().unwrap();
-    let gid = matches
-        .value_of("group id")
-        .unwrap()
-        .parse::<u16>()
-        .unwrap();
-    let hostname = CString::new(matches.value_of("hostname").unwrap()).unwrap();
-    let chroot_path = CString::new(matches.value_of("chroot").unwrap()).unwrap();
-    let entry_point = CString::new(matches.value_of("entry point").unwrap()).unwrap();
-    let args: Vec<CString> = match matches.values_of("arguments") {
-        Some(matches) => {
-            let mut args: Vec<CString> = Vec::new();
-            //push first argument as the entry point name itself, required for execv
-            args.push(CString::new(entry_point.clone()).unwrap());
-            for arg in matches {
-                args.push(CString::new(arg).unwrap());
-            }
-            args
-        }
-        None => Vec::new(),
-    };
-    let user_map = UserMap::new(uid, gid);
-    let command = Cmd::new(entry_point, args);
-    NsConfig::new(command, chroot_path, user_map, hostname)
+#[derive(RustcDecodable, RustcEncodable, Debug)]
+struct BindMountMaps {
+    source: String,
+    target: String,
+    read_only: Option<bool>,
+}
+
+#[derive(RustcDecodable, RustcEncodable, Debug)]
+struct Program {
+    executable: String,
+    args: Vec<String>,
+}
+
+#[derive(RustcDecodable, RustcEncodable, Debug)]
+struct UserMappings {
+    uid: u16,
+    gid: u16,
+}
+
+#[derive(RustcDecodable, RustcEncodable, Debug)]
+struct NsConfigJson {
+    chroot: String,
+    hostname: Option<String>,
+    mount_bindings: Vec<BindMountMaps>,
+    program: Program,
+    user_map: UserMappings,
+}
+
+impl NsConfigJson {
+    fn from_file(config_file_name: String) -> NsConfigJson {
+        let error_message = format!("Config file not found: {}", config_file_name);
+        let mut file = File::open(config_file_name).expect(error_message.as_str());
+        let mut server_config = String::new();
+        file.read_to_string(&mut server_config).unwrap();
+        let ns_config_json: NsConfigJson = json::decode(&mut server_config).unwrap();
+        ns_config_json
+    }
 }
 
 fn create_namespace_mapping(UserMap { uid, gid }: UserMap) {
     let pid = "self";
     let setgroups_file = format!("/proc/{}/setgroups", pid);
+    let uid_map_file = format!("/proc/{}/uid_map", pid);
+    let gid_map_file = format!("/proc/{}/gid_map", pid);
     let mut setgroups = OpenOptions::new()
         .write(true)
         .read(true)
@@ -305,7 +288,7 @@ fn create_namespace_mapping(UserMap { uid, gid }: UserMap) {
         .write_all(b"deny\n")
         .expect("Unable to write to setgroups");
     setgroups.flush().unwrap();
-    let uid_map_file = format!("/proc/{}/uid_map", pid);
+    drop(setgroups);
     let mut uid_map = OpenOptions::new()
         .read(true)
         .write(true)
@@ -317,7 +300,6 @@ fn create_namespace_mapping(UserMap { uid, gid }: UserMap) {
         .expect("Unable to write GID map");
     uid_map.flush().unwrap();
     drop(uid_map);
-    let gid_map_file = format!("/proc/{}/gid_map", pid);
     let mut gid_map = OpenOptions::new()
         .read(true)
         .write(true)
@@ -328,39 +310,48 @@ fn create_namespace_mapping(UserMap { uid, gid }: UserMap) {
         .write_all(gid_map_content.as_bytes())
         .expect("Unable to write GID map");
     gid_map.flush().unwrap();
+    drop(gid_map);
 }
 
-fn setup_chroot_env(chroot_path: CString) {
+fn setup_mount_binds(mount_bind_maps: Vec<MountBinds>) {
     unsafe {
         //Bind mounts before chroot
-        let res = libc::mount(
-            CString::new("/mounts/readonly/").unwrap().as_ptr(),
-            CString::new("/containerfs/mp").unwrap().as_ptr(),
-            std::ptr::null(),
-            libc::MS_BIND, //Note readonly flag wont work here
-            std::ptr::null(),
-        );
-        if res != 0 {
-            println!(
-                "bind mount failed with an error -> {:?}",
-                Error::last_os_error()
-            );
-        } else {
-            //remount as readonly as of now, later
+        for bm in mount_bind_maps {
             let res = libc::mount(
+                bm.source.as_ptr(),
+                bm.target.as_ptr(),
                 std::ptr::null(),
-                CString::new("/containerfs/mp").unwrap().as_ptr(),
-                std::ptr::null(),
-                libc::MS_RDONLY | libc::MS_BIND | libc::MS_REMOUNT,
+                libc::MS_BIND, //Note readonly flag wont work here
                 std::ptr::null(),
             );
             if res != 0 {
                 println!(
-                    "bind readonly switch failed with an error -> {:?}",
+                    "bind mount failed with an error -> {:?}",
                     Error::last_os_error()
                 );
+            } else {
+                //remount as readonly as of now, later
+                println!("mount point {:?}", bm.target);
+                let res = libc::mount(
+                    std::ptr::null(),
+                    bm.target.as_ptr(),
+                    std::ptr::null(),
+                    libc::MS_RDONLY | libc::MS_BIND | libc::MS_REMOUNT,
+                    std::ptr::null(),
+                );
+                if res != 0 {
+                    println!(
+                        "bind readonly switch failed with an error -> {:?}",
+                        Error::last_os_error()
+                    );
+                }
             }
         }
+    }
+}
+
+fn setup_chroot_env(chroot_path: CString) {
+    unsafe {
         let res = libc::chroot(chroot_path.as_ptr());
         if res != 0 {
             println!(
@@ -374,13 +365,11 @@ fn setup_chroot_env(chroot_path: CString) {
         }
         //Mount proc filesystem
         let res = libc::mount(
-            //CString::new("").unwrap().as_ptr(),
             std::ptr::null(),
             CString::new("/proc").unwrap().as_ptr(),
             CString::new("proc").unwrap().as_ptr(),
             0u64,
             std::ptr::null(),
-            //CString::new("").unwrap().as_ptr() as *const libc::c_void,
         );
         if res != 0 {
             println!(
@@ -410,31 +399,34 @@ extern "C" fn setup_ns(ns_config: *mut NsConfig) -> libc::c_int {
     let ns_config: &NsConfig = unsafe { &mut *ns_config };
     //Set hostname
     unsafe {
-        let res = libc::sethostname(
-            ns_config.hostname.as_ptr(),
-            ns_config.hostname.as_bytes().len(),
-        );
-        if res != 0 {
-            println!(
-                "proc mount failed with an error -> {:?}",
-                Error::last_os_error()
-            );
+        if let Some(hostname) = ns_config.hostname.clone() {
+            let res = libc::sethostname(hostname.as_ptr(), hostname.as_bytes().len());
+            if res != 0 {
+                println!(
+                    "proc mount failed with an error -> {:?}",
+                    Error::last_os_error()
+                );
+            }
         }
+        //Do mappings UID and GID mappings
+        create_namespace_mapping(ns_config.user_map());
+
+        //Mount bindings
+        setup_mount_binds(ns_config.bind_map());
+        //Chroot and Proc Mount
+        setup_chroot_env(ns_config.chroot_path());
+
+        //EXECV the entry point replacing the clone completely
+        exec_in_ns(ns_config.entry_point())
     }
-    //Do mappings UID and GID mappings
-    create_namespace_mapping(ns_config.user_map());
-
-    //Chroot and Proc Mount
-    setup_chroot_env(ns_config.chroot_path());
-
-    //EXECV the entry point replacing the clone completely
-    exec_in_ns(ns_config.entry_point())
 }
 
 fn main() {
     //CLONE and then EXEC entry point in CLONE
     unsafe {
-        let mut ns_config = parse_args();
+        //let mut ns_config = parse_args();
+        let json_config = NsConfigJson::from_file("container.json".to_string());
+        let mut ns_config = NsConfig::from_json_config(json_config);
         let mut nstack = [0u8; 4096];
         let ptr = nstack.as_mut_ptr().offset(nstack.len() as isize);
         let ptr_aligned = ptr.offset((ptr as usize % 16) as isize * -1);
@@ -472,9 +464,34 @@ fn main() {
     }
 }
 </pre>
+container.json
+<pre>
+{
+    "chroot": "/containerfs",
+    "hostname": "my-container",
+    "mount_bindings": [
+        {
+            "read_only": true,
+            "source": "/mounts/readonly/",
+            "target": "/containerfs/mp"
+        }
+    ],
+    "program": {
+        "args": [
+            "-c",
+            "/bin/sleep 20s"
+        ],
+        "executable": "/bin/bash"
+    },
+    "user_map": {
+        "gid": 1000,
+        "uid": 1000
+    }
+}
+</pre>
 Output
 <pre>
-$ target/debug/container --chroot /containerfs/ --uid 1000 --gid 1000 --entry /bin/bash --hostname my-container --args --login
+$ cargo run
 Entry point PID -> 13724
 bash-4.3# exit
 </pre>
