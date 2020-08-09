@@ -1,5 +1,5 @@
-var menuikey = [ "Go", "Rust", "DB" , "DS", "Linux", "Math", "About" ];
-var menuitem = { "Go":"go", "Rust":"rust", "DB":"db", "DS":"dist. systems", "Linux":"misc", "Math":"math", "About":"about" };
+var menuikey = [ "Go", "Rust", "DB" , "DS", "Linux", "Math", "Investing", "About" ];
+var menuitem = { "Go":"go", "Rust":"rust", "DB":"db", "DS":"dist. systems", "Linux":"misc", "Math":"math", "Investing":"investing", "About":"about" };
 //var menuikey = [ "Go", "Rust", "DB" , "DS", "Linux", "Math", "About" ];
 //var menuitem = { "Go":"go", "Rust":"rust", "DB":"db", "DS":"dist. systems", "Linux":"linux", "Math":"math", "About":"about" };
 var navigate = [];

@@ -142,135 +142,62 @@ use std::fs::OpenOptions;
 use std::io::prelude::*;
 use std::io::Error;
 
-#[derive(Debug, Clone)]
+#[derive(RustcDecodable, RustcEncodable, Debug, Clone)]
 struct Cmd {
-    path: CString,
-    args: Vec<CString>,
+    executable: String,
+    args: Vec<String>,
 }
 
-impl Cmd {
-    fn new(path: CString, args: Vec<CString>) -> Cmd {
-        Cmd { path, args }
-    }
-}
-
-#[derive(Debug, Clone)]
+#[derive(RustcDecodable, RustcEncodable, Debug, Clone)]
 struct MountBinds {
-    source: CString,
-    target: CString,
-    read_only: Option<bool>,
-}
-
-impl MountBinds {
-    fn new(source: String, target: String, read_only: Option<bool>) -> MountBinds {
-        MountBinds {
-            source: CString::new(source.as_bytes()).unwrap(),
-            target: CString::new(target.as_bytes()).unwrap(),
-            read_only,
-        }
-    }
-}
-
-#[derive(Debug, Clone)]
-struct UserMap {
-    uid: u16,
-    gid: u16,
-}
-
-impl UserMap {
-    fn new(uid: u16, gid: u16) -> UserMap {
-        UserMap { uid, gid }
-    }
-}
-
-#[derive(Debug, Clone)]
-struct NsConfig {
-    hostname: Option<CString>,
-    command: Cmd,
-    user_map: UserMap,
-    bind_map: Vec<MountBinds>,
-    chroot_path: CString,
-}
-
-impl NsConfig {
-    fn from_json_config(ns_json_config: NsConfigJson) -> NsConfig {
-        let mut bind_map = Vec::new();
-        for bm in ns_json_config.mount_bindings {
-            bind_map.push(MountBinds::new(bm.source, bm.target, bm.read_only));
-        }
-        NsConfig {
-            chroot_path: CString::new(ns_json_config.chroot.as_bytes()).unwrap(),
-            command: Cmd::new(
-                CString::new(ns_json_config.program.executable.as_bytes()).unwrap(),
-                Vec::new(),
-            ),
-            bind_map,
-            user_map: UserMap::new(ns_json_config.user_map.uid, ns_json_config.user_map.gid),
-            hostname: {
-                match ns_json_config.hostname {
-                    Some(hostname) => match CString::new(hostname.as_bytes()) {
-                        Ok(hostname) => Some(hostname),
-                        Err(_err) => panic!(_err),
-                    },
-                    None => None,
-                }
-            },
-        }
-    }
-
-    fn entry_point(&self) -> Cmd {
-        self.command.clone()
-    }
-
-    fn bind_map(&self) -> Vec<MountBinds> {
-        self.bind_map.clone()
-    }
-
-    fn user_map(&self) -> UserMap {
-        self.user_map.clone()
-    }
-
-    fn chroot_path(&self) -> CString {
-        self.chroot_path.clone()
-    }
-}
-
-#[derive(RustcDecodable, RustcEncodable, Debug)]
-struct BindMountMaps {
     source: String,
     target: String,
     read_only: Option<bool>,
 }
 
-#[derive(RustcDecodable, RustcEncodable, Debug)]
-struct Program {
-    executable: String,
-    args: Vec<String>,
-}
-
-#[derive(RustcDecodable, RustcEncodable, Debug)]
-struct UserMappings {
+#[derive(RustcDecodable, RustcEncodable, Debug, Clone)]
+struct UserMap {
     uid: u16,
     gid: u16,
 }
 
-#[derive(RustcDecodable, RustcEncodable, Debug)]
-struct NsConfigJson {
-    chroot: String,
+#[derive(RustcDecodable, RustcEncodable, Debug, Clone)]
+struct NsConfig {
     hostname: Option<String>,
-    mount_bindings: Vec<BindMountMaps>,
-    program: Program,
-    user_map: UserMappings,
+    program: Cmd,
+    user_map: Option<UserMap>,
+    mount_bindings: Option<Vec<MountBinds>>,
+    chroot: String,
 }
 
-impl NsConfigJson {
-    fn from_file(config_file_name: String) -> NsConfigJson {
+impl NsConfig {
+    fn from_file(config_file_name: String) -> NsConfig {
         let error_message = format!("Config file not found: {}", config_file_name);
         let mut file = File::open(config_file_name).expect(error_message.as_str());
         let mut server_config = String::new();
         file.read_to_string(&mut server_config).unwrap();
-        let ns_config_json: NsConfigJson = json::decode(&mut server_config).unwrap();
-        ns_config_json
+        let ns_config: NsConfig = json::decode(&mut server_config).unwrap();
+        ns_config
+    }
+
+    fn program(&self) -> Cmd {
+        self.program.clone()
+    }
+
+    fn bind_map(&self) -> Option<Vec<MountBinds>> {
+        self.mount_bindings.clone()
+    }
+
+    fn user_map(&self) -> Option<UserMap> {
+        self.user_map.clone()
+    }
+
+    fn chroot(&self) -> String {
+        self.chroot.clone()
+    }
+
+    fn hostname(&self) -> Option<String> {
+        self.hostname.clone()
     }
 }
 
@@ -285,7 +212,7 @@ fn create_namespace_mapping(UserMap { uid, gid }: UserMap) {
         .open(&setgroups_file)
         .unwrap();
     setgroups
-        .write_all(b"deny\n")
+        .write_all(b"deny")
         .expect("Unable to write to setgroups");
     setgroups.flush().unwrap();
     drop(setgroups);
@@ -294,10 +221,10 @@ fn create_namespace_mapping(UserMap { uid, gid }: UserMap) {
         .write(true)
         .open(uid_map_file)
         .unwrap();
-    let uid_map_content = format!("0 {} 1\n", uid);
+    let uid_map_content = format!("0 {} 1", uid);
     uid_map
         .write_all(uid_map_content.as_bytes())
-        .expect("Unable to write GID map");
+        .expect("Unable to write UID map");
     uid_map.flush().unwrap();
     drop(uid_map);
     let mut gid_map = OpenOptions::new()
@@ -305,7 +232,7 @@ fn create_namespace_mapping(UserMap { uid, gid }: UserMap) {
         .write(true)
         .open(gid_map_file)
         .unwrap();
-    let gid_map_content = format!("0 {} 1\n", gid);
+    let gid_map_content = format!("0 {} 1", gid);
     gid_map
         .write_all(gid_map_content.as_bytes())
         .expect("Unable to write GID map");
@@ -318,10 +245,10 @@ fn setup_mount_binds(mount_bind_maps: Vec<MountBinds>) {
         //Bind mounts before chroot
         for bm in mount_bind_maps {
             let res = libc::mount(
-                bm.source.as_ptr(),
-                bm.target.as_ptr(),
+                CString::new(bm.source.as_bytes()).unwrap().as_ptr(),
+                CString::new(bm.target.as_bytes()).unwrap().as_ptr(),
                 std::ptr::null(),
-                libc::MS_BIND, //Note readonly flag wont work here
+                libc::MS_BIND, //Note readonly flag wont work here - handle RO binds later
                 std::ptr::null(),
             );
             if res != 0 {
@@ -330,29 +257,30 @@ fn setup_mount_binds(mount_bind_maps: Vec<MountBinds>) {
                     Error::last_os_error()
                 );
             } else {
-                //remount as readonly as of now, later
-                println!("mount point {:?}", bm.target);
-                let res = libc::mount(
-                    std::ptr::null(),
-                    bm.target.as_ptr(),
-                    std::ptr::null(),
-                    libc::MS_RDONLY | libc::MS_BIND | libc::MS_REMOUNT,
-                    std::ptr::null(),
-                );
-                if res != 0 {
-                    println!(
-                        "bind readonly switch failed with an error -> {:?}",
-                        Error::last_os_error()
+                //Handle RO binds
+                if let Some(true) = bm.read_only {
+                    let res = libc::mount(
+                        std::ptr::null(),
+                        CString::new(bm.target.as_bytes()).unwrap().as_ptr(),
+                        std::ptr::null(),
+                        libc::MS_RDONLY | libc::MS_BIND | libc::MS_REMOUNT,
+                        std::ptr::null(),
                     );
+                    if res != 0 {
+                        println!(
+                            "bind readonly switch failed with an error -> {:?}",
+                            Error::last_os_error()
+                        );
+                    }
                 }
             }
         }
     }
 }
 
-fn setup_chroot_env(chroot_path: CString) {
+fn setup_chroot_env(chroot_path: String) {
     unsafe {
-        let res = libc::chroot(chroot_path.as_ptr());
+        let res = libc::chroot(CString::new(chroot_path.as_bytes()).unwrap().as_ptr());
         if res != 0 {
             println!(
                 "chroot failed with an error -> {:?}",
@@ -377,14 +305,51 @@ fn setup_chroot_env(chroot_path: CString) {
                 Error::last_os_error()
             );
         }
+        //Mount dev filesystem
+        let res = libc::mount(
+            std::ptr::null(),
+            CString::new("/dev").unwrap().as_ptr(),
+            CString::new("tmpfs").unwrap().as_ptr(),
+            0u64,
+            std::ptr::null(),
+        );
+        if res != 0 {
+            println!(
+                "dev mount failed with an error -> {:?}",
+                Error::last_os_error()
+            );
+        }
+        //Mount run filesystem
+        let res = libc::mount(
+            std::ptr::null(),
+            CString::new("/run").unwrap().as_ptr(),
+            CString::new("tmpfs").unwrap().as_ptr(),
+            0u64,
+            std::ptr::null(),
+        );
+        if res != 0 {
+            println!(
+                "run mount failed with an error -> {:?}",
+                Error::last_os_error()
+            );
+        }
     }
 }
 
-fn exec_in_ns(Cmd { path, args }: Cmd) -> libc::c_int {
+fn exec_in_ns(Cmd { executable, args }: Cmd) -> libc::c_int {
     unsafe {
-        let mut argsp: Vec<*const libc::c_char> = args.iter().map(|arg| arg.as_ptr()).collect();
-        argsp.push(std::ptr::null()); //NULL terminated
-        let res = libc::execv(path.as_ptr(), argsp.as_ptr());
+        //First argument will be the program name itself. See execv syscall description
+        let mut args_cstring: Vec<CString> = vec![CString::new(executable.as_bytes()).unwrap()];
+        for arg in args {
+            args_cstring.push(CString::new(arg.as_bytes()).unwrap());
+        }
+        let mut args_c_char: Vec<*const libc::c_char> =
+            args_cstring.iter().map(|arg| arg.as_ptr()).collect();
+        args_c_char.push(std::ptr::null()); //NULL terminated
+        let res = libc::execv(
+            CString::new(executable.as_bytes()).unwrap().as_ptr(),
+            args_c_char.as_ptr(),
+        );
         if res != 0 {
             println!(
                 "Entry point execution failed with an error -> {:?}",
@@ -399,8 +364,11 @@ extern "C" fn setup_ns(ns_config: *mut NsConfig) -> libc::c_int {
     let ns_config: &NsConfig = unsafe { &mut *ns_config };
     //Set hostname
     unsafe {
-        if let Some(hostname) = ns_config.hostname.clone() {
-            let res = libc::sethostname(hostname.as_ptr(), hostname.as_bytes().len());
+        if let Some(hostname) = ns_config.hostname() {
+            let res = libc::sethostname(
+                CString::new(hostname.as_bytes()).unwrap().as_ptr(),
+                hostname.as_bytes().len(),
+            );
             if res != 0 {
                 println!(
                     "proc mount failed with an error -> {:?}",
@@ -409,42 +377,53 @@ extern "C" fn setup_ns(ns_config: *mut NsConfig) -> libc::c_int {
             }
         }
         //Do mappings UID and GID mappings
-        create_namespace_mapping(ns_config.user_map());
+        println!("setting up uid and gid mappings");
+        match ns_config.user_map() {
+            Some(user_map) => create_namespace_mapping(user_map),
+            None => {}
+        }
 
         //Mount bindings
-        setup_mount_binds(ns_config.bind_map());
-        //Chroot and Proc Mount
-        setup_chroot_env(ns_config.chroot_path());
+        println!("setting up binds");
+        match ns_config.bind_map() {
+            Some(bind_map) => setup_mount_binds(bind_map),
+            None => {}
+        }
 
-        //EXECV the entry point replacing the clone completely
-        exec_in_ns(ns_config.entry_point())
+        //Chroot and Proc Mount
+        println!("setting up chroot");
+        setup_chroot_env(ns_config.chroot());
+
+        //EXECV the program replacing the clone completely
+        println!("setting up to execute program");
+        exec_in_ns(ns_config.program())
     }
 }
 
 fn main() {
     //CLONE and then EXEC entry point in CLONE
     unsafe {
-        //let mut ns_config = parse_args();
-        let json_config = NsConfigJson::from_file("container.json".to_string());
-        let mut ns_config = NsConfig::from_json_config(json_config);
+        let mut ns_config = NsConfig::from_file("container.json".to_string());
         let mut nstack = [0u8; 4096];
         let ptr = nstack.as_mut_ptr().offset(nstack.len() as isize);
         let ptr_aligned = ptr.offset((ptr as usize % 16) as isize * -1);
+        //CLONE FLAGS for namespace
+        let mut ns_flags: libc::c_int =
+            CLONE_NEWNS | CLONE_NEWUTS | CLONE_NEWIPC | CLONE_NEWPID | CLONE_NEWNET | SIGCHLD;
+        //NEWUSER if user mappings are present
+        match ns_config.user_map {
+            Some(_) => ns_flags = ns_flags | CLONE_NEWUSER,
+            None => {}
+        }
         let pid = libc::clone(
             std::mem::transmute(setup_ns as extern "C" fn(*mut NsConfig) -> libc::c_int),
             ptr_aligned as *mut libc::c_void,
-            //CLONE FLAGS
-            CLONE_NEWNS
-                | CLONE_NEWUTS
-                | CLONE_NEWIPC
-                | CLONE_NEWUSER
-                | CLONE_NEWPID
-                | CLONE_NEWNET
-                | SIGCHLD,
+            ns_flags,
             &mut ns_config as *mut _ as *mut libc::c_void,
         );
+        //If NEWUSER is not used/user mappings are not provided then you got to be root to perform clone
         if pid != 0 {
-            println!("Entry point PID -> {}", pid);
+            println!("Program PID -> {}", pid);
 
             let mut rusage: libc::rusage = std::mem::MaybeUninit::uninit().assume_init();
             let mut status: i32 = 0;
@@ -492,6 +471,35 @@ container.json
 Output
 <pre>
 $ cargo run
-Entry point PID -> 13724
-bash-4.3# exit
+Program PID -> 11031
+setting up uid and gid mappings
+setting up binds
+setting up chroot
+setting up to execute program
+CN WAIT RESULT -> 11031
+CN RUSAGE -> rusage {
+    ru_utime: timeval {
+        tv_sec: 0,
+        tv_usec: 0,
+    },
+    ru_stime: timeval {
+        tv_sec: 0,
+        tv_usec: 0,
+    },
+    ru_maxrss: 2648,
+    ru_ixrss: 0,
+    ru_idrss: 0,
+    ru_isrss: 0,
+    ru_minflt: 209,
+    ru_majflt: 1,
+    ru_nswap: 0,
+    ru_inblock: 64,
+    ru_oublock: 0,
+    ru_msgsnd: 0,
+    ru_msgrcv: 0,
+    ru_nsignals: 0,
+    ru_nvcsw: 4,
+    ru_nivcsw: 9,
+}
+CN WAIT STATUS -> 0
 </pre>
