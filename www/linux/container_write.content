@@ -1,15 +1,9 @@
 <h3><a href="#linux" onclick="_().loadContent(this,'linux','ContentBody');" >Containers</a> - Let's build one</h3></p>
-<r>Working on it. Coming soon!!!</r></p>
-In case you want to have a look at basics of Namespaces, click <a href="#linux/container_intro" onclick="_().loadContent(this,'linux/container_intro','ContentBody');">introduction</a>.</p>
 <center>
-<image src="/images/container_flow.svg" width="400px">
+<image src="/images/container_flow.svg" width="600px">
 Fig(a). execution flow.</p>
 </center>
-<!--
-Example uses hindu mythological names</br>
-Brahma the creator of all Lokas (different worlds)</br>
-<*>Loka is an analogy for the container.</br>
-<*>Brahma is the container spawner</p>-->
+In case you want to have a look at basics of Namespaces, click <a href="#linux/container_intro" onclick="_().loadContent(this,'linux/container_intro','ContentBody');">introduction</a>.</p>
 Have a linux filesystem structure created under /containerfs directory (accessible via user executing this binary). Which will have all the essential utilities such as bash and other per your need. Copy them from the local system into this directory.</p>
 <pre>
 /containerfs/
@@ -47,7 +41,7 @@ Have a linux filesystem structure created under /containerfs directory (accessib
     └── bin
         └── id
 </pre>
-Short version
+(Short version)
 <h3>Go</h3>
 <pre>
 package main
@@ -126,7 +120,7 @@ func loka() {
         fmt.Println("I am dying!!!")
 }
 </pre>
-Long version
+(Long version)
 <h3>Rust</h3>
 I am still working on it!!!</br>
 Here you will see exactly what is happening under the hood.
@@ -471,35 +465,43 @@ container.json
 Output
 <pre>
 $ cargo run
-Program PID -> 11031
+    Finished dev [unoptimized + debuginfo] target(s) in 0.01s
+     Running `target/debug/container`
+Program PID -> 18428
 setting up uid and gid mappings
 setting up binds
 setting up chroot
 setting up to execute program
-CN WAIT RESULT -> 11031
+bash-4.3# date
+Mon Jan 10 22:01:39 UTC 2020
+bash-4.3# hostname
+my-container
+bash-4.3# exit
+exit
+CN WAIT RESULT -> 18428
 CN RUSAGE -> rusage {
     ru_utime: timeval {
         tv_sec: 0,
-        tv_usec: 0,
+        tv_usec: 4000,
     },
     ru_stime: timeval {
         tv_sec: 0,
         tv_usec: 0,
     },
-    ru_maxrss: 2648,
+    ru_maxrss: 3272,
     ru_ixrss: 0,
     ru_idrss: 0,
     ru_isrss: 0,
-    ru_minflt: 209,
-    ru_majflt: 1,
+    ru_minflt: 485,
+    ru_majflt: 0,
     ru_nswap: 0,
-    ru_inblock: 64,
+    ru_inblock: 0,
     ru_oublock: 0,
     ru_msgsnd: 0,
     ru_msgrcv: 0,
     ru_nsignals: 0,
-    ru_nvcsw: 4,
-    ru_nivcsw: 9,
+    ru_nvcsw: 24,
+    ru_nivcsw: 38,
 }
 CN WAIT STATUS -> 0
 </pre>
