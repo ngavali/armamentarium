@@ -1,14 +1,17 @@
 <h3><a href="#linux" onclick="_().loadContent(this,'linux','ContentBody');" >Containers</a> - Introduction</h3></p>
 <r>Draft</r></p>
-In Linux, namespaces are used to create isolated environments for processes.</p>
+<b><i>References</i></b>: Namespaces <a href="https://man7.org/linux/man-pages/man7/namespaces.7.html" target="_">man pages</a></p>
+In Linux, namespaces is a kernel feature that allow processe(s) to have their own isolated set of the global system resources. Such as pid, ipc, network, hostname, mounts etc.</p>
 <ul>
-Namespaces
+Namespace available on Linux:
 <li>UTS</li>
+<li>IPC</li>
+<li>Mount</li>
 <li>PID</li>
-<li>NS</li>
-<li>NET</li>
-<li>UTS</li>
+<li>Time</li>
+<li>Network</li>
 <li>USER</li>
+<li>Cgroup</li>
 </ul>
 Networking in namespaces.
 <center>
