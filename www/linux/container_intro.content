@@ -1,9 +1,9 @@
 <h3><a href="#linux" onclick="_().loadContent(this,'linux','ContentBody');" >Containers</a> - Introduction</h3></p>
-<r>Draft</r></p>
-<b><i>References</i></b>: Namespaces <a href="https://man7.org/linux/man-pages/man7/namespaces.7.html" target="_">man pages</a></p>
-Namespaces is a Linux kernel feature that allow processe(s) to have their own isolated set of the global system resources ( such as pid, ipc, network, hostname, mounts etc. ).
-Namespaces are fundamental building blocks of the Container technology.</p>
-Kinds of namespaces:
+<r>Draft!!!</r>
+In this article, we will familarize ourself with namespaces fundamentals and bare minimal <i>essentials</i>.  The purpose of this article is to setup a base to get you started with container technology and at the minimal make reader aware of what exactly is a container. We will take a deep dive into exploiting namespaces to build our own container in the <a href="/#linux/container_write" target="_">second</a> part of this article. Without further ado, let us start with understanding what are Namespaces, building block of Container technology.</p>
+Namespaces<sup><a href="https://man7.org/linux/man-pages/man7/namespaces.7.html" target="_">man pages</a></sup> is a Linux kernel feature that allow processe(s) to have their own isolated set of the global system resources ( such as pid, ipc, network, hostname, mounts etc. ).
+
+Kinds of namespaces available in linux.</p>
 <ul>
 <li>UTS [CLONE_NEWUTS]</br>Process can have different hostname.</li>
 <li>IPC [CLONE_NEWIPC]</li>
@@ -14,6 +14,11 @@ Kinds of namespaces:
 <li>Cgroup [CLONE_NEWCGROUP]</li>
 <li>Time [CLONE_NEWTIME, added recently]</br>Allows to have different system time.</li>
 </ul>
+Switching to a new Namespace is accompllished using either of the two systems calls.
+<ul>
+<li>unshare - puts existing process into a new Namespace</li>
+<li><a href="https://man7.org/linux/man-pages/man2/clone.2.html" target="_">clone</a> - creates a child process in a new Namespace.</li>
+</ul>
 <h4>User</h4>
 User mapping are accomplished by writing to following 3 files:</br>
 <ul>
@@ -22,7 +27,16 @@ User mapping are accomplished by writing to following 3 files:</br>
 <li>/proc/self/setgroups	(setgroups has to be disabled)</li>
 </ul>
 <h4>Mount</h4>
+From CLONE man pages.
+<pre>
+<b>CLONE_NEWNS</b> (since Linux 2.4.19)
+              If CLONE_NEWNS is set, the cloned child is started in a new
+              mount namespace, initialized with a copy of the namespace of
+              the parent.  If CLONE_NEWNS is not set, the child lives in the
+              same mount namespace as the parent.
+</pre>
 <h4>Networking</h4>
+&Tab;Networking is accomplished by creating a virtual interface pair. Wherein, one end attached to new namespace and another remains attached to the default namespace. Traffic is moved in and out via virtual interface pairs. i.e., packets send to one originate out of the another interface.
 <center>
 <image src="/images/vlinks.svg" width="330px">
 Create eth pair and bridge</p>

@@ -1,4 +1,4 @@
-<h3><a href="#rust" onclick="_().loadContent(this,'rust','ContentBody');" >Rust Programming Language</a> - Say Hello, Rust!</h3></p>
+<h3><a href="#rust" onclick="_().loadContent(this,'rust','ContentBody');" >Rust Programming Language</a> - Say Hello to Rust!</h3></p>
 Create a new binary project</br>
 <pre>
 $ cargo new --bin hello

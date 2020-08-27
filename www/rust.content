@@ -1,6 +1,6 @@
 <h3>Rust Programming Language</h3>
 My musings with Rust</p>
-<a href="#rust/hello" onclick="_().loadContent(this,'rust/hello','ContentBody');">Say Hello, Rust!</a>
+<a href="#rust/hello" onclick="_().loadContent(this,'rust/hello','ContentBody');">Say hello to Rust!</a>
 <h4>Basics</h4>
 <a href="#rust/mutable" onclick="_().loadContent(this,'rust/mutable','ContentBody');">Mutability</a></br>
 <a href="#rust/shadow" onclick="_().loadContent(this,'rust/shadow','ContentBody');">Shadowing</a></br>
