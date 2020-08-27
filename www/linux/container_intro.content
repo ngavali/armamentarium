@@ -1,24 +1,28 @@
-<h3><a href="#linux" onclick="_().loadContent(this,'linux','ContentBody');" >Containers</a> - Introduction</h3></p>
-<r>Draft!!!</r>
-In this article, we will familarize ourself with namespaces fundamentals and bare minimal <i>essentials</i>.  The purpose of this article is to setup a base to get you started with container technology and at the minimal make reader aware of what exactly is a container. We will take a deep dive into exploiting namespaces to build our own container in the <a href="/#linux/container_write" target="_">second</a> part of this article. Without further ado, let us start with understanding what are Namespaces, building block of Container technology.</p>
-Namespaces<sup><a href="https://man7.org/linux/man-pages/man7/namespaces.7.html" target="_">man pages</a></sup> is a Linux kernel feature that allow processe(s) to have their own isolated set of the global system resources ( such as pid, ipc, network, hostname, mounts etc. ).
-
-Kinds of namespaces available in linux.</p>
+<h3><a href="#linux" onclick="_().loadContent(this,'linux','ContentBody');" >Containers</a> - Introduction</h3>
+Hello Friends, hope you all are doing great.</br> In this article we will look into container technology. However, due to vastness of the topic, I had to divide it into two parts. The first part will serve as an introduction to the <i>essential</i> concepts covering basic understanding of building blocks of containers, namely Namespaces. And in the <a href="/#linux/container_write" target="_">second</a> part, we will take a deep dive by building our own container.</br>
+Links to the relevant topics are added whever required (like Linux man pages to provide further reading for readers who wish to dig deeper).</p>
+Now, without further ado let us start with understanding what is Namespaces, the most important building block of Container technology. 
+Namespaces<sup>[<a href="https://man7.org/linux/man-pages/man7/namespaces.7.html" target="_">man pages</a>]</sup> is a Linux kernel feature that allow processe(s) to have their own isolated set of the global system resources ( such as pid, ipc, network, hostname, mounts etc. ).
+</p>
+<h4>Kinds of namespaces available in linux.</h4>
 <ul>
-<li>UTS [CLONE_NEWUTS]</br>Process can have different hostname.</li>
-<li>IPC [CLONE_NEWIPC]</li>
-<li>Mount [CLONE_NEWNS]</li>
-<li>PID [CLONE_NEWPID]</li>
-<li>Network [CLONE_NEWNET]</br>Network interface isolation.</li>
-<li>User [CLONE_NEWUSER]</br>Mapping external users into namespaces to provide elevated privileges. Ex. a normal can be mapped as root inside the new namespace.</li>
-<li>Cgroup [CLONE_NEWCGROUP]</li>
-<li>Time [CLONE_NEWTIME, added recently]</br>Allows to have different system time.</li>
+<li>UTS</br>Allows process to have a different hostname.</li>
+<li>IPC</br>Group of processes can have their own isolated IPC resources.</li>
+<li>Mount</br>Group of processes can have their own isolated mount bindings.</li>
+<li>PID</br>Processes can have their own set of Process IDs.</li>
+<li>Network</br>Process have their onw isolated network resources.</li>
+<li>User</br>Mapping external user into namespaces to provide elevated privileges. Ex. Mapping a normal user to a privileged root user inside the container.</li>
+<li>Cgroup</br><i>We will cover this in a separate article.</i></li>
+<li>Time (added recently)</br>Allows to have different system time.</li>
 </ul>
-Switching to a new Namespace is accompllished using either of the two systems calls.
+<h4>Entering into a Namespace</h4>
+Switching to a new Namespace is accomplished by invoking either of the following two Linux System calls with appropriate flags/inputs. These flags dictate the desired isolation of resources.
 <ul>
-<li>unshare - puts existing process into a new Namespace</li>
-<li><a href="https://man7.org/linux/man-pages/man2/clone.2.html" target="_">clone</a> - creates a child process in a new Namespace.</li>
+<li>unshare<sup>[<a href="https://www.man7.org/linux/man-pages/man2/unshare.2.html">man pages</a>]</sup> - puts existing process into a new Namespace</li>
+<li>clone<sup>[<a href="https://man7.org/linux/man-pages/man2/clone.2.html" target="_">man pages</a>]</sup> - creates a child process in a new Namespace.</li>
 </ul>
+<h4>Namespaces in detail</h4>
+Let us look at the some important namespaces in detail, it's purpose and application.
 <h4>User</h4>
 User mapping are accomplished by writing to following 3 files:</br>
 <ul>
@@ -35,8 +39,9 @@ From CLONE man pages.
               the parent.  If CLONE_NEWNS is not set, the child lives in the
               same mount namespace as the parent.
 </pre>
+Any mount(s) or binding(s) created inside will not be visiable in the other namespaces.
 <h4>Networking</h4>
-&Tab;Networking is accomplished by creating a virtual interface pair. Wherein, one end attached to new namespace and another remains attached to the default namespace. Traffic is moved in and out via virtual interface pairs. i.e., packets send to one originate out of the another interface.
+&Tab;Networking is accomplished by creating a virtual interface pair. Wherein, one end attached to new namespace and another remains attached to the default namespace. Traffic is moved in and out via virtual interface pairs. i.e., packets send to one, originate out of the another interface.
 <center>
 <image src="/images/vlinks.svg" width="330px">
 Create eth pair and bridge</p>
