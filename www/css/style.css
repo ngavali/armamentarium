@@ -88,7 +88,7 @@ table#topicContent {
 }
 
 body {
-	font-family: Arial,"Times New Roman";
+	font-family: "Times New Roman";
 	font-size: 17px;
 	color: #444;
 	color: #000;
@@ -99,8 +99,8 @@ body {
 }
 
 table#topicContent tr td {
-	font-family: Arial, "Times New Roman";
-	font-size: 15px;
+	font-family: "Times New Roman";
+	font-size: 17px;
 }
 
 table#menu tr td a {
@@ -108,8 +108,8 @@ table#menu tr td a {
 	text-decoration: none;
 	color: rgb( 100, 100, 100 );
 	color: #000;
-	font-size: 15px;
-	font-family: Arial, "Times New Roman";
+	font-size: 17px;
+	font-family: "Times New Roman";
 }
 
 a {
