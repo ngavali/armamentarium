@@ -1,0 +1,3 @@
+<h3>Thoughts</h3>
+<a href="#thoughts/investing" onclick="_().loadContent(this,'thoughts/investing','ContentBody');">Investing</a></br>
+<a href="#thoughts/ai" onclick="_().loadContent(this,'thoughts/ai','ContentBody');">AI</a></br>
