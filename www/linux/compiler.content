@@ -15,3 +15,4 @@ $ readelf -h ./code.bin_clang++ ./code.bin_g++ | grep Type
   Type:                              EXEC (Executable file)         ###clang++
   Type:                              DYN (Shared object file)       ###g++
 </pre>
+Thanks</br>
