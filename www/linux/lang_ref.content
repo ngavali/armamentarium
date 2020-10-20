@@ -1,0 +1,69 @@
+<h3><a href="#linux" onclick="_().loadContent(this,'linux','ContentBody');" >Linux</a> - Language Reference</h3></p>
+<table border=1 width="1000px">
+<tr>
+<th>Entity</th>
+<th>C++</th>
+<th>Go</th>
+<th>Rust</th>
+</tr>
+<tr>
+<td>Struct</td>
+<td>
+<pre>struct <i>struct_name</i> {
+	field_1_type field_1;
+	field_2_type field_2;
+	...
+	field_N_type field_N;
+};</pre>
+</td>
+<td>
+<pre>type <i>struct_name</i> struct {
+	field_1 field_1_type,
+	field_2 field_2_type,
+	...
+	field_N field_N_type
+}</pre>
+</td>
+<td>
+<pre>struct <i>struct_name</i> {
+	field_1: field_1_type,
+	field_2: field_2_type,
+	...
+	field_N: field_N_type,
+}</pre>
+</td>
+</tr>
+<tr>
+<td>Function</td>
+<td>
+<pre>return_type function <i>function_name</i>
+( arg_type_1 arg_1, arg_type_2 arg_2, ... , arg_type_N arg_N ) {
+	..function_body...
+	return [variable|value];
+}</pre>
+</td>
+<td>
+<pre>
+func <i>function_name</i> ( arg_type_1 arg_1, arg_type_2 arg_2, ... , arg_type_N arg_N ) ( return_type ret_var_1, ..., return_type ret_var_N ) {
+	..function_body...
+	return ( ret_var_1, ... , ret_var_N )
+}
+</pre>
+</td>
+<td>
+<pre>
+fn <i>function_name</i> ( arg_type_1 arg_1, arg_type_2 arg_2, ... , arg_type_N arg_N ) -> return_type ret_var {
+	..function_body...
+	ret_var
+}
+</pre>
+</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</table>
+

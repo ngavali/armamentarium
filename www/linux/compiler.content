@@ -1,0 +1,17 @@
+<h3><a href="#linux" onclick="_().loadContent(this,'linux','ContentBody');" >C++</a> - Compiler</h3></p>
+<pre>
+#Preprocessing
+g++ -E -o code_expanded.cpp code.cpp
+#Compilation into assembly code
+g++ -S code_expanded.cpp
+#Assembly code into object file
+g++ -c code_expanded.s
+#Linking object file(s) into final binary
+g++ -o code.bin code_expanded.o
+</pre>
+clang++ vs g++
+<pre>
+$ readelf -h ./code.bin_clang++ ./code.bin_g++ | grep Type
+  Type:                              EXEC (Executable file)         ###clang++
+  Type:                              DYN (Shared object file)       ###g++
+</pre>
