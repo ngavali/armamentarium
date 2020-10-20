@@ -10,3 +10,5 @@ OpenSSL <a href="#linux/openssl" onclick="_().loadContent(this,'linux/openssl','
 Chess app using <a href="#es6/chess" onclick="_().loadContent(this,'es6/chess','ContentBody');">ES6</a></br>
 <h4>GIT</h4>
 <a href="#linux/git" onclick="_().loadContent(this,'linux/git','ContentBody');">Basics</a></br>
+<h4>C++</h4>
+<a href="#linux/compiler" onclick="_().loadContent(this,'linux/compiler','ContentBody');">Compiler</a></br>
