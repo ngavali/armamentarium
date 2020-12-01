@@ -31,10 +31,10 @@ div#menubar {
 }
 
 logo {
-	color: #c59b3d;
+	color: #D7263D;
 	font-size: 24px;
-	font-weight: normal;
-	font-family: "Times New Roman";
+	font-weight: bold;
+	font-family: Arial;
 }
 
 k3 {
@@ -44,19 +44,19 @@ k3 {
 h3, k3 {
 	font-size: 20px;
 	margin-top: 0px;
-    margin-bottom: 5px;
-	font-family: "Times New Roman";
+    margin-bottom: 10px;
+	font-family: Arial;
 }
 
 h3 {
-    color: #6E8387;
+    color: #D65108;
 }
 
 h4 {
     font-size: 18px;
     margin-top: 5px;
     margin-bottom: 0px;
-	font-family: "Times New Roman";
+	font-family: Arial;
 }
 
 table#menu {
@@ -89,7 +89,7 @@ table#topicContent {
 }
 
 body {
-	font-family: "Times New Roman";
+	font-family: Arial;
 	font-size: 17px;
 	color: #444;
 	color: #000;
@@ -100,7 +100,7 @@ body {
 }
 
 table#topicContent tr td {
-	font-family: "Times New Roman";
+	font-family: Arial;
 	font-size: 17px;
 }
 
@@ -110,11 +110,11 @@ table#menu tr td a {
 	color: rgb( 100, 100, 100 );
 	color: #000;
 	font-size: 17px;
-	font-family: "Times New Roman";
+	font-family: Arial;
 }
 
 a {
-	color: #4F5165;
+	color: #4F51f1;
 	outline: none;
 }
 
@@ -131,9 +131,9 @@ img {
 
 table#menu tr td .activeLink {
 	padding-right: 5px;
-    color: #00A878;
-    color: #D5C7BC;
-    color: #6E8387;
+    color: #D7263D;
+    olor: #D5C7BC;
+    olor: #6E8387;
 	text-decoration: underline;
 	ont-size: 12pt;
 }
