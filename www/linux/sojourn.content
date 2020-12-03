@@ -50,7 +50,6 @@ bool add_to_keyValueStore(const char *key, const char *val) {
     insertVal = new char[strlen(val + 1)];
     strcpy(insertKey, key);
     strcpy(insertVal, val);
-    fflush(stdout);
     keyValueStore.insert({insertKey, insertVal});
     return true;
   }
