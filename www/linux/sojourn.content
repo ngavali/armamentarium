@@ -2,35 +2,35 @@
 <r>Work in progress!!!</r>
 A simple inmemory key value store.
 <pre>
-#include <iostream>
-#include <sys/types.h>
-#include <unistd.h>
-#include <sys/socket.h>
-#include <netdb.h>
-#include <arpa/inet.h>
-#include <string.h>
-#include <string>
+#include &lt;iostream>
+#include &lt;sys/types.h>
+#include &lt;unistd.h>
+#include &lt;sys/socket.h>
+#include &lt;netdb.h>
+#include &lt;arpa/inet.h>
+#include &lt;string.h>
+#include &lt;string>
 
-#include <thread>
-#include <mutex>
-#include <map>
+#include &lt;thread>
+#include &lt;mutex>
+#include &lt;map>
 
 std::mutex keyValueStoreLock;
 
 struct cmp_str {
   bool operator()(char const *a, char const *b) const {
-    return strcmp(a, b) < 0;
+    return strcmp(a, b) &lt; 0;
   }
 };
 
-std::map<const char *, const char *, cmp_str> keyValueStore;
+std::map&lt;const char *, const char *, cmp_str> keyValueStore;
 
 const char *get_from_keyValueStore(const char *key) {
   return keyValueStore.find(key)->second;
 }
 
 bool erase_from_keyValueStore(const char *key) {
-  std::lock_guard<std::mutex> lg(keyValueStoreLock);
+  std::lock_guard&lt;std::mutex> lg(keyValueStoreLock);
   if (get_from_keyValueStore(key) != NULL) {
     const char* k = std::move(keyValueStore.find(key)->first);
     const char* v = std::move(keyValueStore.find(key)->second);
@@ -43,7 +43,7 @@ bool erase_from_keyValueStore(const char *key) {
 }
 
 bool add_to_keyValueStore(const char *key, const char *val) {
-  std::lock_guard<std::mutex> lg(keyValueStoreLock);
+  std::lock_guard&lt;std::mutex> lg(keyValueStoreLock);
   if (get_from_keyValueStore(key) == NULL) {
     char *insertKey, *insertVal;
     insertKey = new char[strlen(key + 1)];
@@ -74,11 +74,11 @@ void handle_connection(int &clientSocket) {
     try {
       int bytesRecv = recv(clientSocket, buf, 4096, 0);
       if (bytesRecv == -1) {
-        std::cerr << "Connection problem." << std::endl;
+        std::cerr &lt;&lt; "Connection problem." &lt;&lt; std::endl;
         break;
       }
       if (bytesRecv == 0) {
-        std::cout << "Client disconnected." << std::endl;
+        std::cout &lt;&lt; "Client disconnected." &lt;&lt; std::endl;
         break;
       }
 
@@ -86,7 +86,7 @@ void handle_connection(int &clientSocket) {
       k = 0;
       iteration = 0;
 
-      for (int i = 0; i < bytesRecv && iteration < 3; i++) {
+      for (int i = 0; i &lt; bytesRecv && iteration &lt; 3; i++) {
         if (k > 255) {
           printf("Key size exceeded...");
           break;
@@ -140,7 +140,7 @@ void handle_connection(int &clientSocket) {
       }
 
     } catch (std::exception &e) {
-      std::cout << "exception : " << e.what() << std::endl;
+      std::cout &lt;&lt; "exception : " &lt;&lt; e.what() &lt;&lt; std::endl;
     }
   }
 
@@ -148,14 +148,14 @@ void handle_connection(int &clientSocket) {
 
   delete &clientSocket;
 
-  std::cout << "---Exited  thread" << std::endl;
+  std::cout &lt;&lt; "---Exited  thread" &lt;&lt; std::endl;
 }
 
 int main() {
 
   int listening = socket(AF_INET, SOCK_STREAM, 0);
   if (listening == -1) {
-    std::cerr << "Can't create a socket" << std::endl;
+    std::cerr &lt;&lt; "Can't create a socket" &lt;&lt; std::endl;
     return -1;
   }
 
@@ -166,12 +166,12 @@ int main() {
   inet_pton(AF_INET, "0.0.0.0", &hint.sin_addr);
 
   if (bind(listening, (const sockaddr *)&hint, sizeof(hint)) == -1) {
-    std::cerr << "Can't bind to IP/Port" << std::endl;
+    std::cerr &lt;&lt; "Can't bind to IP/Port" &lt;&lt; std::endl;
     return -2;
   }
 
   if (listen(listening, SOMAXCONN) == -1) {
-    std::cerr << "Can't listen!" << std::endl;
+    std::cerr &lt;&lt; "Can't listen!" &lt;&lt; std::endl;
   }
 
   sockaddr_in client;
@@ -187,7 +187,7 @@ int main() {
     *clientSocket = accept(listening, (sockaddr *)&client, &clientSize);
 
     if (*clientSocket == -1) {
-      std::cerr << "Problem connecting with the client!" << std::endl;
+      std::cerr &lt;&lt; "Problem connecting with the client!" &lt;&lt; std::endl;
     } else {
       printf("Connected at socket=%p.\n", clientSocket);
       connections++;
@@ -200,15 +200,15 @@ int main() {
                              svc, NI_MAXSERV, 0);
 
     if (result)
-      std::cout << host << " -> connected on " << svc << std::endl;
+      std::cout &lt;&lt; host &lt;&lt; " -> connected on " &lt;&lt; svc &lt;&lt; std::endl;
     else {
       inet_ntop(AF_INET, &client.sin_addr, host, NI_MAXHOST);
-      std::cout << host << " : connected on " << ntohs(client.sin_port)
-                << std::endl;
+      std::cout &lt;&lt; host &lt;&lt; " : connected on " &lt;&lt; ntohs(client.sin_port)
+                &lt;&lt; std::endl;
     }
 
     std::thread(&handle_connection, std::ref(*clientSocket)).detach();
-    std::cout << "Total connections : " << connections << std::endl;
+    std::cout &lt;&lt; "Total connections : " &lt;&lt; connections &lt;&lt; std::endl;
   }
 
   close(listening);
