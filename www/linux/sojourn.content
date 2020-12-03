@@ -32,8 +32,8 @@ const char *get_from_keyValueStore(const char *key) {
 bool erase_from_keyValueStore(const char *key) {
   std::lock_guard&lt;std::mutex> lg(keyValueStoreLock);
   if (get_from_keyValueStore(key) != NULL) {
-    const char* k = std::move(keyValueStore.find(key)->first);
-    const char* v = std::move(keyValueStore.find(key)->second);
+    const char* k = keyValueStore.find(key)->first;
+    const char* v = keyValueStore.find(key)->second;
     keyValueStore.erase(key);
     delete k;
     delete v;
