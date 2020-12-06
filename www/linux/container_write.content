@@ -43,9 +43,8 @@ Have a linux filesystem structure created under /containerfs directory (accessib
     └── bin
         └── id
 </pre>
-Shallow Dive using Go (Short version)
-(Program is named after the hindu god of creation, Brahma)
-<h3>Go</h3>
+<h3>A Shallow Dive</h3> Using Go (Short version)</br>
+Program is named after the hindu god of creation, Brahma.
 <pre>
 package main
 
@@ -123,8 +122,8 @@ func container() {
         fmt.Println("I am dying!!!")
 }
 </pre>
-Deep dive using Rust (Long version)
-<h3>Rust</h3>
+<h3>Deep dive</h3>
+Using Rust (Long version)</br>
 Here you will exactly see, what is happening under the hood.
 <pre>
 extern crate libc;
@@ -508,7 +507,4 @@ CN RUSAGE -> rusage {
 CN WAIT STATUS -> 0
 </pre>
 <a href="https://github.com/ngavali/rationalbear/tree/master/container" target="_">Source code</a>
-Thank you</p>
-
-Nilesh 
-
+Thank you.
