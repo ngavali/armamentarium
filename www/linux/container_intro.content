@@ -1,8 +1,9 @@
 <h3><a href="#linux" onclick="_().loadContent(this,'linux','ContentBody');" >Containers</a> - Introduction</h3>
-&emsp; Hello Friends, hope you all are doing great. In this article we will sneak peek  Containers, what makes them and how they are built. Considering the vastness of the topic, I have divided it into two parts. The first part (this article) will serve as an introduction to the building blocks (i.e., <i>Namespaces</i>) and bare minimal <i>essential</i> concepts. </br>
-&emsp; In the <a href="/#linux/container_write" target="_">second</a> part, we will take a deep dive by building our own container. Links to the relevant topics are added whever required (like Linux man pages) for readers, who wish to dig deeper.</p>
-Now, without further ado let us begin with understanding what Namespaces is?</br>
-Namespaces<sup>[<a href="https://man7.org/linux/man-pages/man7/namespaces.7.html" target="_">man pages</a>]</sup> is a Linux kernel feature that allow processe(s) to have their own isolated set of the global system resources ( such as pid, ipc, network, hostname, mounts etc. ). When a Linux system starts, all the processes belong to a default Namespace and have access to the global resources.
+&emsp; Hello Friends, hope you all are doing great. In this article we will take a sneak peek into Containers. What makes them and how they are built. (Most of you must be knowning it as a Docker container, but that is a wrapper using the Linux Kernel Features underneath).
+Considering the vastness of the topic, I have divided it into two parts. First part (this article), focus on bare minimal <i>essential</i> concepts which will serve as an introduction to the building blocks of a Container.</p>
+&emsp; In the <a href="#linux/container_write" onclick="_().loadContent(this,'linux/container_write','ContentBody');">second</a> part, we will take a deep dive by building our own container. However, there is no active commentary from myside and I would want you to look at the code (talk to it), read through it and understand what is going on by getting your hands dirty. Just like jumping into the pool and learning how to swim by yourself. First one will be a shallow dive using Golang and then a much deeper dive using Rust to grab the underlying perls. In that way I feel you will learn the most and not reading just another article. Links to the relevant topics are added whever required (like Linux man pages) for readers, who wish to dig deeper.</p>
+&emsp; Now, without any further ado let us begin with looking at Namespaces. Heart of the containers.</br>
+Namespaces<sup>[<a href="https://man7.org/linux/man-pages/man7/namespaces.7.html" target="_">man pages</a>]</sup> is a Linux kernel feature that allow processe(s) to have their own isolated set of the global system resources ( well you know them as pid, ipc, network, hostname, mounts etc. ). When a Linux system starts, all the processes belong to a default Namespace and have access to the global resources.
 </p>
 <h4>Entering into a Namespace</h4>
 &emsp; Switching to a new Namespace is accomplished by invoking either of the following two Linux System calls with appropriate flags/inputs. These flags dictate the desired isolation of resources.
@@ -21,14 +22,13 @@ Namespaces<sup>[<a href="https://man7.org/linux/man-pages/man7/namespaces.7.html
 <li>Cgroup</br><i>We will cover this in a separate article.</i></li>
 <li>Time (added recently)</br>Allows to have different system time.</li>
 </ul>
-<h4>Namespaces in detail</h4>
-Let us look at the some important namespaces in detail, it's purpose and application.
+<h4>Enabling specific Namespaces</h4>
 <h4>User</h4>
 User mapping are accomplished by writing to following 3 files:</br>
 <ul>
 <li>/proc/self/uid_map</li>
 <li>/proc/self/gid_map</li>
-<li>/proc/self/setgroups	(setgroups has to be disabled)</li>
+<li>/proc/self/setgroups	(setgroups has to be disabled, <i>More on this later</i>)</li>
 </ul>
 <h4>Mount</h4>
 From CLONE man pages.
@@ -41,7 +41,8 @@ From CLONE man pages.
 </pre>
 Any mount(s) or binding(s) created inside will not be visiable in the other namespaces.
 <h4>Networking</h4>
-&Tab;Networking is accomplished by creating a virtual interface pair. Wherein, one end attached to new namespace and another remains attached to the default namespace. Traffic is moved in and out via virtual interface pairs. i.e., packets send to one, originate out of the another interface.
+&Tab;Networking is accomplished by creating a virtual interface pair. Wherein, one is attached to a new namespace while the other remains attached to the default namespace. Traffic is moved in and out via virtual interface pairs. i.e., packets send to one, originate out of the other interface.</br>
+Please follow below depiction to quickly understand how it is done.</p>
 <center>
 <image src="/images/vlinks.svg" width="330px">
 Create eth pair and bridge</p>
@@ -75,3 +76,6 @@ ip link set veth0 up
 ##This is from inside the container running in Namespace
 ip link set veth1 up
 </pre>
+That's the theory to get you started. In the  <a href="#linux/container_write" onclick="_().loadContent(this,'linux/container_write','ContentBody');">next article</a> have it all explored by yourself!!! 
+</p>
+Nilesh

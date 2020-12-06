@@ -1,10 +1,12 @@
 <h3><a href="#linux" onclick="_().loadContent(this,'linux','ContentBody');" >Containers</a> - Let's build one</h3></p>
+In case you want to have a look at basics of Namespaces, click <a href="#linux/container_intro" onclick="_().loadContent(this,'linux/container_intro','ContentBody');">introduction</a>.</p>
+As I mentioned in the earlier article, I will have readers go and take a dive of the code and explore things for themselves. Below execution flow will provide you a bird's eye view of the complete process.</p>
 <center>
 <image src="/images/container_flow.svg" width="600px">
 Fig(a). execution flow.</p>
 </center>
-In case you want to have a look at basics of Namespaces, click <a href="#linux/container_intro" onclick="_().loadContent(this,'linux/container_intro','ContentBody');">introduction</a>.</p>
-Have a linux filesystem structure created under /containerfs directory (accessible via user executing this binary). Which will have all the essential utilities such as bash and other per your need. Copy them from the local system into this directory.</p>
+Things to prepare before you start.</br>
+Have a linux filesystem structure created under /containerfs directory (accessible via user executing final program). This will have all the essential utilities such as bash and others , you can add to it per your need (do not forget to add dependent libraries, ldd is your friend). Simply copy them from the local system into this directory (Yeah, do not make symlinks).</p>
 <pre>
 /containerfs/
 ├── bin		#some utilities
@@ -41,7 +43,8 @@ Have a linux filesystem structure created under /containerfs directory (accessib
     └── bin
         └── id
 </pre>
-(Short version)
+Shallow Dive using Go (Short version)
+(Program is named after the hindu god of creation, Brahma)
 <h3>Go</h3>
 <pre>
 package main
@@ -57,16 +60,16 @@ func main() {
         switch os.Args[1] {
         case "run":
                 run()
-        case "loka":
-                loka()
+        case "container":
+                container()
         default:
                 fmt.Println("Usage: ./brahma run command")
         }
 }
 
 func run() {
-        fmt.Printf("Creating Loka for %v\n", os.Args[2:])
-        cmd := exec.Command("/proc/self/exe", append([]string{"loka"}, os.Args[2:]...)...)
+        fmt.Printf("Creating Container for %v\n", os.Args[2:])
+        cmd := exec.Command("/proc/self/exe", append([]string{"container"}, os.Args[2:]...)...)
         cmd.Stdin = os.Stdin
         cmd.Stdout = os.Stdout
         cmd.Stderr = os.Stderr
@@ -96,34 +99,33 @@ func run() {
         }
         _err := cmd.Start()
         if _err != nil {
-                fmt.Println("Error while creating Loka ->", _err)
+                fmt.Println("Error while creating Container ->", _err)
         } else {
-                fmt.Println("Loka created successfully!!!")
+                fmt.Println("Container created successfully!!!")
         }
         if _err := cmd.Wait(); _err != nil {
-                fmt.Println("Error while in Loka ->", _err)
+                fmt.Println("Error while in Container ->", _err)
         }
-        fmt.Println("Loka distroyed!!!")
+        fmt.Println("Container distroyed!!!")
 }
 
-func loka() {
-        fmt.Printf("Preparing %v in new Loka\n", os.Args[2:])
-        syscall.Sethostname([]byte("my-loka"))
-        syscall.Chroot("/containerfs")               //New root for the Loka container
+func container() {
+        fmt.Printf("Preparing %v in new Container\n", os.Args[2:])
+        syscall.Sethostname([]byte("my-container"))
+        syscall.Chroot("/containerfs")               //New root for the Container
         syscall.Chdir("/")                           //Change directory
         syscall.Mount("proc", "proc", "proc", 0, "") //Mount new proc
         //Replace the current process. Leaving no trace of the parent /proc/self/exe
         _err := syscall.Exec(os.Args[2], os.Args[3:], nil)
         if _err != nil {
-                fmt.Println("Loka error ->", _err)
+                fmt.Println("Container error ->", _err)
         }
         fmt.Println("I am dying!!!")
 }
 </pre>
-(Long version)
+Deep dive using Rust (Long version)
 <h3>Rust</h3>
-I am still working on it!!!</br>
-Here you will see exactly what is happening under the hood.
+Here you will exactly see, what is happening under the hood.
 <pre>
 extern crate libc;
 use libc::{
@@ -505,3 +507,8 @@ CN RUSAGE -> rusage {
 }
 CN WAIT STATUS -> 0
 </pre>
+<a href="https://github.com/ngavali/rationalbear/tree/master/container" target="_">Source code</a>
+Thank you</p>
+
+Nilesh 
+
