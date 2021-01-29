@@ -1,0 +1,225 @@
+<h3><a href="#linux" onclick="_().loadContent(this,'linux','ContentBody');" >C++</a> - Octopus, a simple process manager.</h3></p>
+<r>Work in progress!!!</r>
+A simple process manager that can spawn and manage proceses.
+<pre>
+#include&lt;unistd.h>
+#include&lt;sys/wait.h>
+#include&lt;thread>
+#include&lt;sys/resource.h>
+#include&lt;vector>
+#include&lt;string.h>
+#include&lt;fcntl.h>
+#include&lt;unistd.h>
+
+extern char **environ;
+
+static const char * NullPtr = 0;
+
+class Program {
+    int status;
+    struct rusage r_usage;
+    int retries;
+    int kill_timeout;
+    bool completed;
+    pid_t pid;
+    const char ** args;
+    public:
+    Program(int rt, const char * command[]) {
+        retries = rt;
+        kill_timeout = 0;
+        completed = false;
+        int i = 0, count = 0;
+        while ( command[count++] ) {}
+        args = (const char **) malloc( count * sizeof(char *));
+        for ( i = 0; command[i]!=NullPtr; i++ ) {
+            args[i] = (const char *)malloc(strlen(command[i])+1);
+            strcpy((char *)args[i], command[i]);
+        }
+        args[i] = NullPtr;  //Null terminated
+    }
+    int Retries() {
+        return retries;
+    }
+    const char * Name() {
+        return args[0];
+    }
+    bool Retry() {
+        if ( retries == 0 ) {
+            printf("Retry limit exceeded!!! Giving up!!! on [%s]\n", args[0]);
+            completed = true;
+        } else {
+            printf("Retrying... [%s]\n", args[0]);
+            completed = false;
+            Start();
+            retries--;
+        }
+        return completed;
+    }
+    bool Completed() {
+        return completed;
+    }
+    void SetCompleted(bool ic) {
+        completed = ic;
+    }
+    void Print() {
+        for ( int i = 0; args[i]!=NullPtr; i++ ) {
+            printf("%s ", args[i]);
+        }
+        printf("\n");
+    }
+    void Start() {
+        pid = fork();
+        if ( pid != 0 ) {
+            printf("Program [%s] started with pid [%d]\n", args[0], pid);
+            return;
+        } else {
+            char * outfile = (char * ) malloc( sizeof(char)*32 );
+            char * errfile = (char * ) malloc( sizeof(char)*32 );
+            sprintf(outfile, "%d-out.log", getpid());
+            sprintf(errfile, "%d-err.log", getpid());
+            int fd_out = open(outfile, O_RDWR | O_CREAT | O_TRUNC, 0644);
+            int fd_err = open(errfile, O_RDWR | O_CREAT | O_TRUNC, 0644);
+            dup2(fd_out, 1);
+            dup2(fd_err, 2);
+            close(fd_out);
+            close(fd_err);
+            int res = execv(args[0], (char **)args);
+            printf("Error executing the program [%s] --> %d\n", args[0], res);
+            exit(res);  //last call in the program...world ends here!!!
+        }
+    }
+    int Pid() {
+        return pid;
+    }
+    void Collect() {
+        if ( !completed ) {
+            pid_t ws = wait4(pid, &status, WNOHANG, &r_usage);
+            if ( ws == pid ) {
+                completed = true;
+            }
+        }
+    }
+    int Status() {
+        return status;
+    }
+    rusage RUsage() {
+        return r_usage;
+    }
+};
+
+bool CollectAndRetryProgram(Program &P) {
+    return ( P.Collect(), P.Completed() && P.Status() != 0 ) ? P.Retry() : P.Completed();
+}
+
+class ProgramGroup {
+    const char * name;
+    int instance_count;
+    std::vector&lt;Program> program;
+    public:
+    ProgramGroup(const char * n, int ic, int rt, const char * command[]) {
+        name = n;
+        instance_count = ic;
+        while ( ic-- > 0 ) {
+            program.push_back(Program(rt, command));
+        }
+    }
+    int InstanceCount() {
+        return instance_count;
+    }
+    void Print() {
+        for ( auto &P : program ) {
+            P.Print();
+            break;
+        }
+    }
+    std::vector&lt;Program> ProgramVector() {
+        return program;
+    }
+    void Spawn() {
+        printf("Starting Group [%s]\n[instance count=%3d]\n", name, instance_count);
+        Print();
+        for ( auto &P : program ) {
+            P.Start();
+        }
+    }
+    bool Collect() {
+        bool completed = true;
+        for ( auto &P : program ) {
+            if ( !P.Completed() ) {
+                CollectAndRetryProgram(P);
+                completed &= P.Completed();
+            }
+        }
+        return completed;
+    }
+};
+
+void PrintResourceUsage(std::vector&lt;ProgramGroup> &pgs) {
+    for ( auto &pg : pgs ) {
+        for ( auto &p : pg.ProgramVector() ) {
+            printf("Program: %s\nResource usage max rss=%6ld, cputime=%6zds%6zdus systime=%6zds%6zdus\n", 
+                p.Name(), 
+                p.RUsage().ru_maxrss, 
+                p.RUsage().ru_utime.tv_sec, 
+                p.RUsage().ru_utime.tv_usec,
+                p.RUsage().ru_stime.tv_sec,
+                p.RUsage().ru_stime.tv_usec);
+        }
+    }
+}
+
+
+void AddProgramGroup(std::vector&lt;ProgramGroup> &Pg, ProgramGroup pg) {
+    Pg.push_back(pg);
+}
+
+void StartProgramGroup(std::vector&lt;ProgramGroup> &Pg) {
+    for ( auto &P : Pg ) {
+        P.Spawn();
+    }
+}
+
+void WaitForProgramGroup(std::vector&lt;ProgramGroup> &Pg) {
+    int sleep = 1;
+    bool all_collected = false;
+    while ( !all_collected ) {
+        all_collected = true;
+        for ( auto &P : Pg ) {
+            all_collected &= P.Collect();
+        }
+        std::this_thread::sleep_for(std::chrono::seconds(sleep));
+    }
+}
+
+int main(int argc, char * argv[]) {
+
+    std::vector&lt;ProgramGroup> ProgramGroups;
+
+    const char * program1[] = { "/bin/ls", "-l", "-t", "-r", "-h", NullPtr };
+    const char * program2[] = { "/bin/echo", "Hello World!!!", NullPtr };
+    const char * program3[] = { "/bin/grep", "-i", "process", "process.cpp", NullPtr };
+    const char * program4[] = { "/usr/bin/sudo", "/usr/sbin/apache2ctl", "-D", "FOREGROUND", NullPtr };
+
+    ProgramGroup P1 = {"list dir", 1, 1, program1};
+    ProgramGroup P2 = {"echo message on shell", 2, 1, program2};
+    ProgramGroup P3 = {"grep for a text in file", 10, 1, program3};
+    ProgramGroup P4 = {"apache server", 1, 3, program4};
+
+    AddProgramGroup(ProgramGroups, P1);
+    AddProgramGroup(ProgramGroups, P2);
+    AddProgramGroup(ProgramGroups, P3);
+    AddProgramGroup(ProgramGroups, P4);
+
+    //Spawn ProgramGroups
+    StartProgramGroup(ProgramGroups);
+
+    //Wait for all to finish
+    WaitForProgramGroup(ProgramGroups);
+
+    //Print resource usage
+    PrintResourceUsage(ProgramGroups);
+
+    printf("All Program Groups Finished !!!\n");
+
+}
+</pre>
