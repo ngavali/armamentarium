@@ -1,0 +1,14 @@
+<h3><a href="#thoughts" onclick="_().loadContent(this,'thoughts','ContentBody');" >Thoughts</a> - Reading Books</h3></p>
+I am not an avid book reader and I do not target to read X number of books.</p>
+My reading list
+<ul>
+<li>Thinking, Fast and Slow - Daniel Kahneman</li>
+<li>The Richest Man in Babylon - George S. Clason</li>
+<li>Das Capital - Karl Marx</li>
+<li>The Intelligent Investor - Benjamin Graham</li>
+<li>Enchiridion of Epictetus</li>
+<li>On the Shortness of Life - Essays by Seneca</li>
+<li>Meditations - Marcus Aurelius</li>
+<li>The book of Mirdad - Mikhail Naimy</li>
+<li>Mastery - Robert Greene</li>
+</ul>
