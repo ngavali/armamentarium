@@ -1,10 +1,8 @@
 <h3>About me and this website</h3>
-		Hello Friends, my name is Nilesh.</p>I come from an Electronics background and have over a 12 years of working experience in IT industry. I have taken up and switched various roles and this website is the collection of articles about my learnings, experimenting and musings around the same.</p>While writing those articles, I have tried my level best to strike straight to the point and avoid any use of jargaons or blah! blah! statements. And, I hope you will find these articles useful.</p>
-Any code used in the examples can be found in <a href="https://github.com/ngavali/rationalbear">github.</a>
+		Hi Friends, my name is Nilesh.</p>I am an Electronics Engineer with over a 12 years of working experience in the IT industry. I have taken up and switched various roles and this website is the collection of articles about my learnings, experimenting and musings during the same.</p>While writing those articles, I have tried my level best to strike straight to the point and avoid any use of jargaons or blah! blah! statements. And, I hope you will find these articles useful.</p>
+Any code used in the examples can be found on <a href="https://github.com/ngavali/rationalbear">github.</a>
 	<!--img style="display:block;align:left;border-radius:8px;" width="150" src="/images/jackn.jpg"--></p>
-		<span style="float:right">"To be better today than yesterday, with a plan to become even better tomorrow".
-		</span>
-		</br></p>
+		</p>
 Happy learning!</p>
 		<!--
 		You can find links to the collection of some interesting literature <a href="#interests" onclick="_().loadContent(this,'interests','ContentBody');" >here</a> that drives and keeps me motivated.</p>

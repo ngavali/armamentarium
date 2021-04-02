@@ -24,10 +24,13 @@ div#menubar {
 	position: fixed;
 	width: 100%;
 	background: rgb(255,255,255);
+	background: rgb(0,0,0);
+	color: #fff;
 }
 
 .logo {
 	padding: 14px;
+	background: rgb(0,0,0);
 }
 
 logo {
@@ -35,6 +38,7 @@ logo {
 	font-size: 26px;
 	font-weight: bold;
 	font-family: Arial;
+	background: rgb(0,0,0);
 }
 
 k3 {
@@ -63,9 +67,11 @@ table#menu {
 	width:1000px;
 	border:0px;
 	padding-bottom:5px;
-	border-bottom:#aae 1px dashed;
+	order-bottom:#aae 1px dashed;
 	background: rgb(255,255,255);
+	background: rgb(0,0,0);
 	height: 70px;
+	color: #fff;
 }
 
 div#bodyTopic {
@@ -106,7 +112,7 @@ table#topicContent tr td {
 table#menu tr td a {
 	padding-right: 5px;
 	text-decoration: none;
-	color: #000;
+	color: #fff;
 	font-size: 18px;
 	font-family: Arial;
 }
