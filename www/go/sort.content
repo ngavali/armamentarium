@@ -1,0 +1,53 @@
+<h3><a href="#go" onclick="_().loadContent(this,'go','ContentBody');" >Go Programming Language</a> - Sort</h3></p>
+<r>Work in progress</r></p>
+<h4>Quick Sort</h4>
+algorithm/sort/quicksort.go
+<pre>
+package sort
+
+func partition(ar []int, low, high int) int {
+
+	i := low
+	pivot := ar[high]
+
+	for j := low; j < high; j++ {
+		if ar[j] < pivot {
+			ar[i], ar[j] = ar[j], ar[i]	//Swap
+			i++				//And increment index
+		}
+	}
+	ar[i], ar[high] = ar[high], ar[i]		//Swap with pivot
+	return i
+}
+
+func Quick(ar []int, low, high int) {
+	if low < high {
+		pI := partition(ar, low, high)		//Sort and Compute Partition index
+		Quick(ar, low, pI-1)			//Handle left partition
+		Quick(ar, pI+1, high)			//Handle Right partition
+	}
+}
+</pre>
+main.go
+<pre>
+package main
+
+import (
+	"algorithm/sort"
+	"fmt"
+)
+
+func main() {
+	ar := []int{5, 8, 9, 10, 4, 3, 1, 6, 2, 7}
+	fmt.Printf("Before: %+v\n", ar)
+	sort.Quick(ar, 0, len(ar)-1)
+	fmt.Printf("After : %+v\n", ar)
+}
+</pre>
+<h4>Output</h4>
+<pre>
+algorithm % go run main.go 
+Before: [5 8 9 10 4 3 1 6 2 7]
+After : [1 2 3 4 5 6 7 8 9 10]
+algorithm % 
+</pre>

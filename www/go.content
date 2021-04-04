@@ -6,6 +6,8 @@ My musings with Go
 <a href="#go/tree" onclick="_().loadContent(this,'go/tree','ContentBody');">Tree</a>,
 <a href="#go/trie" onclick="_().loadContent(this,'go/trie','ContentBody');">Trie</a>,
 <a href="#go/linkedList" onclick="_().loadContent(this,'go/linkedList','ContentBody');">Linked List</a>,
+<h4>Alogrithm</h4>
+<a href="#go/sort" onclick="_().loadContent(this,'go/sort','ContentBody');">Sort</a>
 <h4>Microservices</h4>
 Simple <a href="#go/httpserver" onclick="_().loadContent(this,'go/httpserver','ContentBody');">HTTP Server</a>, 
 <a href="#go/protobuff" onclick="_().loadContent(this,'go/protobuff','ContentBody');">Protocol Buffers</a>,
@@ -26,4 +28,4 @@ Process sychronization using a <a href="#go/dblocks" onclick="_().loadContent(th
 <a href="#go/auth" onclick="_().loadContent(this,'go/auth','ContentBody');">OAuth and SAML</a></br>
 <a href="#go/testing" onclick="_().loadContent(this,'go/testing','ContentBody');">Testing</a>
 <h4>Good Reads</h4>
-<a hred="https://www.ardanlabs.com/blog/2017/05/language-mechanics-on-stacks-and-pointers.html" target="_">Stacks and Pointers</a>
+<a href="https://www.ardanlabs.com/blog/2017/05/language-mechanics-on-stacks-and-pointers.html" target="_">Stacks and Pointers</a>
