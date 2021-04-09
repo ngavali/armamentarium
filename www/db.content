@@ -7,4 +7,5 @@ Below is the collection of articles that will help you get familiarize with impo
 <a href="#db/consistency" onclick="_().loadContent(this,'db/consistency','ContentBody');">Isolation levels</a> for transations.</br>
 <a href="#db/2pc" onclick="_().loadContent(this,'db/2pc','ContentBody');">2PC - Two Phase Commit</a></br>
 <a href="#db/jobScheduler" onclick="_().loadContent(this,'db/jobScheduler','ContentBody');">Simple job scheduler</a></br>
-<a href="#db/graphsrdbms" onclick="_().loadContent(this,'db/graphsrdbms','ContentBody');">Oh My(SQL) Graph</a>
+<a href="#db/graphsrdbms" onclick="_().loadContent(this,'db/graphsrdbms','ContentBody');">Oh My(SQL) Graph</a></br>
+<a href="#db/galera" onclick="_().loadContent(this,'db/galera','ContentBody');">Mariadb Galera Cluster</a>

@@ -1,0 +1,5 @@
+<h3><a href="#db" onclick="_().loadContent(this,'db','ContentBody');" > Database</a> - Mariadb Galera Cluster</h3>
+Thinking of porting your application, from using a single node mysql database to a galera based multi-master mariadb database cluster.</p>
+<i>Welcome to a brand new world of deadlocks!</i></p>
+Go beyond REPEATABLE READS and prepare yourself for SERIALIZABLE isolation level.</br>
+Handle concurrent data access in application code. Do not rely no the database table locks.</br>
