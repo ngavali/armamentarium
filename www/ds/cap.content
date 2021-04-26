@@ -1,5 +1,5 @@
 <h3><a href="#ds" onclick="_().loadContent(this,'ds','ContentBody');" >Distributed Systems</a> - CAP, simplified</h3>
-When dealing with distributed systems, you must have definitely come across the CAP theorem ( If not nothing to worry, you will know about it very soon ). I got to know about it while setting up a distributed database cluster. After that, I went through plethora of articles across the Internet to understand it and its implications. In this article, I have tried to explain it in simple words. Hope you will find this article useful in understanding the CAP theorem.</p>
+While dealing with distributed systems, you must have come across the CAP theorem ( If not there is nothing to worry, at the end of this article you should be already knowing it ). I got to know about it while setting up a distributed database cluster. After that, I went through plethora of articles across the Internet to understand it and its implications. In this article, I have tried to explain it in simple words. Hope you will find this article useful in understanding the CAP theorem.</p>
 First, let us take a look at the desired properties of a distributed system as defined by the CAP theorem. Later we will see an illustration to understand these properties and implications of CAP theorem.</p>
 Three important properties are:
 <dl>

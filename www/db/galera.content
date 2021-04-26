@@ -3,31 +3,33 @@ Thinking of porting your application, from using a single mysql database node to
 Oh Yes! we are.</p>
 Then first of all, <i>welcome to a brand new world of deadlocks!</i>.</p> 
 
-If connections go to two different node then what would usually work well in a single node setup will give you sudden surprises. I have listed below such surprises.</p>
-<h4>Scenario 1</h4>
+If connections go to two different node then what would usually work well in a single node setup will give you sudden surprises.</br>
+In a single node configuration, various conflicting locks will usually not create any issues. But, when it comes to Galera it handles it in a little different way (Mostly you would see error message:- WSREP detected deadlock/conflict detected).</br>
+Surprises are listed as follows:</p>
+<h4>Surprise #1</h4>
 Working on different tables connected by a foriegn key.
 <pre>
-<b>Transaction #1 [Node 1]</b>
+<b>Transaction #1 [Node #1]</b>
 update table A 
 [IX Lock]
 
-<b>Transaction #2 [Node 2]</b>
+<b>Transaction #2 [Node #2]</b>
 insert into table B (has FK reference to table A) 
 [IS Lock]
 </pre>
 
-<h4>Scenario 2</h4>
+<h4>Surprise #2</h4>
 Working on a same table.
 <pre>
-<b>Transaction #1 [Node 1]</b>
+<b>Transaction #1 [Node #1]</b>
 update table A
 [IX Lock]
 
-<b>Transaction #2 [Node 2]</b>
+<b>Transaction #2 [Node #2]</b>
 update table A
 [IX Lock]
 </pre>
-You would say, an optimistic locking solution in will take care of Scenarios 2. But beware, there is still a possiblility you could still end up in conflict i.e., if both the transactions have made the update before one of them commits the changes (test it for yourself).
+You would say, an optimistic locking solution in will take care of Surprise #2. But beware, there is still a possiblility you could still end up in conflict i.e., if both the transactions have made the update before one of them commits the changes (test it for yourself).
 
 Handle concurrent data access in your application using some sort of pessimistic global locking. You cannot rely on the database table locks.</p>
 <h4>Larger transactions</h4>
