@@ -1,24 +1,23 @@
-<h3><a href="#thoughts" onclick="_().loadContent(this,'thoughts','ContentBody');" >Thoughts</a> - Reading Books</h3></p>
-Categorized based on my reading interests</p>
+<h3><a href="#thoughts" onclick="_().loadContent(this,'thoughts','ContentBody');" >Thoughts</a> - Books</h3></p>
+Categorized by my reading interests</p>
 
-On acquiring wealth</p>
-
+Money
 <ul>
-<li>Material
-	<ul>
-	<li>Thinking, Fast and Slow - Daniel Kahneman</li>
 	<li>The Richest Man in Babylon - George S. Clason</li>
 	<li>Das Capital - Karl Marx</li>
 	<li>The Intelligent Investor - Benjamin Graham</li>
-	</ul>
-	</li>
-<li>Spiritual
-	<ul>
+</ul>
+
+Being better</p>
+<ul>
+	<li>Thinking, Fast and Slow - Daniel Kahneman</li>
+	<li>Mastery - Robert Greene</li>
+</ul>
+
+Stoicism
+<ul>
 	<li>Enchiridion of Epictetus</li>
 	<li>On the Shortness of Life - Essays by Seneca</li>
 	<li>Meditations - Marcus Aurelius</li>
 	<li>The book of Mirdad - Mikhail Naimy</li>
-	<li>Mastery - Robert Greene</li>
-	</ul>
-	</li>
 </ul>

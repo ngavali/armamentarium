@@ -26,13 +26,9 @@ div#menubar {
 	background: rgb(255,255,255);
 }
 
-.logo {
-	padding: 14px;
-}
-
 logo {
 	color: #D7263D;
-	font-size: 26px;
+	font-size: 24px;
     font-family: "Playfair Display";
 }
 
@@ -98,7 +94,7 @@ body {
 }
 
 table#topicContent tr td {
-	font-family: Arial;
+	font-family: "Playfair Display";
 	font-size: 17px;
 }
 
