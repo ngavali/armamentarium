@@ -1,5 +1,5 @@
 <r>Work in progress!</r></p>
-<h3><a href="#go" onclick="_().loadContent(this,'go','ContentBody');" >Go Programming Language</a> - Linked List Reversal</h3></p>
+<h3><a href="#go"  >Go Programming Language</a> - Linked List Reversal</h3></p>
 In this short article, we will see how to reverse a linked list using recursion logic.</p>
 <h4>At first, the act of reversal</h4>
 Assume, while traversing a link list (forget the direction) we are at node A, we try to perform reversal by updating node B to point to node A. i.e. we update B.next such that it points to A.</br>

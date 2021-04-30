@@ -1,9 +1,9 @@
 <h3>
-<a href="#go" onclick="_().loadContent(this,'go','ContentBody');">Go Programming Language</a> - Design patterns</h3>
+<a href="#go" >Go Programming Language</a> - Design patterns</h3>
 <h4>Creational</h4>
-<a href="#go/design_patterns/creational/factory" onclick="_().loadContent(this,'go/design_patterns/creational/factory','ContentBody');">Factory</a></br>
-<a href="#go/design_patterns/creational/singleton" onclick="_().loadContent(this,'go/design_patterns/creational/singleton','ContentBody');">Singleton</a></br>
+<a href="#go/design_patterns/creational/factory" >Factory</a></br>
+<a href="#go/design_patterns/creational/singleton" >Singleton</a></br>
 <h4>Behavioral</h4>
-<a href="#go/design_patterns/behavioral/chainOfResponsibility" onclick="_().loadContent(this,'go/design_patterns/behavioral/chainOfResponsibility','ContentBody');">Chain of responsibility</a></br>
-<a href="#go/design_patterns/behavioral/observer" onclick="_().loadContent(this,'go/design_patterns/behavioral/observer','ContentBody');">Observer</a></br>
-<a href="#go/design_patterns/behavioral/strategy" onclick="_().loadContent(this,'go/design_patterns/behavioral/strategy','ContentBody');">Strategy</a></br>
+<a href="#go/design_patterns/behavioral/chainOfResponsibility" >Chain of responsibility</a></br>
+<a href="#go/design_patterns/behavioral/observer" >Observer</a></br>
+<a href="#go/design_patterns/behavioral/strategy" >Strategy</a></br>

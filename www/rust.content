@@ -1,10 +1,10 @@
 <h3>Rust Programming Language</h3>
 My musings with Rust</p>
-<a href="#rust/hello" onclick="_().loadContent(this,'rust/hello','ContentBody');">Say hello to Rust!</a>
+<a href="#rust/hello" >Say hello to Rust!</a>
 <h4>Basics</h4>
-<a href="#rust/mutable" onclick="_().loadContent(this,'rust/mutable','ContentBody');">Mutability</a></br>
-<a href="#rust/shadow" onclick="_().loadContent(this,'rust/shadow','ContentBody');">Shadowing</a></br>
+<a href="#rust/mutable" >Mutability</a></br>
+<a href="#rust/shadow" >Shadowing</a></br>
 <h4>Long reads</h4>
-<a href="#rust/opr" onclick="_().loadContent(this,'rust/opr','ContentBody');">One Page Rust</a>
+<a href="#rust/opr" >One Page Rust</a>
 <h4>Pointers</h4>
-<a href="#rust/linkedlist" onclick="_().loadContent(this,'rust/linkedlist','ContentBody');">Linked List</a>
+<a href="#rust/linkedlist" >Linked List</a>

@@ -1,4 +1,4 @@
-<h3><a href="#linux" onclick="_().loadContent(this,'linux','ContentBody');" >Linux</a> - OpenSSL commands</h3></p>
+<h3><a href="#linux"  >Linux</a> - OpenSSL commands</h3></p>
 
 <dl>
 <dt>Print cert information from a certificate file</dt>

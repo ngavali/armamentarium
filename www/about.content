@@ -5,18 +5,18 @@ Any code used in the examples can be found on <a href="https://github.com/ngaval
 		</p>
 Happy learning!</p>
 		<!--
-		You can find links to the collection of some interesting literature <a href="#interests" onclick="_().loadContent(this,'interests','ContentBody');" >here</a> that drives and keeps me motivated.</p>
+		You can find links to the collection of some interesting literature <a href="#interests"  >here</a> that drives and keeps me motivated.</p>
 		<!--<h3>Motivation</h3>
 		Collection of useful resources that I gathered, while learning various software technologies!
-		During my tenure, some time back I got to work with databases. Realized the fact that eveything revolves around data and now I see database as one of the finest piece of software that has been ever built. It is always fun working on datasets and finding solutions to the problems using <a href="#db" onclick="_().loadContent(this,'db','ContentBody');" >The SQL way</a>. Then, Building applications around the databases using <a href="#go" onclick="_().loadContent(this,'go','ContentBody');" >Go</a>. It is simple, subtle and a very powerful programming language. Running tirelessly on the platform that has supported and powered mission critical applications, none other than <a href="#linux" onclick="_().loadContent(this,'linux','ContentBody');" >Linux</a>, with maximum uptime dispite magnitudes of load.</p>
-		And finally, the future <a href="#ds" onclick="_().loadContent(this,'ds','ContentBody');" >distributed systems</a>.</p>
+		During my tenure, some time back I got to work with databases. Realized the fact that eveything revolves around data and now I see database as one of the finest piece of software that has been ever built. It is always fun working on datasets and finding solutions to the problems using <a href="#db"  >Linux</a>, with maximum uptime dispite magnitudes of load.</p>
+		And finally, the future <a href="#ds"  >distributed systems</a>.</p>
 		Apart from technology, I am interested in learning music, cycling, reading about physics & philosophy, and spending quality time with friends and family.</p>
 		If you are looking for solving complex technological problem, I would be glad to hear about them or have any queries please feel to reach me at <a href="mailto:gavali.nilesh80186@gmail.com">gavali.nilesh80186@gmail.com</a></p>
 
 		<span style="float:right">"To be better today than yesterday, with a plan to become even better tomorrow".
 		</span>
 		</br></p>
-		You can find links to the collection of some interesting literature <a href="#interests" onclick="_().loadContent(this,'interests','ContentBody');" >here</a> that drives me and keeps me motivated.</p>
+		You can find links to the collection of some interesting literature <a href="#interests"  >here</a> that drives me and keeps me motivated.</p>
 		<!--<h3>Motivation</h3>
 		Collection of useful resources that I gathered, while learning various software technologies!
 

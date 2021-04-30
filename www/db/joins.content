@@ -1,5 +1,5 @@
 <tr><td>
-		<h3><a href="#db" onclick="_().loadContent(this,'db','ContentBody');" > Database</a> - SQL joins</h3>
+		<h3><a href="#db"  > Database</a> - SQL joins</h3>
 		SQL joins offer us the way to extract relevant rows by combining columns from one (self-join) or more tables. </p>
 		Rows from one (self-join) or more tables are associated together by corresponding common column(s) having same values.</p> These column(s) form key(s) for the join and row selectivity.</p>
 Now, before going any further and digging into SQL join queries, first let us try to build a visual map of joins ( See Fig.1 below ) and understand different types of joins available in MySQL/Mariadb database.</p>

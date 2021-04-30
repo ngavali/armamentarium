@@ -1,5 +1,5 @@
 <tr><td>
-<h3><a href="#db" onclick="_().loadContent(this,'db','ContentBody');" > Database</a> - Fibonacci</h3>
+<h3><a href="#db"  > Database</a> - Fibonacci</h3>
 This example will introduce you to CTE, known as Common Table Expressions. It is a standard SQL feature and recently support was added in mariadb database.</p>
 You can think of them as a named result set, which can refer to itself and optionally be excuted recursively.</p>
 

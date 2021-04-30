@@ -1,4 +1,4 @@
-<h3><a href="#go" onclick="_().loadContent(this,'go','ContentBody');">Go Programming Language</a> - Tip of the iceberg</h3>
+<h3><a href="#go" >Go Programming Language</a> - Tip of the iceberg</h3>
 <i><r>Work in progress</r></i>
 <h4>Go performance</h4>
 Tools - <a href="https://github.com/google/pprof">pprof</a> and benchmark are your friends</br>

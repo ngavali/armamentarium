@@ -1,16 +1,19 @@
 <h3>Miscellaneous topics</h3>
 <h4>Linux</h4>
-HAProxy - <a href="#linux/snihaproxy" onclick="_().loadContent(this,'linux/snihaproxy','ContentBody');">SNI implementation</a></br>
-HAProxy - SNI implementation - <a href="#linux/snitransparenthaproxy" onclick="_().loadContent(this,'linux/snitransparenthaproxy','ContentBody');">Capturing the client IP</a></br>
-OpenSSL <a href="#linux/openssl" onclick="_().loadContent(this,'linux/openssl','ContentBody');">commands</a></br>
+HAProxy - <a href="#linux/snihaproxy" >SNI implementation</a></br>
+HAProxy - SNI implementation - <a href="#linux/snitransparenthaproxy" >Capturing the client IP</a></br>
+OpenSSL <a href="#linux/openssl" >commands</a></br>
 <h4>Containers</h4>
-<a href="#linux/container_intro" onclick="_().loadContent(this,'linux/container_intro','ContentBody');">Introduction</a></br>
-<a href="#linux/container_write" onclick="_().loadContent(this,'linux/container_write','ContentBody');">Let's build one</a>
+<a href="#linux/container_intro" >Introduction</a></br>
+<a href="#linux/container_write" >Let's build one</a>
 <h4>Javascript</h4>
-Chess app using <a href="#es6/chess" onclick="_().loadContent(this,'es6/chess','ContentBody');">ES6</a></br>
+Chess app using <a href="#es6/chess" >ES6</a></br>
 <h4>GIT</h4>
-<a href="#linux/git" onclick="_().loadContent(this,'linux/git','ContentBody');">Basics</a></br>
+<a href="#linux/git" >Basics</a></br>
 <h4>C++</h4>
-<a href="#linux/compiler" onclick="_().loadContent(this,'linux/compiler','ContentBody');">Compiler</a></br>
-<a href="#linux/sojourn" onclick="_().loadContent(this,'linux/sojourn','ContentBody');">Sojourn</a>, a light weight key value store</br>
-<a href="#linux/octopus" onclick="_().loadContent(this,'linux/octopus','ContentBody');">Octopus</a>, a simple process manager</br>
+<a href="#linux/compiler" >Compiler</a></br>
+<a href="#linux/sojourn" >Sojourn</a>, a light weight key value store</br>
+<a href="#linux/octopus" >Octopus</a>, a simple process manager</br>
+<a href="#linux/nintyseventhings" >97 Things Every Programmer Should Know</a>
+<h4>JWT</h4>
+<a href="#linux/jwt" >Introdution</a></br>

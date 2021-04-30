@@ -1,5 +1,5 @@
-<h3><a href="#go" onclick="_().loadContent(this,'go','ContentBody');" >Go Programming Language</a> - gRPC</h3></p>
-Read <a href="#go/protobuff" onclick="_().loadContent(this,'go/protobuff','ContentBody');">Protocol Buffers</a> before proceeding.
+<h3><a href="#go"  >Go Programming Language</a> - gRPC</h3></p>
+Read <a href="#go/protobuff" >Protocol Buffers</a> before proceeding.
 <h4>Example</h4>
 Invoke RPC to find sum of numbers.
 <h4>Message format and Service definition</h4>

@@ -1,5 +1,5 @@
 <h3>Thoughts</h3>
 This section contains articles on my learning, experience and understanding over random topics. Few came out of some day-dreaming activities or while having a casual conversations with someone.</br>
-<a href="#thoughts/investing" onclick="_().loadContent(this,'thoughts/investing','ContentBody');">Investing</a></br>
-<a href="#thoughts/ai" onclick="_().loadContent(this,'thoughts/ai','ContentBody');">AI</a></br>
-<a href="#thoughts/books" onclick="_().loadContent(this,'thoughts/books','ContentBody');">Books</a></br>
+<a href="#thoughts/investing" >Investing</a></br>
+<a href="#thoughts/ai" >AI</a></br>
+<a href="#thoughts/books" >Books</a></br>

@@ -1,4 +1,4 @@
-<h3><a href="#linux" onclick="_().loadContent(this,'linux','ContentBody');" >C++</a> - Octopus, a simple process manager.</h3></p>
+<h3><a href="#linux"  >C++</a> - Octopus, a simple process manager.</h3></p>
 <r>Work in progress!!!</r>
 A simple process manager that can spawn and manage proceses.
 <pre>

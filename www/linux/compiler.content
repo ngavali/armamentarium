@@ -1,4 +1,4 @@
-<h3><a href="#linux" onclick="_().loadContent(this,'linux','ContentBody');" >C++</a> - Compiler</h3></p>
+<h3><a href="#linux"  >C++</a> - Compiler</h3></p>
 <pre>
 #Preprocessing
 g++ -E -o code_expanded.cpp code.cpp

@@ -1,4 +1,4 @@
-<h3><a href="#db" onclick="_().loadContent(this,'db','ContentBody');" > Database</a> - Normalization</h3>
+<h3><a href="#db"  > Database</a> - Normalization</h3>
 <r>Work in progress</r>
 <h4>Notations used</h4>
 <dl>

@@ -1,4 +1,4 @@
-<h3><a href="#ds" onclick="_().loadContent(this,'ds','ContentBody');" >Distributed Systems</a> - Distributed transaction, SAGA</h3>
+<h3><a href="#ds"  >Distributed Systems</a> - Distributed transaction, SAGA</h3>
 <r>Work in progress!!!</r>
 </p>
 A <e>long running</e> transaction composed of N <e>local</e> transactions - T<sub>1</sub>, T<sub>2</sub>, T<sub>3</sub>, ... and, T<sub>N</sub></br>

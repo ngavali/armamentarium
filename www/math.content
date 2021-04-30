@@ -1,6 +1,6 @@
 <h3>Mathematics</h3>
-Gentle review of <a href="#math/probability" onclick="_().loadContent(this,'math/probability','ContentBody');"> the probability</a> theory</br>
-The <a href="#math/montyHallProblem" onclick="_().loadContent(this,'math/montyHallProblem','ContentBody');">Monty Hall</a> problem</br>
-<a href="#math/bayesianModel" onclick="_().loadContent(this,'math/bayesianModel','ContentBody');">Bayesian Model</a></br>
-<a href="#math/markovChain" onclick="_().loadContent(this,'math/markovChain','ContentBody');">Markov processes</a></br>
-<a href="#math/bloomFilter" onclick="_().loadContent(this,'math/bloomFilter','ContentBody');">Bloom filter</a></br>
+Gentle review of <a href="#math/probability" > the probability</a> theory</br>
+The <a href="#math/montyHallProblem" >Monty Hall</a> problem</br>
+<a href="#math/bayesianModel" >Bayesian Model</a></br>
+<a href="#math/markovChain" >Markov processes</a></br>
+<a href="#math/bloomFilter" >Bloom filter</a></br>

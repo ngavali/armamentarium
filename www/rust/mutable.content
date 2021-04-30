@@ -1,4 +1,4 @@
-<h3><a href="#rust" onclick="_().loadContent(this,'rust','ContentBody');" >Rust Programming Language</a> - Mutability</h3></p>
+<h3><a href="#rust"  >Rust Programming Language</a> - Mutability</h3></p>
 Rust variables are immutable by default.</br>
 Version 1
 <pre>

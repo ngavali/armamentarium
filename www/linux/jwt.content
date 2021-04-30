@@ -1,0 +1,5 @@
+<h3><a href="#linux"  >JWT</a> - Introduction</h3></p>
+<h4>JSON Web Token</h4>
+They carry information <i>Claim(s)</i>, encoded in JSON format. Claims are assertions about the subject who is holding the token (Now, who holds it is different security question, for that matter these claims have an expiry).
+Claims are stored as key value pairs and can be encrypted or signed by a MAC.</br>
+What it is made of?</p>

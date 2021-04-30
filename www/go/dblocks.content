@@ -1,4 +1,4 @@
-<h3><a href="#go" onclick="_().loadContent(this,'go','ContentBody');" >Go Programming Language</a> - Using DB lock for process sychronization</h3></p>
+<h3><a href="#go"  >Go Programming Language</a> - Using DB lock for process sychronization</h3></p>
 Many times it happens that you have to run a process periodically such that only one instance of this process has to be executing at any given point of time. 
 </p>There are several ways to achieve same. Simplest of them is to use a file lock, it works well when you try to run such process(es) on a single system. But say for the sake of high availability, you have to run such a process in a distributed environment among several machines with the same restriction, file lock is no longer a viable option.</p>
 

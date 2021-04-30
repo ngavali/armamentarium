@@ -1,4 +1,5 @@
 import * as ng from './ng.js'
+import * as moveValidator from './ng-move.js'
 
 class chessPiece extends ng.DOMElement {
     name
@@ -8,14 +9,30 @@ class chessPiece extends ng.DOMElement {
     moveNum
     isCaptured = false
 	steps
+    validators
 
-    constructor(name, color) {
+    constructor(name, color, validators = []) {
         super("div", {
             class: color + name
         })
         this.name = name
         this.color = color
-        this.moveNum = 0
+        this.moveNum = 0    
+        //console.log(this.name, validators)
+        this.validators = validators
+    }
+
+    ValidateMove(cboard, move) {
+        //console.log("validator called for ", this.name, this.color)
+        let result = false
+        if ( this.validators.length > 0 ) {
+            this.validators.forEach( function(validator) {
+                result ||= validator(cboard, move.src.has, move.dst)
+            })
+            return result
+        }   else {
+            return true
+        }
     }
 
     /*
@@ -26,75 +43,111 @@ class chessPiece extends ng.DOMElement {
     }*/
 }
 
-class BlackPawn extends chessPiece {
+class Pawn extends chessPiece {
+    constructor(color) {
+        super("Pawn", color, [moveValidator.checkEnpassant, moveValidator.checkSingleStep])
+    }
+}
+
+class BlackPawn extends Pawn {
 	constructor() {
-		super("Pawn", "black")
+		super("black")
 	}
 }
 
-class WhitePawn extends chessPiece {
+class WhitePawn extends Pawn {
 	constructor() {
-		super("Pawn", "white")
+		super("white")
 	}
 }
 
-class BlackKing extends chessPiece {
+class King extends chessPiece {
+    constructor(color) {
+        super("King", color,[moveValidator.castlingMoveValidator, moveValidator.checkSingleStep])
+    }
+}
+
+class BlackKing extends King {
 	constructor() {
-		super("King", "black")
+		super("black")
 	}
 }
 
-class WhiteKing extends chessPiece {
-	constructor() {
-		super("King", "white")
+class WhiteKing extends King {
+	constructor(color) {
+		super("white")
 	}
 }
 
-class BlackKnight extends chessPiece {
+class Knight extends chessPiece {
+    constructor(color) {
+        super("Knight", color, [moveValidator.knightStepValidator])
+    }
+}
+
+class BlackKnight extends Knight {
 	constructor() {
-		super("Knight", "black")
+		super("black")
 	}
 }
 
-class WhiteKnight extends chessPiece {
+class WhiteKnight extends Knight {
 	constructor() {
-		super("Knight", "white")
+		super("white")
 	}
 }
 
-class BlackQueen extends chessPiece {
+class Queen extends chessPiece {
+    constructor(color) {
+        super("Queen", color, [moveValidator.diagonalMoveValidator, moveValidator.verticalMoveValidator, moveValidator.horizontalMoveValidator])
+    }
+}
+
+class BlackQueen extends Queen {
 	constructor() {
-		super("Queen", "black")
+		super("black")
 	}
 }
 
-class WhiteQueen extends chessPiece {
+class WhiteQueen extends Queen {
 	constructor() {
-		super("Queen", "white")
+		super("white")
 	}
 }
 
-class BlackBishop extends chessPiece {
+class Bishop extends chessPiece {
+    constructor(color) {
+        super("Bishop", color, [moveValidator.diagonalMoveValidator])
+    }
+}
+
+class BlackBishop extends Bishop {
 	constructor() {
-		super("Bishop", "black")
+		super("black")
 	}
 }
 
-class WhiteBishop extends chessPiece {
+class WhiteBishop extends Bishop {
 	constructor() {
-		super("Bishop", "white")
+		super("white")
 	}
 }
 
-class BlackRook extends chessPiece {
+class Rook extends chessPiece {
+    constructor(color) {
+        super("Rook", color, [moveValidator.verticalMoveValidator, moveValidator.horizontalMoveValidator])
+    }
+}
+
+class BlackRook extends Rook {
 	constructor() {
-		super("Rook", "black")
+		super("black")
 	}
 }
 
-class WhiteRook extends chessPiece {
+class WhiteRook extends Rook {
 	constructor() {
-		super("Rook", "white")
+		super("white")
 	}
 }
 

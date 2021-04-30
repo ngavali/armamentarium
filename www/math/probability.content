@@ -1,4 +1,4 @@
-<h3><a href="#math" onclick="_().loadContent(this,'math','ContentBody');" >Mathematics</a> - Gentle review of the probability theory</h3>
+<h3><a href="#math"  >Mathematics</a> - Gentle review of the probability theory</h3>
 As a kid, I always struggled understanding the concepts of probability during the school days ( rarely got the answers right ). Most of the times left frustrated but, still finding it a very captivating topic and later at some point decided to take a sincere effort to get a better understanding instead of restricting that for academic purposes. This article is the result of same and it is written with an intend to provide a gentle introduction to the reader of the very fundamental concepts of probability in a very simplest possible way. So, let get started.</p>
 <h3>What is probability</h3>
 In simplest terms it can be defined as, how likely something (an event) is expected to happen</p>

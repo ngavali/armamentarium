@@ -1,4 +1,4 @@
-<h3><a href="#rust" onclick="_().loadContent(this,'rust','ContentBody');" >Rust Programming Language</a> - Pointers (linked list)</h3>
+<h3><a href="#rust"  >Rust Programming Language</a> - Pointers (linked list)</h3>
 In this article, we shall explore pointers in rust by implementing a Linked List.</p>While we do so, I feel it would be in reader's best interest that they read through code thoroughly and try to play around with it! to have much better learning experience. I have added comments wherever necessary. Additionally, there is as an exercise left for the reader to explore more on this topic (read comments).</p>
 <h4>Unsafe nodes!!!</h4>
 <pre>

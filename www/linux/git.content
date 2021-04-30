@@ -1,4 +1,4 @@
-<h3><a href="#linux" onclick="_().loadContent(this,'linux','ContentBody');" >GIT</a> - Basics</h3></p>
+<h3><a href="#linux"  >GIT</a> - Basics</h3></p>
 <b>IMP</b>: GIT doesn't store diff's of different versions of a given file. Instead it stores a complete snapshot of each commit using an efficient storage strategy to reduce the disk utilization. We shall talk more about it, but later.</p>
 <center>
 	<img src="/images/git.svg" width="400px" /></p><b>Fig.1. </b>Git flow

@@ -18,9 +18,6 @@ class DOMElement {
     }
 
     add(component) {
-		if ( component.elem.parentNode ) {
-			component.elem.parentNode.removeChild(component.elem)
-		}
        	this.elem.appendChild(component.elem)
     }
 
@@ -40,12 +37,9 @@ class DOMElement {
 				this.elem.classList.add(attr[prop])
 				continue
 			}
-			console.log("a")
             this.elem.removeAttribute(prop)
             this.elem.setAttribute(prop, attr[prop])
             this.attr[prop] = attr[prop]
         }
     }
 }
-
-export { DOMElement }

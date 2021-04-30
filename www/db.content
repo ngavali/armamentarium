@@ -1,11 +1,11 @@
 <h3>Databases</h3>
 Database is one of the fascinating piece of software. And the SQL, a very powerful analytical tool for manipulating and crunching the data.</p>
 Below is the collection of articles that will get you familiarize with important concepts of the database world and hele build your SQL vocabulary with a concrete understanding.</p>
-<a href="#db/joins" onclick="_().loadContent(this,'db/joins','ContentBody');">Joins</a></br>
-<a href="#db/normalization" onclick="_().loadContent(this,'db/normalization','ContentBody');">Normalization</a></br>
-<a href="#db/cte" onclick="_().loadContent(this,'db/cte','ContentBody');">Fibonacci</a> and <a href="#db/ncte" onclick="_().loadContent(this,'db/ncte','ContentBody');">Non-recursive CTE</a></br>
-<a href="#db/consistency" onclick="_().loadContent(this,'db/consistency','ContentBody');">Isolation levels</a> for transations.</br>
-<a href="#db/2pc" onclick="_().loadContent(this,'db/2pc','ContentBody');">2PC - Two Phase Commit</a></br>
-<a href="#db/jobScheduler" onclick="_().loadContent(this,'db/jobScheduler','ContentBody');">Simple job scheduler</a></br>
-<a href="#db/graphsrdbms" onclick="_().loadContent(this,'db/graphsrdbms','ContentBody');">Oh My(SQL) Graph</a></br>
-<a href="#db/galera" onclick="_().loadContent(this,'db/galera','ContentBody');">Mariadb Galera Cluster</a>
+<a href="#db/joins" >Joins</a></br>
+<a href="#db/normalization" >Normalization</a></br>
+<a href="#db/cte" >Non-recursive CTE</a></br>
+<a href="#db/consistency" >Isolation levels</a> for transations.</br>
+<a href="#db/2pc" >2PC - Two Phase Commit</a></br>
+<a href="#db/jobScheduler" >Simple job scheduler</a></br>
+<a href="#db/graphsrdbms" >Oh My(SQL) Graph</a></br>
+<a href="#db/galera" >Mariadb Galera Cluster</a>

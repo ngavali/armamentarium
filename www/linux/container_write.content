@@ -1,5 +1,5 @@
-<h3><a href="#linux" onclick="_().loadContent(this,'linux','ContentBody');" >Containers</a> - Let's build one</h3></p>
-In case you want to have a look at basics of Namespaces, click <a href="#linux/container_intro" onclick="_().loadContent(this,'linux/container_intro','ContentBody');">introduction</a>.</p>
+<h3><a href="#linux"  >Containers</a> - Let's build one</h3></p>
+In case you want to have a look at basics of Namespaces, click <a href="#linux/container_intro" >introduction</a>.</p>
 As I mentioned in the earlier article, I will have readers go and take a dive of the code and explore things for themselves. Below execution flow will provide you a bird's eye view of the complete process.</p>
 <center>
 <image src="/images/container_flow.svg" width="600px">

@@ -1,5 +1,5 @@
 <tr><td>
-<h3><a href="#linux" onclick="_().loadContent(this,'linux','ContentBody');" >Linux</a> - HAProxy - SNI implementation</h3></p>
+<h3><a href="#linux"  >Linux</a> - HAProxy - SNI implementation</h3></p>
 In this article, we will see how to configure HAProxy to serve multiple backend http(SSL) domains over a single IP address using Server Name Indication (SNI) TLS extension. 
 You must have seen apache httpd ( or any other http server ) being used to host mutliple http domains on a same machine and serving multiple SSL enabled virtual hosts on a single IP using SNI.</p>
 

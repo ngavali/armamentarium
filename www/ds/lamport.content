@@ -1,4 +1,4 @@
-<h3><a href="#ds" onclick="_().loadContent(this,'ds','ContentBody');" >Distributed Systems</a> - Lamport timestamps</h3>
+<h3><a href="#ds"  >Distributed Systems</a> - Lamport timestamps</h3>
 Lamport timestamps provides simplest mechanism for ordering events in a distributed system, eliminating the complexities of time synchronization across the nodes (processes). Each process maintains its own logical clock (nothing but an incremental counter). These logical clocks do not work like our real world clocks and the ticking (counter progression) is governed by an algorithm. Wherein, counter is updated whenever an event occurs. The generated counter values (assigned to an event) are used to order events and determine causality. In a process, an event could occur due to some local processing or as a result of interaction with an another process. Lamport timestamps primarily deals with the later case, two or more processes interacting with each other (communicating by exchanging messages).
 </p>
 We will walkthrough the algorithm, an illustration and finally its limitations.
@@ -52,6 +52,6 @@ OR</br>
 2. Event x is sending of a message <b>m</b> by one process and event y is receiving of the same message <b>m</b> in an another process.</br>
 </div>
 </p>
-That's all folks! In next article we will see how these limitations are overcome by a <a href="#ds/vectorclock" onclick="_().loadContent(this,'ds/vectorclock','ContentBody');">Vector Clock</a>.
+That's all folks! In next article we will see how these limitations are overcome by a <a href="#ds/vectorclock" >Vector Clock</a>.
 </p>
 Thanks.

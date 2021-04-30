@@ -1,4 +1,4 @@
-<h3><a href="#go" onclick="_().loadContent(this,'go','ContentBody');" >Go Programming Language</a> - Protocol Buffer</h3></p>
+<h3><a href="#go"  >Go Programming Language</a> - Protocol Buffer</h3></p>
 <b>When to choose?</b> Performance is your goal. But, beware of strings.
 <h4>Install golang plugin</h4>
 go get -u github.com/golang/protobuf/protoc-gen-go

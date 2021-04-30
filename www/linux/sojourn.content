@@ -1,4 +1,4 @@
-<h3><a href="#linux" onclick="_().loadContent(this,'linux','ContentBody');" >C++</a> - Sojourn, a light weight key value store</h3></p>
+<h3><a href="#linux"  >C++</a> - Sojourn, a light weight key value store</h3></p>
 <r>Work in progress!!!</r>
 A simple inmemory key value store.
 <pre>

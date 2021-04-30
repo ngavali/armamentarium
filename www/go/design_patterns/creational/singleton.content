@@ -1,6 +1,6 @@
 <h3>
-<a href="#go" onclick="_().loadContent(this,'go','ContentBody');">Go Programming Language</a> - 
-<a href="#go/patterns" onclick="_().loadContent(this,'go/patterns','ContentBody');" > Design Patterns</a> - Singleton</h3>
+<a href="#go" >Go Programming Language</a> - 
+<a href="#go/patterns"  > Design Patterns</a> - Singleton</h3>
 Code
 <pre>
 //

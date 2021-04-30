@@ -1,5 +1,5 @@
-<h3><a href="#math" onclick="_().loadContent(this,'math','ContentBody');" >Mathematics</a> - Bayesian Model</h3>
-<r>[Work in progress!]</r> Before going to Bayesian Model, you can do a gentle review of <a href="#math/probability" onclick="_().loadContent(this,'math/probability','ContentBody');">Probability</a> theory.</p>
+<h3><a href="#math"  >Mathematics</a> - Bayesian Model</h3>
+<r>[Work in progress!]</r> Before going to Bayesian Model, you can do a gentle review of <a href="#math/probability" >Probability</a> theory.</p>
 <h3>Bayes theorem</h3>
 <i>P</i>(A<sub>i</sub>|B) = <i>P</i>(B|A<sub>i</sub>) * <i>P</i>(A<sub>i</sub>) / <i>P</i>(B)</p>
 There are i mutually exclusive events A<sub>1</sub>, A<sub>2</sub>,..., and A<sub>i</sub></br>

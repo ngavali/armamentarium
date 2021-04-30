@@ -1,4 +1,4 @@
-<h3><a href="#db" onclick="_().loadContent(this,'db','ContentBody');" > Database</a> - Mariadb Galera Cluster</h3>
+<h3><a href="#db"  > Database</a> - Mariadb Galera Cluster</h3>
 Thinking of porting your application, from using a single mysql database node to a galera based multi-master mariadb database cluster.
 Oh Yes! we are.</p>
 Then first of all, <i>welcome to a brand new world of deadlocks!</i>.</p> 

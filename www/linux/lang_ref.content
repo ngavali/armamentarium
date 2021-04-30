@@ -1,4 +1,4 @@
-<h3><a href="#linux" onclick="_().loadContent(this,'linux','ContentBody');" >Linux</a> - Language Reference</h3></p>
+<h3><a href="#linux"  >Linux</a> - Language Reference</h3></p>
 <table border=1 width="1000px">
 <tr>
 <th>Entity</th>
