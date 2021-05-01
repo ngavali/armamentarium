@@ -1,0 +1,181 @@
+<h3><a href="#go" >Go Programming Language</a> - <a href="#go/poeaa">P of EAA</a> - Data Mappers</h3>
+<i><r>Work in progress</r></i></p>
+Code organization
+<img src="static/data-mapper.png" width="300px" />
+model/person.go
+<pre>
+package model
+
+type Person struct {
+	id   int
+	name string
+	age  int
+}
+
+func NewPerson(id int, name string, age int) *Person {
+	return &Person{id, name, age}
+}
+
+func (p *Person) Fields() []interface{} {
+	return []interface{}{&p.id, &p.name, &p.age}
+}
+
+func (p Person) Id() int {
+	return p.id
+}
+
+func (p Person) Age() int {
+	return p.age
+}
+</pre>
+mapper/personMapper.go
+<pre>
+package mapper
+
+import (
+	"data-mapper/model"
+
+	_ "github.com/go-sql-driver/mysql"
+)
+
+type MapperType int
+
+const (
+	MEMORY MapperType = iota
+	MYSQL
+	PGSQL
+)
+
+//PersonMapper interface
+type PersonMapper interface {
+	GetAllPerson() []model.Person
+	FindById(int) model.Person
+}
+
+func NewPersonMapper(mt MapperType) PersonMapper {
+	switch mt {
+	case MEMORY:
+		return &MemoryPersonMapper{}
+	case MYSQL:
+		return &MySQLPersonMapper{}
+	default:
+		return nil
+	}
+}
+</pre>
+mapper/personMysql.go
+<pre>
+package mapper
+
+import (
+	"data-mapper/model"
+	"database/sql"
+	"log"
+
+	_ "github.com/go-sql-driver/mysql"
+)
+
+//Concrete PersonMapper
+type MySQLPersonMapper struct {
+}
+
+func (p MySQLPersonMapper) Columns() string {
+	return "id, name, age"
+}
+
+func (p MySQLPersonMapper) Fields(person *model.Person) []interface{} {
+	return person.Fields()
+}
+
+func (p MySQLPersonMapper) GetAllPerson() (persons []model.Person) {
+
+	if db, _err := sql.
+		Open("mysql", "root:mysecret@tcp(localhost:3306)/alexandria"); _err != nil {
+		log.Fatalln(_err)
+	} else {
+		defer db.Close()
+
+		if rows, _err := db.
+			Query("select " + p.Columns() + " from Person"); _err != nil {
+			log.Fatalln(_err)
+		} else {
+			defer rows.Close()
+			persons = make([]model.Person, 0)
+			for rows.Next() {
+				var person model.Person
+				rows.Scan(p.Fields(&person)...)
+				persons = append(persons, person)
+			}
+		}
+	}
+	return
+
+}
+
+func (p MySQLPersonMapper) FindById(id int) (person model.Person) {
+
+	if db, _err := sql.
+		Open("mysql", "root:mysecret@tcp(localhost:3306)/alexandria"); _err != nil {
+		log.Fatalln(_err)
+	} else {
+		defer db.Close()
+		if _err := db.
+			QueryRow("select "+p.Columns()+" from Person where id = ?", id).
+			Scan(p.Fields(&person)...); _err != nil {
+			log.Fatalln(_err)
+		}
+	}
+	return
+
+}
+</pre>
+mapper/personMemory.go
+<pre>
+package mapper
+
+import (
+	"data-mapper/model"
+
+	_ "github.com/go-sql-driver/mysql"
+)
+
+/*Default data set*/
+var personCollection = []model.Person{
+	*model.NewPerson(1, "Nilesh", 36),
+	*model.NewPerson(2, "Vihaan", 3),
+	*model.NewPerson(3, "Priyanka", 28),
+}
+
+/*Seed Custom data*/
+func SeedData(pc []model.Person) {
+	personCollection = pc
+}
+
+//Concrete PersonMapper
+type MemoryPersonMapper struct {
+}
+
+func (p MemoryPersonMapper) Columns() string {
+	return "id, name, age"
+}
+
+func (p MemoryPersonMapper) Fields(person *model.Person) []interface{} {
+	return person.Fields()
+}
+
+func (p MemoryPersonMapper) GetAllPerson() []model.Person {
+	return personCollection
+}
+
+func (p MemoryPersonMapper) FindById(id int) model.Person {
+	var person model.Person
+	for _, p := range p.GetAllPerson() {
+		if p.Id() == id {
+			person = p
+			break
+		}
+
+	}
+	return person
+}
+</pre>

@@ -8,6 +8,8 @@ My musings with Go
 <a href="#go/linkedList" >Linked List</a>,
 <h4>Alogrithm</h4>
 <a href="#go/sort" >Sort</a>
+<h4>P of EAA</h4>
+<a href="#go/poeaa" >Patterns</a>
 <h4>Microservices</h4>
 Simple <a href="#go/httpserver" >HTTP Server</a>, 
 <a href="#go/protobuff" >Protocol Buffers</a>,
