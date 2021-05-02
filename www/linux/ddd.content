@@ -1,0 +1,24 @@
+<h3><a href="#linux"  >DDD</a> - Thoughts</h3></p>
+<r>Work in progress</r>
+<h4>Domain</h4>
+Area or problem space you are trying to create software solution for. E.g., it could be logistics, banking, health care etc.
+<h4>Model</h4>
+Abstraction of a given problem space. E.g., Map of the world. It wouldnt be great for nagivation, but good enough to talk about continents and major oceans to a toddler. Depends on what details are we looking for and make it more descriptive depending on the use case that we will be dealing with.</p>
+<table align="center">
+<img style="border: #888 1px dashed" src="/static/ddd3.jpeg" height="200px" />
+</tr>
+</table>
+<h4>Bounded Context</h4>
+Context in which given model has a specific meaning and behavior, stays same in that context and it doesn't change. If it changes then thats the sign we are crossingthe context boundaries.
+<table align="center" style="border-spacing:5px">
+<tr>
+<tr>
+<td>Broom context map</td>
+</tr>
+<td style="border: #888 1px dashed"><img src="/static/ddd1.jpeg" height="200px" />Good mom!</br>cleaning effectiveness</td>
+<td style="border: #888 1px dashed"><img src="/static/ddd2.jpeg" height="200px" />Strict mom!</br>hitting effectiveness</td>
+</tr>
+</table>
+E.g. broom in the house, used for hygiene management and also for discipline management (Just for fun, wanted to have a simplest example that could make it more clear).
+<h4>Ubiquitous language</h4>
+Terms and expressions, used across specific to a bounded context so as to have a common understanding of a behavior and meaning.
