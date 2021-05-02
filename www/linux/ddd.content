@@ -13,9 +13,10 @@ Context in which given model has a specific meaning and behavior, stays same in 
 <table align="center" style="border-spacing:5px">
 <tr>
 <tr>
-<td>Broom context map</td>
+<td>Context map</br>
+(Model: Broom)</td>
 </tr>
-<td style="border: #888 1px dashed"><img src="/static/ddd1.jpeg" height="200px" />Good mom!</br>cleaning effectiveness</td>
+<td style="border: #888 1px dashed"><img src="/static/ddd1.jpeg" height="200px" />Working mom!</br>cleaning effectiveness</td>
 <td style="border: #888 1px dashed"><img src="/static/ddd2.jpeg" height="200px" />Strict mom!</br>hitting effectiveness</td>
 </tr>
 </table>
