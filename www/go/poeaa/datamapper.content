@@ -2,131 +2,179 @@
 <i><r>Work in progress</r></i></p>
 Code organization
 <img src="static/data-mapper.png" width="300px" />
-model/person.go
+entity/person.go
 <pre>
-package model
+package entity
 
 type Person struct {
-	id   int
-	name string
-	age  int
+        id   int64
+        name string
+        age  int
 }
 
-func NewPerson(id int, name string, age int) *Person {
-	return &Person{id, name, age}
+func <v>NewPerson</v>(id int64, name string, age int) *Person {
+        return &Person{id, name, age}
 }
 
-func (p *Person) Fields() []interface{} {
-	return []interface{}{&p.id, &p.name, &p.age}
+func (p *Person) <v>Fields</v>() []interface{} {
+        return []interface{}{&p.id, &p.name, &p.age}
 }
 
-func (p Person) Id() int {
-	return p.id
+func (p Person) <v>Id</v>() int64 {
+        return p.id
 }
 
-func (p Person) Age() int {
-	return p.age
+func (p Person) <v>Name</v>() string {
+        return p.name
+}
+
+func (p *Person) <v>SetAge</v>(age int) {
+        p.age = age
+}
+
+func (p Person) <v>Age</v>() int {
+        return p.age
 }
 </pre>
-mapper/personMapper.go
+persistence/database/query.go
 <pre>
-package mapper
+package database
 
 import (
-	"data-mapper/model"
+        "strings"
 
-	_ "github.com/go-sql-driver/mysql"
+        _ "github.com/go-sql-driver/mysql"
 )
 
-type MapperType int
+type Query interface {
+        <v>String</v>() string
+        <v>Where</v>(string) Query
+}
+
+func <v>NewQuery</v>(sql string) Query {
+        return &query{sql}
+}
+
+type query struct {
+        sql string
+}
+
+func (q *query) <v>Where</v>(cond string) Query {
+        q.sql = strings.<v>Join</v>([]string{q.sql, cond}, " ")
+        return q
+}
+
+func (q *query) <v>String</v>() string {
+        return <v>string</v>(q.sql)
+}
+</pre>
+persistence/database/mysqlConfig.go
+<pre>
+package database
 
 const (
-	MEMORY MapperType = iota
-	MYSQL
-	PGSQL
+        MYSQL_HOST     = "localhost"
+        MYSQL_PORT     = 3306
+        MYSQL_USER     = "root"
+        MYSQL_PASS     = "mysecret"
+        MYSQL_DATABASE = "alexandria"
+)
+</pre>
+persistence/database/database.go
+<pre>
+package database
+
+import "database/sql"
+
+type DbType int
+
+const (
+        MYSQL DbType = iota
+        PGSQL
 )
 
-//PersonMapper interface
-type PersonMapper interface {
-	GetAllPerson() []model.Person
-	FindById(int) model.Person
-}
+type (
+        ScanFn <v>func</v>()
 
-func NewPersonMapper(mt MapperType) PersonMapper {
-	switch mt {
-	case MEMORY:
-		return &MemoryPersonMapper{}
-	case MYSQL:
-		return &MySQLPersonMapper{}
-	default:
-		return nil
-	}
+        Database interface {
+                <v>Connect</v>() error
+                <v>QuerySingle</v>(string, ...interface{}) *sql.Row
+                <v>QueryMany</v>(string, ...interface{}) (*sql.Rows, error)
+                <v>ScanMany</v>(*sql.Rows, ScanFn)
+                <v>ExecSingle</v>(string, ...interface{}) (sql.Result, error)
+                <v>Close</v>()
+        }
+)
+
+func <v>NewDatabase</v>(dbtype DbType) Database {
+        switch dbtype {
+        case MYSQL:
+                return &MySQLDatabase{}
+        default:
+                return nil
+        }
 }
 </pre>
-mapper/personMysql.go
+persistence/database/mysql.go
 <pre>
-package mapper
+package database
 
 import (
-	"data-mapper/model"
-	"database/sql"
-	"log"
+        "database/sql"
+        "fmt"
+        "log"
 
-	_ "github.com/go-sql-driver/mysql"
+        _ "github.com/go-sql-driver/mysql"
 )
 
-//Concrete PersonMapper
-type MySQLPersonMapper struct {
+const (
+        MYSQL_DSN = "%s:%s@<v>tcp</v>(%s:%d)/%s"
+)
+
+type MySQLDatabase struct {
+        conn *sql.DB
 }
 
-func (p MySQLPersonMapper) Columns() string {
-	return "id, name, age"
+func <v>NewMySQLDatabase</v>() *MySQLDatabase {
+        return &MySQLDatabase{}
 }
 
-func (p MySQLPersonMapper) Fields(person *model.Person) []interface{} {
-	return person.Fields()
+func (m *MySQLDatabase) <v>Connect</v>() error {
+        if db, <r>_err</r> := sql.
+                <v>Open</v>("mysql", fmt.<v>Sprintf</v>(MYSQL_DSN, MYSQL_USER, MYSQL_PASS, MYSQL_HOST, MYSQL_PORT, MYSQL_DATABASE)); <r>_err</r> != nil {
+                return <r>_err</r>
+        } else {
+                m.conn = db
+        }
+        return nil
 }
 
-func (p MySQLPersonMapper) GetAllPerson() (persons []model.Person) {
-
-	if db, _err := sql.
-		Open("mysql", "root:mysecret@tcp(localhost:3306)/alexandria"); _err != nil {
-		log.Fatalln(_err)
-	} else {
-		defer db.Close()
-
-		if rows, _err := db.
-			Query("select " + p.Columns() + " from Person"); _err != nil {
-			log.Fatalln(_err)
-		} else {
-			defer rows.Close()
-			persons = make([]model.Person, 0)
-			for rows.Next() {
-				var person model.Person
-				rows.Scan(p.Fields(&person)...)
-				persons = append(persons, person)
-			}
-		}
-	}
-	return
-
+func (m *MySQLDatabase) <v>Close</v>() {
+        m.conn.<v>Close</v>()
 }
 
-func (p MySQLPersonMapper) FindById(id int) (person model.Person) {
+func (m *MySQLDatabase) <v>QueryMany</v>(query string, args ...interface{}) (*sql.Rows, error) {
+        return m.conn.<v>Query</v>(query, args...)
+}
 
-	if db, _err := sql.
-		Open("mysql", "root:mysecret@tcp(localhost:3306)/alexandria"); _err != nil {
-		log.Fatalln(_err)
-	} else {
-		defer db.Close()
-		if _err := db.
-			QueryRow("select "+p.Columns()+" from Person where id = ?", id).
-			Scan(p.Fields(&person)...); _err != nil {
-			log.Fatalln(_err)
-		}
-	}
-	return
+func (m *MySQLDatabase) <v>QuerySingle</v>(query string, args ...interface{}) *sql.Row {
+        return m.conn.<v>QueryRow</v>(query, args...)
+}
 
+func (m *MySQLDatabase) <v>ScanMany</v>(rows *sql.Rows, scanFn ScanFn) {
+        for rows.<v>Next</v>() {
+                <v>scanFn</v>()
+        }
+}
+
+func (m *MySQLDatabase) <v>ExecSingle</v>(query string, args ...interface{}) (sql.Result, error) {
+
+        if stmt, <r>_err</r> := m.conn.<v>Prepare</v>(query); <r>_err</r> != nil {
+                log.<v>Fatalln</v>(<r>_err</r>)
+                return nil, <r>_err</r>
+        } else {
+                return stmt.<v>Exec</v>(args...)
+        }
 }
 </pre>
 mapper/personMemory.go
@@ -134,48 +182,303 @@ mapper/personMemory.go
 package mapper
 
 import (
-	"data-mapper/model"
+        "data-mapper/entity"
+        "fmt"
+        "math/rand"
 
-	_ "github.com/go-sql-driver/mysql"
+        _ "github.com/go-sql-driver/mysql"
 )
 
 /*Default data set*/
-var personCollection = []model.Person{
-	*model.NewPerson(1, "Nilesh", 36),
-	*model.NewPerson(2, "Vihaan", 3),
-	*model.NewPerson(3, "Priyanka", 28),
+var personCollection = []entity.Person{
+        *entity.<v>NewPerson</v>(1, "Tushar", 38),
+        *entity.<v>NewPerson</v>(2, "Dhruv", 7),
+        *entity.<v>NewPerson</v>(3, "Charu", 34),
+        *entity.<v>NewPerson</v>(4, "Ira", 2),
 }
 
 /*Seed Custom data*/
-func SeedData(pc []model.Person) {
-	personCollection = pc
+func <v>SeedData</v>(pc []entity.Person) {
+        personCollection = pc
 }
 
 //Concrete PersonMapper
 type MemoryPersonMapper struct {
 }
 
-func (p MemoryPersonMapper) Columns() string {
-	return "id, name, age"
+func (p MemoryPersonMapper) <v>Columns</v>() string {
+        return "id, name, age"
 }
 
-func (p MemoryPersonMapper) Fields(person *model.Person) []interface{} {
-	return person.Fields()
+func (p MemoryPersonMapper) <v>Fields</v>(person *entity.Person) []interface{} {
+        return person.<v>Fields</v>()
 }
 
-func (p MemoryPersonMapper) GetAllPerson() []model.Person {
-	return personCollection
+func (p MemoryPersonMapper) <v>Create</v>(name string, age int) entity.Person {
+        return *entity.<v>NewPerson</v>(rand.Int63<v>n</v>(10000000), name, age)
 }
 
-func (p MemoryPersonMapper) FindById(id int) model.Person {
-	var person model.Person
-	for _, p := range p.GetAllPerson() {
-		if p.Id() == id {
-			person = p
-			break
-		}
+func (p MemoryPersonMapper) <v>GetAllPerson</v>() []entity.Person {
+        return personCollection
+}
 
-	}
-	return person
+func (p MemoryPersonMapper) <v>FindById</v>(id int64) entity.Person {
+        var person entity.Person
+        for _, p := range p.<v>GetAllPerson</v>() {
+                if p.<v>Id</v>() == id {
+                        person = p
+                        break
+                }
+        }
+        return person
+}
+
+func (p MemoryPersonMapper) <v>Save</v>(person entity.Person) {
+        fmt.<v>Println</v>("Saved")
+        for k, v := range personCollection {
+                if v.<v>Id</v>() == person.<v>Id</v>() {
+                        personCollection[k] = person
+                        break
+                }
+        }
+}
+
+func (p MemoryPersonMapper) <v>SaveAll</v>(persons []entity.Person) {
+        personCollection = persons
+}
+
+func (p MemoryPersonMapper) <v>Remove</v>(person entity.Person) {
+
+        fmt.<v>Println</v>("Deleted")
+        for k, v := range personCollection {
+                if v.<v>Id</v>() == person.<v>Id</v>() {
+                        personCollection = <v>append</v>(personCollection[:k], personCollection[k+1:]...)
+                        break
+                }
+        }
+
+}
+</pre>
+mapper/personMysql.go
+<pre>
+package mapper
+
+import (
+        "data-mapper/entity"
+        "data-mapper/persistence/database"
+        "fmt"
+        "log"
+        "strings"
+
+        _ "github.com/go-sql-driver/mysql"
+)
+
+//Concrete PersonMapper
+type MySQLPersonMapper struct {
+        database.Database
+}
+
+func <v>NewMySQLPersonMapper</v>(mysqlDB *database.MySQLDatabase) *MySQLPersonMapper {
+        return &MySQLPersonMapper{mysqlDB}
+}
+
+func (p MySQLPersonMapper) <v>Columns</v>() []string {
+        return []string{"name", "age"}
+}
+
+func (p MySQLPersonMapper) <v>Fields</v>(person *entity.Person) []interface{} {
+        return person.<v>Fields</v>()
+}
+
+func (p MySQLPersonMapper) <v>InsertQuery</v>() database.Query {
+        valueFields := <v>func</v>() (setFields []string) {
+                for _ = range p.<v>Columns</v>() {
+                        setFields = <v>append</v>(setFields, "?")
+                }
+                return
+        }()
+        return database.<v>NewQuery</v>("insert into Person (" + strings.<v>Join</v>(p.<v>Columns</v>(), ",") + ") values (" + strings.<v>Join</v>(valueFields, ",") + ")")
+}
+
+func (p MySQLPersonMapper) <v>SelectQuery</v>() database.Query {
+        return database.<v>NewQuery</v>("select id, " + strings.<v>Join</v>(p.<v>Columns</v>(), ",") + " from Person")
+}
+
+func (p MySQLPersonMapper) <v>UpdateQuery</v>() database.Query {
+
+        setFields := <v>func</v>() (setFields []string) {
+                for _, v := range p.<v>Columns</v>() {
+                        setFields = <v>append</v>(setFields, v+"=?")
+                }
+                return
+        }()
+        return database.<v>NewQuery</v>("update Person set " + strings.<v>Join</v>(setFields, ","))
+}
+
+func (p MySQLPersonMapper) <v>DeleteQuery</v>() database.Query {
+        return database.<v>NewQuery</v>("delete from Person")
+}
+
+func (p MySQLPersonMapper) <v>Create</v>(name string, age int) (person entity.Person) {
+
+        if <r>_err</r> := p.Database.<v>Connect</v>(); <r>_err</r> != nil {
+                log.<v>Fatalln</v>(<r>_err</r>)
+        } else {
+                defer p.Database.<v>Close</v>()
+
+                if res, <r>_err</r> := p.Database.<v>ExecSingle</v>(p.<v>InsertQuery</v>().<v>String</v>(), name, age); <r>_err</r> != nil {
+                        log.<v>Fatalln</v>(<r>_err</r>)
+                } else {
+                        fmt.<v>Printf</v>("Created: %+v\n", res)
+                        if id, <r>_err</r> := res.<v>LastInsertId</v>(); <r>_err</r> != nil {
+                                log.<v>Fatalln</v>(<r>_err</r>)
+                        } else {
+                                person = *entity.<v>NewPerson</v>(id, name, age)
+                        }
+                }
+        }
+
+        return
+}
+
+func (p MySQLPersonMapper) <v>GetAllPerson</v>() (persons []entity.Person) {
+
+        //persons = <v>make</v>([]entity.Person, 0)
+        if <r>_err</r> := p.Database.<v>Connect</v>(); <r>_err</r> != nil {
+                log.<v>Fatalln</v>(<r>_err</r>)
+        } else {
+                defer p.Database.<v>Close</v>()
+
+                if rows, <r>_err</r> := p.Database.<v>QueryMany</v>(p.<v>SelectQuery</v>().<v>String</v>()); <r>_err</r> != nil {
+                        log.<v>Fatalln</v>(<r>_err</r>)
+                } else {
+                        defer rows.<v>Close</v>()
+
+                        for rows.<v>Next</v>() {
+                                var person entity.Person
+                                rows.<v>Scan</v>(p.<v>Fields</v>(&person)...)
+                                persons = <v>append</v>(persons, person)
+
+                        }
+
+                        /*p.Database.<v>ScanMany</v>(rows, <v>func</v>() {
+                                var person entity.Person
+                                rows.<v>Scan</v>(p.<v>Fields</v>(&person)...)
+                                persons = <v>append</v>(persons, person)
+                        })*/
+                }
+        }
+        return
+
+}
+
+func (p MySQLPersonMapper) <v>FindById</v>(id int64) (person entity.Person) {
+
+        if <r>_err</r> := p.Database.<v>Connect</v>(); <r>_err</r> != nil {
+                log.<v>Fatalln</v>(<r>_err</r>)
+        } else {
+                defer p.Database.<v>Close</v>()
+
+                if <r>_err</r> := p.Database.<v>QuerySingle</v>(p.<v>SelectQuery</v>().<v>Where</v>("where id = ?").<v>String</v>(), id).<v>Scan</v>(p.<v>Fields</v>(&person)...); <r>_err</r> != nil {
+                        log.<v>Fatalln</v>(<r>_err</r>)
+                }
+        }
+        return
+
+}
+
+func (p MySQLPersonMapper) <v>Update</v>(person entity.Person) {
+        if _, <r>_err</r> := p.Database.<v>ExecSingle</v>(p.<v>UpdateQuery</v>().<v>Where</v>("where id = ?").<v>String</v>(), person.<v>Name</v>(), person.<v>Age</v>(), person.<v>Id</v>()); <r>_err</r> != nil {
+                log.<v>Fatalln</v>(<r>_err</r>)
+        } else {
+                fmt.<v>Println</v>("Saved")
+        }
+}
+
+func (p MySQLPersonMapper) <v>Save</v>(person entity.Person) {
+
+        if <r>_err</r> := p.Database.<v>Connect</v>(); <r>_err</r> != nil {
+                log.<v>Fatalln</v>(<r>_err</r>)
+        } else {
+                defer p.Database.<v>Close</v>()
+
+                p.<v>Update</v>(person)
+        }
+
+}
+
+func (p MySQLPersonMapper) <v>SaveAll</v>(persons []entity.Person) {
+
+        if <r>_err</r> := p.Database.<v>Connect</v>(); <r>_err</r> != nil {
+                log.<v>Fatalln</v>(<r>_err</r>)
+        } else {
+                defer p.Database.<v>Close</v>()
+
+                for _, person := range persons {
+                        p.<v>Update</v>(person)
+                }
+        }
+
+}
+
+func (p MySQLPersonMapper) <v>Delete</v>(person entity.Person) {
+        if _, <r>_err</r> := p.Database.<v>ExecSingle</v>(p.<v>DeleteQuery</v>().<v>Where</v>("where id = ?").<v>String</v>(), person.<v>Id</v>()); <r>_err</r> != nil {
+                log.<v>Fatalln</v>(<r>_err</r>)
+        } else {
+                fmt.<v>Println</v>("deleted")
+        }
+}
+
+func (p MySQLPersonMapper) <v>Remove</v>(person entity.Person) {
+
+        if <r>_err</r> := p.Database.<v>Connect</v>(); <r>_err</r> != nil {
+                log.<v>Fatalln</v>(<r>_err</r>)
+        } else {
+                defer p.Database.<v>Close</v>()
+
+                p.<v>Delete</v>(person)
+        }
+
+}
+</pre>
+mapper/personMapper.go
+<pre>
+package mapper
+
+import (
+        "data-mapper/entity"
+        "data-mapper/persistence/database"
+
+        _ "github.com/go-sql-driver/mysql"
+)
+
+type MapperType int
+
+const (
+        MEMORY MapperType = iota
+        MYSQL
+        PGSQL
+)
+
+//PersonMapper interface
+type PersonMapper interface {
+        <v>GetAllPerson</v>() []entity.Person
+        <v>FindById</v>(int64) entity.Person
+        <v>Save</v>(entity.Person)
+        <v>SaveAll</v>([]entity.Person)
+        <v>Create</v>(string, int) entity.Person
+        <v>Remove</v>(entity.Person)
+}
+
+func <v>NewPersonMapper</v>(mt MapperType) PersonMapper {
+        switch mt {
+        case MEMORY:
+                return &MemoryPersonMapper{}
+        case MYSQL:
+                mysqlDatabase := database.<v>NewMySQLDatabase</v>()
+                return <v>NewMySQLPersonMapper</v>(mysqlDatabase)
+        default:
+                return nil
+        }
 }
 </pre>

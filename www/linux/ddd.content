@@ -1,4 +1,4 @@
-<h3><a href="#linux"  >DDD</a> - Thoughts</h3></p>
+<h3><a href="#linux"  >DDD</a> - My Notes</h3></p>
 <r>Work in progress</r>
 <h4>Domain</h4>
 Area or problem space you are trying to create software solution for. E.g., it could be logistics, banking, health care etc.
@@ -14,12 +14,11 @@ Context in which given model has a specific meaning and behavior, stays same in 
 <tr>
 <tr>
 <td>Context map</br>
-(Model: Broom)</td>
 </tr>
-<td style="border: #888 1px dashed"><img src="/static/ddd1.jpeg" height="200px" />Working mom!</br>cleaning effectiveness</td>
-<td style="border: #888 1px dashed"><img src="/static/ddd2.jpeg" height="200px" />Strict mom!</br>hitting effectiveness</td>
+<td style="border: #888 1px dashed"><img src="/static/ddd1.jpeg" height="200px" /><b>Working mom!</b></br>Broom: Used for cleaning, </br>Easy of usage</br>Longitivity</br>Wipe quality</td>
+<td style="border: #888 1px dashed"><img src="/static/ddd2.jpeg" height="200px" /><b>Angry mom!</b></br>Broom: Used for control, </br>Easy of usage</br>Strength</br>Impact quality</td>
 </tr>
 </table>
 E.g. broom in the house, used for hygiene management and also for discipline management (Just for fun, wanted to have a simplest example that could make it more clear).
 <h4>Ubiquitous language</h4>
-Terms and expressions, used across specific to a bounded context so as to have a common understanding of a behavior and meaning.
+Terms and expressions, specific to a bounded context so as to have a common understanding of a behavior and meaning.
