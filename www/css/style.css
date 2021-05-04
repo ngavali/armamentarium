@@ -156,3 +156,8 @@ ul {
 ul ul {
   list-style-type: disc;
 }
+
+.align-right {
+    align: right;
+    float: right;
+}
