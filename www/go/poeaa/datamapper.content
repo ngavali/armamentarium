@@ -1,9 +1,10 @@
 <h3><a href="#go" >Go Programming Language</a> - <a href="#go/poeaa">P of EAA</a> - Data Mappers</h3>
 <i><r>Work in progress</r></i></p>
-In this article, I have tried GO implementation for the Data Mapper from the book by Eric Evans - Patterns of Enterprise Application Archtecture. The example uses a Person object that has a unique <b>id</b> to identifies itself, and a <b>name</b> and <b>age</b> fields for the demonstration.</p>
-I have skipped finer detailed implementation for the sake of brevity of this article.</br>
-Code organization is as follows
-<img src="static/data-mapper.png" width="300px" />
+In this article, I have tried to implement Data Mapper (from the book by Eric Evans - Patterns of Enterprise Application Archtecture) using Golang. The example uses a Person object that has an unique <b>id</b> to identifies itself, and a <b>name</b> and <b>age</b> fields for the demonstration. And we perform basic CRUD operations on same.
+(Pardon me for the naming convention used in this example, I am not good at it). I hope you will find this article useful in understanding datamappers.</p>
+Let jump straight into it. Code is organized as follows:
+<img src="static/data-mapper.png" width="250px" />
+<h4>Entities</h4>
 entity/person.go
 <pre>
 package entity
@@ -18,6 +19,7 @@ func NewPerson(id int64, name string, age int) *Person {
   return &Person{id, name, age}
 }
 
+//I have put it here
 func (p *Person) Fields() []interface{} {
   return []interface{}{&p.id, &p.name, &p.age}
 }
@@ -38,6 +40,8 @@ func (p Person) Age() int {
   return p.age
 }
 </pre>
+<h4>Persistence Layer</h4>
+Query, it is used to store SQL statement text and extend them with minimal helper functions.</br>
 persistence/database/query.go
 <pre>
 package database
@@ -73,6 +77,7 @@ func (q *query) String() string {
   return string(q.sql)
 }
 </pre>
+Database config file</br>
 persistence/database/mysqlConfig.go
 <pre>
 package database
@@ -85,6 +90,7 @@ const (
   MYSQL_DATABASE = "alexandria"
 )
 </pre>
+Database interface exposing only required functionality</br>
 persistence/database/database.go
 <pre>
 package database
@@ -99,7 +105,8 @@ const (
 )
 
 type (
-  ScanFn func()
+
+  ScanFn func() //bear with me on this
 
   Database interface {
     Connect() error
@@ -120,6 +127,7 @@ func NewDatabase(dbtype DbType) Database {
   }
 }
 </pre>
+Something specific to Mysql</br>
 persistence/database/mysql.go
 <pre>
 package database
@@ -172,6 +180,7 @@ func (m *MySQLDatabase) QuerySingle(query string, args ...interface{}) *sql.Row 
   return m.conn.QueryRow(query, args...)
 }
 
+<r>//I hope you must have got an idea by now!</r>
 func (m *MySQLDatabase) ScanMany(rows *sql.Rows, scanFn ScanFn) {
   for rows.Next() {
     scanFn()
@@ -189,23 +198,62 @@ func (m *MySQLDatabase) ExecSingle(query string, args ...interface{}) (sql.Resul
   }
 }
 </pre>
+<h4>Data mapper</h4> Interface</br>
+mapper/personMapper.go
+<pre>
+package mapper
+
+import (
+  "data-mapper/entity"
+
+  _ "github.com/go-sql-driver/mysql"
+)
+
+type MapperType int
+
+const (
+  MEMORY MapperType = iota
+  MYSQL
+  PGSQL
+)
+
+//PersonMapper interface
+type PersonMapper interface {
+  GetAllPerson() []entity.Person
+  FindById(int64) entity.Person
+  Save(entity.Person)
+  SaveAll([]entity.Person)
+  Create(string, int) entity.Person
+  Remove(entity.Person)
+}
+
+func NewPersonMapper(mt MapperType) PersonMapper {
+  switch mt {
+  case MEMORY:
+    return NewMemoryPersonMapper()
+  case MYSQL:
+    return NewMySQLPersonMapper()
+  default:
+    return nil
+  }
+}
+</pre>
+Just for the sake of quick testing, nothing special</br>
 mapper/personMemory.go
 <pre>
 package mapper
 
 import (
-  "POEAA/data-mapper/entity"
+  "data-mapper/entity"
   "fmt"
   "math/rand"
-
-  _ "github.com/go-sql-driver/mysql"
 )
 
 /*Default data set*/
 var personCollection = []entity.Person{
   *entity.NewPerson(1, "Tushar", 38),
-  *entity.NewPerson(2, "Dhruv", 7),
-  *entity.NewPerson(3, "Charu", 34),
+  *entity.NewPerson(2, "Charusheela", 34),
+  *entity.NewPerson(3, "Dhruv", 7),
   *entity.NewPerson(4, "Ira", 2),
 }
 
@@ -218,6 +266,10 @@ func SeedData(pc []entity.Person) {
 type MemoryPersonMapper struct {
 }
 
+func NewMemoryPersonMapper() *MemoryPersonMapper {
+  return &MemoryPersonMapper{}
+}
+
 func (p MemoryPersonMapper) Columns() string {
   return "id, name, age"
 }
@@ -228,7 +280,7 @@ func (p MemoryPersonMapper) Fields(person *entity.Person) []interface{} {
 
 func (p MemoryPersonMapper) Create(name string, age int) entity.Person {
   return *entity.NewPerson(
-    rand.Int63n(10000000),
+    rand.Int63n(10000000),      <c>//Just some random, number no sequence</c>
     name,
     age)
 }
@@ -275,19 +327,35 @@ func (p MemoryPersonMapper) Remove(person entity.Person) {
   }
 }
 </pre>
+Some real database mapper</br>
 mapper/personMysql.go
 <pre>
 package mapper
 
 import (
-  "POEAA/data-mapper/entity"
-  "POEAA/data-mapper/persistence/database"
+  "data-mapper/entity"
+  "data-mapper/persistence/database"
   "fmt"
   "log"
   "strings"
 
   _ "github.com/go-sql-driver/mysql"
 )
+
+/*Seed Custom data*/
+func MySQLSeedData(pc []entity.Person) {
+
+    mm := NewMySQLPersonMapper()
+    mm.Truncate()
+
+    if persons != nil {
+        personCollection = pc
+    }
+
+    for _, person := range personCollection {
+        mm.Create(person.Name(), person.Age())
+    }
+}
 
 //Concrete PersonMapper
 type MySQLPersonMapper struct {
@@ -342,6 +410,10 @@ func (p MySQLPersonMapper) DeleteQuery() database.Query {
   return database.NewQuery("delete from Person")
 }
 
+func (p MySQLPersonMapper) TruncateQuery() database.Query {
+  return database.NewQuery("truncate table Person")
+}
+
 func (p MySQLPersonMapper) Create(name string, age int) (person entity.Person) {
 
   if _err := p.Database.Connect(); _err != nil {
@@ -391,6 +463,7 @@ func (p MySQLPersonMapper) GetAllPerson() (persons []entity.Person) {
 
       }
 
+      <r>//You got it here! and i will leave it upto you to explore</r>
       /*p.Database.ScanMany(rows, func() {
         var person entity.Person
         rows.Scan(p.Fields(&person)...)
@@ -459,18 +532,6 @@ func (p MySQLPersonMapper) SaveAll(persons []entity.Person) {
   }
 }
 
-func (p MySQLPersonMapper) Delete(person entity.Person) {
-  if _, _err := p.Database.
-    ExecSingle(p.
-      DeleteQuery().
-      Where("where id = ?").String(),
-      person.Id()); _err != nil {
-    log.Fatalln(_err)
-  } else {
-    fmt.Println("deleted")
-  }
-}
-
 func (p MySQLPersonMapper) Remove(person entity.Person) {
 
   if _err := p.Database.Connect(); _err != nil {
@@ -478,46 +539,33 @@ func (p MySQLPersonMapper) Remove(person entity.Person) {
   } else {
     defer p.Database.Close()
 
-    p.Delete(person)
+    if _, _err := p.Database.
+      ExecSingle(p.
+        DeleteQuery().
+        Where("where id = ?").String(),
+        person.Id()); _err != nil {
+      log.Fatalln(_err)
+    } else {
+      fmt.Println("deleted")
+    }
+  }
+}
+
+func (p MySQLPersonMapper) Truncate() {
+  if _err := p.Database.Connect(); _err != nil {
+    log.Fatalln(_err)
+  } else {
+    defer p.Database.Close()
+
+    if _, _err := p.Database.
+      ExecSingle(p.
+        TruncateQuery().String()); _err != nil {
+      log.Fatalln(_err)
+    } else {
+      fmt.Println("truncated")
+    }
   }
 }
 </pre>
-mapper/personMapper.go
-<pre>
-package mapper
-
-import (
-  "POEAA/data-mapper/entity"
-
-  _ "github.com/go-sql-driver/mysql"
-)
-
-type MapperType int
-
-const (
-  MEMORY MapperType = iota
-  MYSQL
-  PGSQL
-)
-
-//PersonMapper interface
-type PersonMapper interface {
-  GetAllPerson() []entity.Person
-  FindById(int64) entity.Person
-  Save(entity.Person)
-  SaveAll([]entity.Person)
-  Create(string, int) entity.Person
-  Remove(entity.Person)
-}
-
-func NewPersonMapper(mt MapperType) PersonMapper {
-  switch mt {
-  case MEMORY:
-    return &MemoryPersonMapper{}
-  case MYSQL:
-    return NewMySQLPersonMapper()
-  default:
-    return nil
-  }
-}
-</pre>
+That's all folks</p>
+Hope you have enjoyed it!!!
