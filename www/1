@@ -1,7 +1,7 @@
 <h3><a href="#go" >Go Programming Language</a> - <a href="#go/poeaa">P of EAA</a> - Data Mappers</h3>
 <i><r>Work in progress</r></i></p>
-In this article, I have tried GO implementation for the Data Mapper from the book by Eric Evans - Patterns of Enterprise Application Archtecture. The example uses a Person object that has a unique <b>id</b> to identifies itself, and a <b>name</b> and <b>age</b> fields for the demonstration.</p>
-I have skipped finer detailed implementation for the sake of brevity of this article.</br>
+In this article, I have tried GO implementation for the Data Mapper from the book by Eric Evans - Patterns of Enterprise Application Archtecture.</br>
+I have skipped details for the sake of brevity.</p>
 Code organization is as follows
 <img src="static/data-mapper.png" width="300px" />
 entity/person.go
