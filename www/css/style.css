@@ -61,8 +61,7 @@ h4 {
 table#menu {
 	width:1000px;
 	border:0px;
-	adding-bottom:5px;
-	border-bottom:#eee 1px solid;
+	border-bottom:#888 1px solid;
 	background: rgb(255,255,255);
 	height: 70px;
 }
@@ -106,7 +105,7 @@ table#menu tr td a {
 	padding-right: 5px;
 	text-decoration: none;
 	color: #000;
-	font-size: 18px;
+	font-size: 20px;
 	font-family: "myfont";
 }
 
@@ -130,7 +129,7 @@ img {
 table#menu tr td .activeLink {
 	padding-right: 5px;
     color: #D7263D;
-	text-decoration: underline;
+    font-weight: bold;
 }
 
 /*text styles*/
