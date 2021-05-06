@@ -32,7 +32,7 @@ div#menubar {
 
 logo {
 	color: #D7263D;
-	font-size: 26px;
+	font-size: 24px;
     font-family: "myfont";
     font-weight: bold;
 }
@@ -82,7 +82,7 @@ table {
 table#topicContent {
 	width:1000px;
 	border:0px;
-	font-size: 21px;
+	font-size: 20px;
 }
 
 body {
@@ -97,14 +97,14 @@ body {
 
 table#topicContent tr td {
 	font-family: "myfont";
-	font-size: 21px;
+	font-size: 20px;
 }
 
 table#menu tr td a {
 	padding-right: 5px;
 	text-decoration: none;
 	color: #000;
-	font-size: 22px;
+	font-size: 21px;
 	font-family: "myfont";
 }
 
