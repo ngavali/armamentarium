@@ -4,6 +4,15 @@ var menuitem = { "Go":"go", "Rust":"rust", "DB":"db", "DS":"dist. systems", "Lin
 //var menuitem = { "Go":"go", "Rust":"rust", "DB":"db", "DS":"dist. systems", "Linux":"linux", "Math":"math", "About":"about" };
 var navigate = [];
 var currentI = 0;
+var reading = false;
+var fontSelection = { true: "myfont", false: "Arial" };
+var readingSource = { true: "/static/book-active.png", false: "/static/book.png"}
+
+function toggleFont() {
+    reading = !reading;
+    _('topicContent').style.fontFamily = fontSelection[reading];
+    _('reader').src = readingSource[reading];
+}
 
 _ = ( objString ) => {
 
@@ -149,4 +158,5 @@ _().ready(function() {
         //	menuitemdiv.innerHTML = menuitemdiv.innerHTML + '<a href="#'+item.toLowerCase()+'" id="'+item.toLowerCase()+'" id="someid" onclick="_().loadContent(this,\''+item.toLowerCase()+'\',\'ContentBody\');">'+item+'</a> ';
         //	menuitemdiv.innerHTML = menuitemdiv.innerHTML + '<a id="'+idname+'" href="/'+item.toLowerCase()+'.html" onclick="return loadContent("'+item+'");">'+item+'</a> ';
         }
+    
 });
