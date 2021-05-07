@@ -28,12 +28,13 @@ div#menubar {
 	position: fixed;
 	width: 100%;
 	background: rgb(255,255,255);
+	border-bottom:#888 1px solid;
 }
 
 logo {
 	color: #D7263D;
 	font-size: 24px;
-    font-family: "myfont";
+    font-family: Arial;
     font-weight: bold;
 }
 
@@ -45,7 +46,6 @@ h3, k3 {
 	font-size: 24px;
 	margin-top: 0px;
     margin-bottom: 15px;
-	font-family: "myfont";
     color: #2C365E;
 }
 
@@ -54,20 +54,19 @@ h4 {
     font-weight: bold;
     margin-top: 5px;
     margin-bottom: 0px;
-	font-family: "myfont";
+    color: #a0f;
 }
 
 table#menu {
 	width:1000px;
 	border:0px;
-	border-bottom:#888 1px solid;
 	background: rgb(255,255,255);
-	height: 70px;
+	height: 50px;
 }
 
 div#bodyTopic {
 	margin: 0px;
-	padding-top: 85px;
+	padding-top: 70px;
 }
 
 table {
@@ -79,14 +78,7 @@ table {
 	padding: 2pt;
 }
 
-table#topicContent {
-	width:1000px;
-	border:0px;
-	font-size: 20px;
-}
-
 body {
-	font-family: "myfont";
 	font-size: 20px;
 	color: #000;
 	padding-left: 0px;
@@ -95,9 +87,11 @@ body {
 	margin: 0px;
 }
 
-table#topicContent tr td {
-	font-family: "myfont";
+table#topicContent {
+	width:1000px;
+	border:0px;
 	font-size: 20px;
+	font-family: Arial;
 }
 
 table#menu tr td a {
@@ -105,13 +99,12 @@ table#menu tr td a {
 	text-decoration: none;
 	color: #000;
 	font-size: 21px;
-	font-family: "myfont";
+	font-family: Arial;
 }
 
 a {
 	color: #4F51f1;
 	outline: none;
-	font-family: "myfont";
 }
 
 a:hover {
