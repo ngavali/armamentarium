@@ -6,7 +6,7 @@ var navigate = [];
 var currentI = 0;
 var reading = false;
 var fontSelection = { true: "myfont", false: "Arial" };
-var readingSource = { true: "/static/book-active.png", false: "/static/book.png"}
+var readingSource = { true: "/static/book-active.svg", false: "/static/book-inactive.svg"}
 
 function toggleFont() {
     reading = !reading;
