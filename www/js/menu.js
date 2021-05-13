@@ -9,9 +9,47 @@ var fontSelection = { true: "myfont", false: "Arial" };
 var readingSource = { true: "/static/book-active.svg", false: "/static/book-inactive.svg"}
 
 function toggleFont() {
-    reading = !reading;
-    _('topicContent').style.fontFamily = fontSelection[reading];
-    _('reader').src = readingSource[reading];
+    reading = !getReadingMode()
+    fixFont(reading)
+    setCookie("reading_mode", reading, 7)
+}
+
+function getReadingMode() {
+    let reading_mode = getCookie("reading_mode")
+    if ( reading_mode != "" ) {
+        reading = (reading_mode=='true')
+        return reading
+    }
+    return false
+}
+
+function fixFont(reading) {
+    _('topicContent').style.fontFamily = fontSelection[reading]
+    _('reader').src = readingSource[reading]
+}
+
+function setCookie(cookie_name, cookie_value, exdays) {
+  var d = new Date();
+  d.setTime(d.getTime() + (exdays*24*60*60*1000))
+  var expires = "expires="+ d.toUTCString()
+  document.cookie = cookie_name + "=" + cookie_value + ";" + expires + ";path=/"
+    console.log(document.cookie)
+}
+
+function getCookie(cookie_name) {
+  var name = cookie_name + "=";
+  var decodedCookie = decodeURIComponent(document.cookie);
+  var ca = decodedCookie.split(';');
+  for(var i = 0; i <ca.length; i++) {
+    var c = ca[i];
+    while (c.charAt(0) == ' ') {
+      c = c.substring(1);
+    }
+    if (c.indexOf(name) == 0) {
+      return c.substring(name.length, c.length);
+    }
+  }
+  return "";
 }
 
 _ = ( objString ) => {
@@ -159,4 +197,5 @@ _().ready(function() {
         //	menuitemdiv.innerHTML = menuitemdiv.innerHTML + '<a id="'+idname+'" href="/'+item.toLowerCase()+'.html" onclick="return loadContent("'+item+'");">'+item+'</a> ';
         }
     
+        fixFont(getReadingMode())
 });

@@ -1,5 +1,5 @@
 <h3><a href="#math"  >Mathematics</a> - Gentle review of the probability theory</h3>
-As a kid, I always struggled understanding the concepts of probability during the school days ( rarely got the answers right ). Most of the times left frustrated but, still finding it a very captivating topic and later at some point decided to take a sincere effort to get a better understanding instead of restricting that for academic purposes. This article is the result of same and it is written with an intend to provide a gentle introduction to the reader of the very fundamental concepts of probability in a very simplest possible way. So, let get started.</p>
+During the school days, I always struggled understanding the concepts of probability (rarely got the answers right). Most of the times frustrated, still I felt it was a very captivating topic and later at some point decided to take a sincere effort to get a better at it. This article is written with an intent to provide a gentle introduction of the very fundamental concepts of probability. So, let get started.</p>
 <h3>What is probability</h3>
 In simplest terms it can be defined as, how likely something (an event) is expected to happen</p>
 <!--b>&#x2119</b>P(An event) = ( number of favourable outcomes ) / ( total number of all possible outcome(s) )</p-->
@@ -16,8 +16,8 @@ Thus, P(Tail) = 1 - P(Head) = 0.5
 </dl>
 <h3>Notations</h3>
 <table>
-<tr><td><e>And</e></td><td>is denoted by </td><td>∩</td></tr>
-<tr><td><e>Or</e></td><td>is denoted by </td><td>∪</td></tr>
+<tr><td>AND operation</td><td>is denoted by </td><td>∩</td></tr>
+<tr><td>OR operation</td><td>is denoted by </td><td>∪</td></tr>
 </table></p>
 <h3>Types of events</h3>
 <dl>
@@ -28,7 +28,7 @@ Notice that <e>simultaneity</e> is the key.</br>
 </dl>
 <dl>
 <dt>Ex.</dt>
-<dd>A coin toss, it cannot yield both head and tail at the same time.</br>However, consider a case of drawing a King or Heart card from a deck of 52 card, there is a possiblity that card could be a <i>King</i> of <i>Hearts</i>. </br>
+<dd>A coin tossed, cannot yield both head and tail at the same time.</br>However, consider a case of drawing a King or Heart card from a deck of 52 card, there is a possiblity that card could be a <i>King</i> of <i>Hearts</i>. </br>
 So, both are not mutually exclusive events. </br>While on the other hand drawing a card which is both King and Queen is not possible. Thus, both become mutually exclusive events.</dd>
 </dl>
 </p>

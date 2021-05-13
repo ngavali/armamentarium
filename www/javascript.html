@@ -1,0 +1,103 @@
+<html>
+<head>
+<style>
+div {
+/*transition: width 1s, height 1s, background 1s;*/
+transition: width 0.5s, height 0.5s, background 0.5s;
+}
+</style>
+<script type="text/javascript">
+class DOMElement {
+
+    attr
+        elemType
+        elem
+
+        constructor(e, a) {
+            this.attr = a
+                this.elemType = e
+                if ( e !== "body" ) {
+                    this.elem = document.createElement(e)
+                        for ( let prop in this.attr ) {
+                            this.elem.setAttribute(prop, this.attr[prop])
+                        }
+                } else {
+                    this.elem = document.body
+                }
+        }
+
+    add(component) {
+        if ( component.elem.parentNode ) {
+            component.elem.parentNode.removeChild(component.elem)
+        }
+        this.elem.appendChild(component.elem)
+    }
+
+    remove(component) {
+        if (component.elem.parentNode === this.elem) {
+            this.elem.removeChild(component.elem)
+                return true
+        }
+        return true
+    }
+
+    //Refresh object based on changes in the attr
+    refresh(attr) {
+        for (let prop in attr) {
+            if ( prop === "class" ) {
+                this.elem.classList.remove(...this.elem.classList)
+                    this.elem.classList.add(attr[prop])
+                    continue
+            }
+            console.log("a")
+                this.elem.removeAttribute(prop)
+                this.elem.setAttribute(prop, attr[prop])
+                this.attr[prop] = attr[prop]
+        }
+    }
+}
+
+var MyObj
+
+document.addEventListener('DOMContentLoaded', function(event) {
+        let bar = new DOMElement('div', { "id" : "bar" })
+        let myApp = new DOMElement("div")
+        myApp.elem = document.getElementById("myapp")
+        myApp.add(bar)
+
+        bar.elem.style.background = "#a0f"
+        bar.elem.style.height = "20px"
+        bar.elem.style.width = "20px"
+
+        /*
+           async function animate(callback) {
+           console.log("sleeping")
+           await new Promise(resolve => setTimeout(resolve, 1000))
+           callback()
+           }
+
+           animate(function() {
+           bar.elem.style.background = "#0ff"
+           bar.elem.style.width = "200px"
+           bar.elem.style.height = "200px"
+           })
+         */
+
+        MyObj = { 
+            changeBar: function() {
+                this.updateObject(bar, {width: 200, color: 'rgb(255,0,155)'})
+            },
+            updateObject: function(obj, {height, width, color}) {
+                obj.elem.style.width = width
+                obj.elem.style.height = height
+                obj.elem.style.background = color
+            }
+        }
+});
+
+</script>
+<body>
+<div id="myapp"></div>
+<button onclick="MyObj.changeBar()" value="update"/>Update</button>
+</body>
+</html>
