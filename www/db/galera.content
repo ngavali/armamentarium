@@ -1,7 +1,9 @@
 <h3><a href="#db"  > Database</a> - Mariadb Galera Cluster</h3>
-Thinking of porting your application, from using a single mysql database node to a galera based multi-master mariadb database cluster.
-Oh Yes! we are.</p>
-Then first of all, <i>welcome to a brand new world of deadlocks!</i>.</p> 
+<pre><r>Draft Version</r></pre>
+Your application is connected to a single backend mysql/mariadb database node (Master/Slave mode) and your thinking of scaling it by upgrading to galera based multi-master mariadb database cluster.
+Oh Yes! we are. This article will walk you through the limitations and behavior that you need to deal with when making a move and will help you decide/design if that is a good choice for you.</p>
+
+So first of all <i>welcome to a brand new world of deadlocks!</i>.</p> 
 
 If connections go to two different node then what would usually work well in a single node setup will give you sudden surprises.</br>
 In a single node configuration, various conflicting locks will usually not create any issues. But, when it comes to Galera it handles it in a little different way (Mostly you would see error message:- WSREP detected deadlock/conflict detected).</br>

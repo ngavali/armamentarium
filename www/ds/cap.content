@@ -1,7 +1,7 @@
 <h3><a href="#ds"  >Distributed Systems</a> - CAP, simplified</h3>
-While dealing with distributed systems, you must have come across the CAP theorem ( If not there is nothing to worry, at the end of this article you should be already knowing it ). I got to know about it while setting up a distributed database cluster. After that, I went through plethora of articles across the Internet to understand it and its implications. In this article, I have tried to explain it in simple words. Hope you will find this article useful in understanding the CAP theorem.</p>
+While dealing with distributed systems, you must have come across the CAP theorem (If not there is nothing to worry, by the end of this article you should be already knowing it). I got to know about it while setting up a distributed database cluster. After that, I went through plethora of articles across the Internet to understand it and its implications. In this article, I have tried to explain it in simple words. Hope you will find this article useful in understanding the CAP theorem.</p>
 First, let us take a look at the desired properties of a distributed system as defined by the CAP theorem. Later we will see an illustration to understand these properties and implications of CAP theorem.</p>
-Three important properties are:
+The three important properties are:
 <dl>
 <dt><h4>1. Consistency<h4></dt>
 <dd><i>
@@ -13,7 +13,7 @@ Every read would get you the most recent write. i.e., any read operation that be
 <dt><h4>3. Partition tolerance</h4></dt>
 <dd><i>The network will be allowed to lose arbitrarily many messages sent from one node to another. i.e., System is functional even if nodes are separated by network partition</i></dd></p>
 </dl>
-According to CAP theorem a distributed system cannot have all properties at once, it has to let go any one of them. i.e, it can be either CP or AP or CA.</p>And for all practical distributed systems, it is simply CP vs AP!</p>
+According to CAP theorem a distributed system cannot have all properties at once, it has to let go any one of them. i.e, it can honor CP or AP or CA.</p>And for all practical distributed systems, it is simply CP vs AP!</p>
 <h3>Illustration</h3>
 Consider a distributed system consisting of 3 nodes, all maintaining a state, say of a variable <r><r>z</r></r>. All 3 nodes are connected to each other and communicate their state with each other. Initially, say the value of <r><r>z</r></r> is 1. Depicted below, in Fig.1.</p>
 <center>

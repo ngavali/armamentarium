@@ -1,8 +1,9 @@
 <h3><a href="#go" >Go Programming Language</a> - <a href="#go/poeaa">P of EAA</a> - Data Mappers</h3>
 <i><r>Work in progress</r></i></p>
-In this article, I have tried to implement Data Mapper (from the book by Eric Evans - Patterns of Enterprise Application Archtecture) using Golang. The example uses a Person object that has an unique <b>id</b> to identifies itself, and a <b>name</b> and <b>age</b> fields for the demonstration. And we perform basic CRUD operations on same.
-(Pardon me for the naming convention used in this example, I am not good at it). I hope you will find this article useful in understanding datamappers.</p>
-Let jump straight into it. Code is organized as follows:
+The example is built around a Person object. It has a unique <b>id</b>, <b>name</b> and <b>age</b> fields. We will perform basic CRUD operations. We use datamappers to persist and retrieve the Person object.</br>
+(Pardon me for the naming convention used in this example, I am not good at it). 
+</p>
+So, let's jump straight into it. The code is organized as follows:</p>
 <img src="static/data-mapper.png" width="250px" />
 <h4>Entities</h4>
 entity/person.go
@@ -41,7 +42,7 @@ func (p Person) Age() int {
 }
 </pre>
 <h4>Persistence Layer</h4>
-Query, it is used to store SQL statement text and extend them with minimal helper functions.</br>
+Query</br>It is used to store SQL statement text and extend them with minimal helper functions.</br>
 persistence/database/query.go
 <pre>
 package database
