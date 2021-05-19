@@ -156,3 +156,18 @@ ul ul {
     align: right;
     float: right;
 }
+
+draft::before {
+    content : "draft version - I am still working on it";
+	font-family: "Syne Mono", "Courier New", Consolas;
+	font-size: 14px;
+    background: #efefef;
+	color: #f22;
+	padding: 10px;
+    border-radius: 8px;
+}
+
+hl {
+    color: #a0f;
+    font-weight: bold;
+}
