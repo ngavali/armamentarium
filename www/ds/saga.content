@@ -1,5 +1,5 @@
 <h3><a href="#ds"  >Distributed Systems</a> - Distributed transaction, SAGA</h3>
-<r>Work in progress!!!</r>
+<draft/>
 </p>
 A <e>long running</e> transaction composed of N <e>local</e> transactions - T<sub>1</sub>, T<sub>2</sub>, T<sub>3</sub>, ... and, T<sub>N</sub></br>
 With <e>compensating</e> transactions - C<sub>1</sub>, C<sub>2</sub>, C<sub>3</sub>, ... and, C<sub>N</sub>. Each able to undo a corresponding local transaction.</p>

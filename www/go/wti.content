@@ -1,5 +1,5 @@
 <h3><a href="#go" >Go Programming Language</a> - Tip of the iceberg</h3>
-<i><r>Work in progress</r></i>
+<i><draft/></i>
 <h4>Go performance</h4>
 Tools - <a href="https://github.com/google/pprof">pprof</a> and benchmark are your friends</br>
 A debugger - <a href="https://github.com/go-delve/delve">delve</a>

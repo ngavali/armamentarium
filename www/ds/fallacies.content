@@ -1,5 +1,5 @@
 <h3><a href="#ds"  >Distributed Systems</a> - The fallacies of distributed computing</h3>
-<r>Work in progress!!!</r></p>
+<draft/></p>
 A set of assertions made by L Peter Deutsch.
 <ol>
 <li>The network is reliable.</li>

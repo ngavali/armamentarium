@@ -163,8 +163,9 @@ draft::before {
 	font-size: 14px;
     background: #efefef;
 	color: #f22;
-	padding: 10px;
+	padding-left: 10px;
     border-radius: 8px;
+    display: block;
 }
 
 hl {

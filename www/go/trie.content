@@ -1,5 +1,5 @@
 <h3><a href="#go"  >Go Programming Language</a> - Trie</h3></p>
-<code><r>Work in progress</r></code></p>
+<code><draft/></code></p>
 Example: English dictionary.
 <pre>
 package main

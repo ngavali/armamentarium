@@ -1,5 +1,5 @@
 <h3><a href="#linux"  >C++</a> - Octopus, a simple process manager.</h3></p>
-<r>Work in progress!!!</r>
+<draft/>
 A simple process manager that can spawn and manage proceses.
 <pre>
 #include&lt;unistd.h>

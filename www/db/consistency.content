@@ -1,5 +1,5 @@
 <h3><a href="#db"  > Database</a> - Isolation levels for transations.</h3>
-<r>Work in progress!!!</r></p>
+<draft/></p>
 <h4>Side effects</h4>
 Dirty reads,</br>
 Phantom reads</p>
