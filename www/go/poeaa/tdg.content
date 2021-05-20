@@ -1,0 +1,224 @@
+<h3><a href="#go" >Go Programming Language</a> - <a href="#go/poeaa">P of EAA</a> - Data Mappers</h3>
+<draft/></p>
+The example is built around a Person object. It has a unique <b>id</b>, <b>name</b> and <b>age</b> fields. We will perform basic CRUD operations. We use table data gateway to persist and retrieve the Person object.</br>
+(Pardon me for the naming convention used in this example, I am not good at it). 
+</p>
+So, let's jump straight into it. The code is organized as follows:</p>
+<img src="static/table-data-gateway.png" width="250px" />
+./entity/person.go
+<pre>package entity
+
+type Person struct {
+    id  int64
+    name string
+    age int
+}
+
+func NewPerson(name string, age int) Person {
+    return Person{name: name, age: age}
+}
+
+func (p *Person) Fields() []interface{} {
+    return []interface{}{&p.id, &p.name, &p.age}
+}
+
+func (p Person) Id() int64 {
+    return p.id
+}
+
+func (p Person) Name() string {
+    return p.name
+}
+
+func (p *Person) SetAge(age int) {
+    p.age = age
+}
+
+func (p Person) Age() int {
+    return p.age
+}</pre>
+./gateway/personGateway.go
+<pre>package gateway
+
+import (
+    "POEAA/table-data-gateway/entity"
+    "POEAA/table-data-gateway/gateway/database"
+)
+
+type DbType int
+
+const (
+    MYSQL DbType = iota
+    PGSQL
+)
+
+type (
+    PersonGateway interface {
+        Find(int64) entity.Person
+        FindWithAgeAbove(int64) []entity.Person
+        Insert(string, int) int64
+        Update(int64, string, int) error
+        SeedData() error
+    }
+)
+
+func NewPersonGateway(dbtype DbType) PersonGateway {
+    switch dbtype {
+    case MYSQL:
+        return database.NewMysqlPersonGateway()
+    default:
+        return nil
+    }
+}</pre>
+./gateway/database/mysqlConfig.go
+<pre>
+package database
+
+const (
+    MYSQL_HOST   = "localhost"
+    MYSQL_PORT   = 3306
+    MYSQL_USER   = "root"
+    MYSQL_PASS   = "mysecret"
+    MYSQL_DATABASE = "alexandria"
+)</pre>
+./gateway/database/mysqlPersonGateway.go
+<pre>package database
+
+import (
+    "POEAA/table-data-gateway/entity"
+    "database/sql"
+    "fmt"
+    "log"
+
+    _ "github.com/go-sql-driver/mysql"
+)
+
+const (
+    MYSQL_DSN = "%s:%s@tcp(%s:%d)/%s"
+)
+
+func (m *MysqlPersonGateway) SeedData() error {
+    m.deleteAll()
+    m.Insert("Tushar", 38)
+    m.Insert("Charu", 34)
+    m.Insert("Dhruv", 7)
+    return nil
+}
+
+type MysqlPersonGateway struct {
+    conn *sql.DB
+}
+
+func NewMysqlPersonGateway() *MysqlPersonGateway {
+    return &MysqlPersonGateway{}
+}
+
+func (m *MysqlPersonGateway) open() {
+    if db, _err := sql.
+        Open("mysql", fmt.Sprintf(
+            MYSQL_DSN,
+            MYSQL_USER,
+            MYSQL_PASS,
+            MYSQL_HOST,
+            MYSQL_PORT,
+            MYSQL_DATABASE)); _err != nil {
+        log.Fatalln(_err)
+    } else {
+        if _err = db.Ping(); _err != nil {
+            log.Fatalln(_err)
+        } else {
+            m.conn = db
+        }
+    }
+}
+
+func (m *MysqlPersonGateway) close() {
+    m.conn.Close()
+}
+
+func (m *MysqlPersonGateway) Find(id int64) entity.Person {
+    var person entity.Person
+    m.open()
+    defer m.close()
+    if _err := m.conn.
+        QueryRow("select id, name, age from Person where id = ?", id).
+        Scan(person.Fields()...); _err != nil {
+        log.Fatalln(_err)
+    }
+    m.close()
+    return person
+}
+
+func (m *MysqlPersonGateway) FindWithAgeAbove(age int64) []entity.Person {
+    var persons []entity.Person
+    m.open()
+    defer m.close()
+    if rows, _err := m.conn.
+        Query("select id, name, age from Person where age > ?", age); _err != nil {
+        log.Fatalln(_err)
+    } else {
+        for rows.Next() {
+            var person entity.Person
+            rows.Scan(person.Fields()...)
+            persons = append(persons, person)
+        }
+    }
+    m.close()
+    return persons
+}
+
+func (m *MysqlPersonGateway) Insert(name string, age int) (id int64) {
+    m.open()
+    defer m.close()
+    res, _err := m.conn.
+        Exec(`insert into Person 
+            (name, age) values (?, ?)`,
+            name,
+            age)
+    if _err != nil {
+        log.Fatalln(_err)
+    }
+    id, _err = res.LastInsertId()
+    if _err != nil {
+        log.Fatalln(_err)
+    }
+    //fmt.Printf("Inserted LastInsert:%d ", id)
+    return
+}
+
+func (m *MysqlPersonGateway) Update(id int64, name string, age int) error {
+    m.open()
+    defer m.close()
+    res, _err := m.conn.
+        Exec(`update Person 
+                set name = ? , 
+                age = ? 
+                where id = ?"`,
+            name,
+            age,
+            id)
+    if _err != nil {
+        return _err
+    }
+    _, _err = res.RowsAffected()
+    if _err != nil {
+        return _err
+    }
+    //fmt.Printf("Updated : %d", ra)
+    return nil
+}
+
+func (m *MysqlPersonGateway) deleteAll() error {
+    m.open()
+    defer m.close()
+    _, _err := m.conn.
+        Exec(`create or replace table Person ( 
+        id serial primary key, 
+        name varchar(200) not null, 
+        age int not null )`)
+    if _err != nil {
+        return _err
+    }
+    m.close()
+    return nil
+}</pre>

@@ -1,4 +1,4 @@
-<h3><a href="#go" >Go Programming Language</a> - <a href="#go/poeaa">P of EAA</a> - Data Mappers</h3>
+<h3><a href="#go" >Go Programming Language</a> - <a href="#go/poeaa">P of EAA</a> - Data Mapper</h3>
 <i><draft/></i></p>
 The example is built around a Person object. It has a unique <b>id</b>, <b>name</b> and <b>age</b> fields. We will perform basic CRUD operations. We use datamappers to persist and retrieve the Person object.</br>
 (Pardon me for the naming convention used in this example, I am not good at it). 

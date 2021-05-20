@@ -3,4 +3,6 @@
 This articles reflect my understanding of the concepts presented by Martin Fowler, in his book "Patterns of Enterprise Application Architecture". 
 I felt it was worthwhile getting my hands dirty implement those concepts using Go programming langauge.
 It might not be an accurate or complete implementation and I will be more than happy to have a feedback at gavali.nilesh80186@gmail.com.</p>
-<a href="#go/poeaa/datamapper" >Data Mappers</a> 
+<h4>Data Source Architectural Patterns</h4>
+<a href="#go/poeaa/tdg" >Table Gateway</a></br>
+<a href="#go/poeaa/datamapper" >Data Mapper</a> 
