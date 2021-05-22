@@ -12,7 +12,7 @@ div#ContentBody {
 }
 
 pre {
-    line-height: 20px;
+    line-height: 18px;
     white-space: pre-wrap;       /* Since CSS 2.1 */
     white-space: -moz-pre-wrap;  /* Mozilla, since 1999 */
     white-space: -pre-wrap;      /* Opera 4-6 */
@@ -28,14 +28,15 @@ div#menubar {
 	position: fixed;
 	width: 100%;
 	background: rgb(255,255,255);
-	border-bottom:#888 1px solid;
+    border-bottom-width: 1px;
+	border-bottom-color: #888;
+    border-bottom-style: dashed;
 }
 
 logo {
 	color: #D7263D;
-	font-size: 24px;
-    font-family: Arial;
-    font-weight: bold;
+	font-size: 22px;
+    font-family: "Helvetica Neue";
 }
 
 k3 {
@@ -43,14 +44,14 @@ k3 {
 }
 
 h3, k3 {
-	font-size: 24px;
+	font-size: 22px;
 	margin-top: 0px;
     margin-bottom: 15px;
     color: #2C365E;
 }
 
 h4 {
-    font-size: 22px;
+    font-size: 20px;
     font-weight: bold;
     margin-top: 5px;
     margin-bottom: 0px;
@@ -79,7 +80,7 @@ table {
 }
 
 body {
-	font-size: 20px;
+	font-size: 18px;
 	color: #000;
 	padding-left: 0px;
 	padding-right: 0px;
@@ -90,16 +91,16 @@ body {
 table#topicContent {
 	width:1000px;
 	border:0px;
-	font-size: 20px;
-	font-family: Arial;
+	font-size: 18px;
+	font-family: "Helvetica Neue";
 }
 
 table#menu tr td a {
 	padding-right: 5px;
 	text-decoration: none;
 	color: #000;
-	font-size: 21px;
-	font-family: Arial;
+	font-size: 18px;
+	font-family: "Helvetica Neue";
 }
 
 a {
