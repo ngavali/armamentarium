@@ -31,12 +31,14 @@ div#menubar {
     border-bottom-width: 1px;
 	border-bottom-color: #888;
     border-bottom-style: dashed;
+    font-family: "Helvetica Neue", Helvetica;
 }
 
 logo {
 	color: #D7263D;
 	font-size: 22px;
-    font-family: "Helvetica Neue";
+    font-family: "Helvetica Neue", Helvetica;
+    font-weight: bold;
 }
 
 k3 {
@@ -86,13 +88,14 @@ body {
 	padding-right: 0px;
 	padding-bottom: 50px;
 	margin: 0px;
+	font-family: "Helvetica Neue", Helvetica;
 }
 
 table#topicContent {
 	width:1000px;
 	border:0px;
 	font-size: 18px;
-	font-family: "Helvetica Neue";
+	font-family: "Helvetica Neue", Helvetica;
 }
 
 table#menu tr td a {
@@ -100,7 +103,7 @@ table#menu tr td a {
 	text-decoration: none;
 	color: #000;
 	font-size: 18px;
-	font-family: "Helvetica Neue";
+	font-family: "Helvetica Neue", Helvetica;
 }
 
 a {
