@@ -1,47 +1,29 @@
-<h3><a href="#go" >Go Programming Language</a> - <a href="#go/poeaa">P of EAA</a> - Data Mappers</h3>
+<h3><a href="#go" >Go Programming Language</a> - <a href="#go/poeaa">P of EAA</a> - Table Data Gateway</h3>
 <draft/></p>
-The example is built around a Person object. It has a unique <b>id</b>, <b>name</b> and <b>age</b> fields. We will perform basic CRUD operations. We use table data gateway to persist and retrieve the Person object.</br>
-(Pardon me for the naming convention used in this example, I am not good at it). 
-</p>
-So, let's jump straight into it. The code is organized as follows:</p>
 <img src="static/table-data-gateway.png" width="250px" />
-./entity/person.go
-<pre>package entity
+./gateway/database/record_set.go
+<pre>package database
 
-type Person struct {
-    id  int64
-    name string
-    age int
+type Record map[string]interface{}
+
+type RecordSet struct {
+    rows []Record
 }
 
-func NewPerson(name string, age int) Person {
-    return Person{name: name, age: age}
+func (rs *RecordSet) First() Record {
+    if len(rs.rows) > 0 {
+        return rs.rows[0]
+    }
+    return nil
 }
 
-func (p *Person) Fields() []interface{} {
-    return []interface{}{&p.id, &p.name, &p.age}
-}
-
-func (p Person) Id() int64 {
-    return p.id
-}
-
-func (p Person) Name() string {
-    return p.name
-}
-
-func (p *Person) SetAge(age int) {
-    p.age = age
-}
-
-func (p Person) Age() int {
-    return p.age
+func (rs *RecordSet) All() []Record {
+    return rs.rows
 }</pre>
-./gateway/personGateway.go
+./gateway/person_gateway.go
 <pre>package gateway
 
 import (
-    "POEAA/table-data-gateway/entity"
     "POEAA/table-data-gateway/gateway/database"
 )
 
@@ -54,10 +36,11 @@ const (
 
 type (
     PersonGateway interface {
-        Find(int64) entity.Person
-        FindWithAgeAbove(int64) []entity.Person
-        Insert(string, int) int64
-        Update(int64, string, int) error
+        Find(int64) database.RecordSet
+        FindWithAgeOver(int64) database.RecordSet
+        FindAll() database.RecordSet
+        Insert(string, int64) int64
+        Update(int64, string, int64) error
         SeedData() error
     }
 )
@@ -70,7 +53,7 @@ func NewPersonGateway(dbtype DbType) PersonGateway {
         return nil
     }
 }</pre>
-./gateway/database/mysqlConfig.go
+./gateway/database/mysql_config.go
 <pre>
 package database
 
@@ -81,11 +64,10 @@ const (
     MYSQL_PASS   = "mysecret"
     MYSQL_DATABASE = "alexandria"
 )</pre>
-./gateway/database/mysqlPersonGateway.go
+./gateway/database/mysql_person_gateway.go
 <pre>package database
 
 import (
-    "POEAA/table-data-gateway/entity"
     "database/sql"
     "fmt"
     "log"
@@ -136,38 +118,133 @@ func (m *MysqlPersonGateway) close() {
     m.conn.Close()
 }
 
-func (m *MysqlPersonGateway) Find(id int64) entity.Person {
-    var person entity.Person
+func (m *MysqlPersonGateway) Find(id int64) RecordSet {
+    var recordSet RecordSet
+    var record = make(Record)
     m.open()
     defer m.close()
-    if _err := m.conn.
-        QueryRow("select id, name, age from Person where id = ?", id).
-        Scan(person.Fields()...); _err != nil {
+    rows, _err := m.conn.
+        Query("select id, name, age from Person where id = ? limit 1", id)
+
+    if _err != nil {
+        log.SetFlags(log.LstdFlags | log.Lshortfile)
         log.Fatalln(_err)
     }
+
+    columns, _err := rows.Columns()
+
+    rowValue := make([]interface{}, len(columns))
+    scanInterface := make([]interface{}, len(columns))
+    for i := range rowValue {
+        scanInterface[i] = &rowValue[i]
+    }
+
+    for rows.Next() {
+        _err = rows.Scan(scanInterface...)
+        if _err != nil {
+            log.SetFlags(log.LstdFlags | log.Lshortfile)
+            log.Fatalln(_err)
+        }
+
+        for i, k := range columns {
+            record[k] = rowValue[i]
+        }
+
+        recordSet.rows = append(recordSet.rows, record)
+    }
+
+    //recordSet.rows = make([]map[string]interface{}, 0)
+
     m.close()
-    return person
+    return recordSet
 }
 
-func (m *MysqlPersonGateway) FindWithAgeAbove(age int64) []entity.Person {
-    var persons []entity.Person
+func (m *MysqlPersonGateway) FindAll() RecordSet {
+    var recordSet RecordSet
     m.open()
     defer m.close()
-    if rows, _err := m.conn.
-        Query("select id, name, age from Person where age > ?", age); _err != nil {
+    if stmt, _err := m.conn.Prepare("select id, name, age from Person"); _err != nil {
         log.Fatalln(_err)
     } else {
-        for rows.Next() {
-            var person entity.Person
-            rows.Scan(person.Fields()...)
-            persons = append(persons, person)
+        if rows, _err := stmt.Query(); _err != nil {
+            log.Fatalln(_err)
+        } else {
+            defer rows.Close()
+
+            columns, _err := rows.Columns()
+            for rows.Next() {
+
+                rowValue := make([]interface{}, len(columns))
+                scanInterface := make([]interface{}, len(columns))
+                for i := range rowValue {
+                    scanInterface[i] = &rowValue[i]
+                }
+
+                _err = rows.Scan(scanInterface...)
+
+                if _err != nil {
+                    log.SetFlags(log.LstdFlags | log.Lshortfile)
+                    log.Fatalln(_err)
+                }
+
+                record := make(Record)
+                for i, k := range columns {
+                    record[k] = rowValue[i]
+                }
+
+                recordSet.rows = append(recordSet.rows, record)
+            }
         }
     }
     m.close()
-    return persons
+    return recordSet
 }
 
-func (m *MysqlPersonGateway) Insert(name string, age int) (id int64) {
+func (m *MysqlPersonGateway) FindWithAgeOver(age int64) RecordSet {
+    var recordSet RecordSet
+    m.open()
+    defer m.close()
+    if stmt, _err := m.conn.
+        Prepare("select id, name, age from Person where age > ?"); _err != nil {
+        log.Fatalln(_err)
+    } else {
+        if rows, _err := stmt.
+            Query(age); _err != nil {
+            log.Fatalln(_err)
+        } else {
+            defer rows.Close()
+
+            columns, _err := rows.Columns()
+            for rows.Next() {
+
+                rowValue := make([]interface{}, len(columns))
+                scanInterface := make([]interface{}, len(columns))
+                for i := range rowValue {
+                    scanInterface[i] = &rowValue[i]
+                }
+
+                _err = rows.Scan(scanInterface...)
+
+                if _err != nil {
+                    log.SetFlags(log.LstdFlags | log.Lshortfile)
+                    log.Fatalln(_err)
+                }
+
+                record := make(Record)
+                for i, k := range columns {
+                    record[k] = rowValue[i]
+                }
+
+                recordSet.rows = append(recordSet.rows, record)
+            }
+
+        }
+    }
+    m.close()
+    return recordSet
+}
+
+func (m *MysqlPersonGateway) Insert(name string, age int64) (id int64) {
     m.open()
     defer m.close()
     res, _err := m.conn.
@@ -182,18 +259,18 @@ func (m *MysqlPersonGateway) Insert(name string, age int) (id int64) {
     if _err != nil {
         log.Fatalln(_err)
     }
-    //fmt.Printf("Inserted LastInsert:%d ", id)
+    //fmt.Printf("Inserted LastInsert:%d", id)
     return
 }
 
-func (m *MysqlPersonGateway) Update(id int64, name string, age int) error {
+func (m *MysqlPersonGateway) Update(id int64, name string, age int64) error {
     m.open()
     defer m.close()
     res, _err := m.conn.
         Exec(`update Person 
-                set name = ? , 
+                set name = ?, 
                 age = ? 
-                where id = ?"`,
+                where id = ?`,
             name,
             age,
             id)

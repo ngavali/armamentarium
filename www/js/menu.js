@@ -25,6 +25,12 @@ function getReadingMode() {
 
 function fixFont(reading) {
     _('topicContent').style.fontFamily = fontSelection[reading]
+    _('topicContent').style.fontWeight = reading ?  "bold" : "normal";
+/*
+    } else {
+        _('topicContent').style.fontWeight = "normal";
+    }
+*/
     _('reader').src = readingSource[reading]
 }
 
@@ -132,7 +138,7 @@ loadContentXp : function (caller, src, target) {
                       link.classList.add("activeLink");
                   }
 
-console.log('fetching links...', src)
+//console.log('fetching links...', src)
                   window.location = "#"+src;
                   _(target).innerHTML = "Loading...";
                   _().fetchData({ method : "GET", url : "/"+src, target : _(target)}, _().fixLinks, 'ContentBody');
