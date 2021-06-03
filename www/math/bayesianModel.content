@@ -2,10 +2,10 @@
 <draft/>
 Before going to Bayesian Model, you can do a gentle review of <a href="#math/probability" >Probability</a> theory.</p>
 <h3>Bayes theorem</h3>
-<i>P</i>(A<sub>i</sub>|B) = <i>P</i>(B|A<sub>i</sub>) * <i>P</i>(A<sub>i</sub>) / <i>P</i>(B)</p>
+P(A<sub>i</sub>|B) = P(B|A<sub>i</sub>) * P(A<sub>i</sub>) / P(B)</p>
 There are i mutually exclusive events A<sub>1</sub>, A<sub>2</sub>,..., and A<sub>i</sub></br>
 B is an event that can occur with these events.</p>
-[ According to the law of total probability : <i>P</i>(B) = ∑<sub>i</sub> <i>P</i>(B|A<sub>i</sub>)*<i>P</i>(A<sub>i</sub>) ]</p>
+[ According to the law of total probability : P(B) = ∑<sub>i</sub> P(B|A<sub>i</sub>)*P(A<sub>i</sub>) ]</p>
 You try to find the probabilty of happening of event A<sub>i</sub> when event B occurs. You update your belief on observing certain event.</br>
 </p>
 <h4>Illustration</h4>
@@ -24,8 +24,8 @@ Now, let us come back to our original question. What is the probabilty that it w
     <img src="/images/bayesTm.svg" height="260px" /></p>
 </center>
 </p>
-<i>P</i>(R=Rain) = 20/100, P</i>(C=Cloudy) = 16/100 and <i>P</i>(C=Cloudy|R=Rain) = 70/100</p>
-<i>P</i>(Rain|Cloudy) = <i>P</i>(R|C) = <i>P</i>(C|R) * <i>P</i>(R) / <i>P</i>(C) = (70/100) * (20/100) / (16/100) = (70/100) * (1.25) = 87.5%</p>
+P(R=Rain) = 20/100, P</i>(C=Cloudy) = 16/100 and P(C=Cloudy|R=Rain) = 70/100</p>
+P(Rain|Cloudy) = P(R|C) = P(C|R) * P(R) / P(C) = (70/100) * (20/100) / (16/100) = (70/100) * (1.25) = 87.5%</p>
 Indicates, that rain is very likely to happen given you observe cloud on a given day. Definitely, it is time to carry an umbrella.</p>
 <center>
     <img src="/images/bayesTA.svg" height="250px" /></p>
@@ -35,18 +35,18 @@ In nutshell, what we have calculated is the fraction that represents Rain in Clo
 <dt><h3>Bayesian Model</h3></dt>
 <dd>
 <table>
-<tr><td width="100px">Posterior</td><td>= <i>P</i>(A|B)</td></tr>
-<tr><td>Prior    </td><td>= <i>P</i>(A)</td></tr> 
-<tr><td>Likelihood</td><td>= <i>P</i>(B|A)</td></tr>
-<tr><td>Evidence</td><td>= <i>P</i>(B)</td></tr>
+<tr><td width="100px">Posterior</td><td>= P(A|B)</td></tr>
+<tr><td>Prior    </td><td>= P(A)</td></tr> 
+<tr><td>Likelihood</td><td>= P(B|A)</td></tr>
+<tr><td>Evidence</td><td>= P(B)</td></tr>
 </table></br>
 Posterior = Likelihood * Prior / Evidence</p>
 For above ex.
 <table>
-<tr><td width="100px">Posterior</td><td>= <i>P</i>(Rain|Cloudy)</td></tr>
-<tr><td>Prior    </td><td>= <i>P</i>(Rain)</td></tr> 
-<tr><td>Likelihood</td><td>= <i>P</i>(Cloudy|Rain)</td></tr>
-<tr><td>Evidence</td><td>= <i>P</i>(Cloudy)</td></tr>
+<tr><td width="100px">Posterior</td><td>= P(Rain|Cloudy)</td></tr>
+<tr><td>Prior    </td><td>= P(Rain)</td></tr> 
+<tr><td>Likelihood</td><td>= P(Cloudy|Rain)</td></tr>
+<tr><td>Evidence</td><td>= P(Cloudy)</td></tr>
 </table></br>
 </p>
 </dd>
