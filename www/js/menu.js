@@ -6,7 +6,7 @@ var navigate = [];
 var currentI = 0;
 var reading = false;
 var fontSelection = { true: "myfont", false: "Helvetica" };
-var fontSelection = { true: "myfont", false: "Rubik" };
+var fontSelection = { true: "myfont", false: "Padauk, 'Helvetica Neue', 'Helvetica'" };
 var readingSource = { true: "/static/book-active.svg", false: "/static/book-inactive.svg"}
 
 function toggleFont() {
@@ -26,8 +26,8 @@ function getReadingMode() {
 
 function fixFont(reading) {
     _('topicContent').style.fontFamily = fontSelection[reading]
-    _('topicContent').style.fontWeight = reading ?  "bold" : "normal";
 /*
+    _('topicContent').style.fontWeight = reading ?  "bold" : "normal";
     } else {
         _('topicContent').style.fontWeight = "normal";
     }

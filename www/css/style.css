@@ -1,5 +1,4 @@
-/*@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400&display=swap');*/
-@import url('https://fonts.googleapis.com/css2?family=Rubik&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Padauk&display=swap');
 @font-face {
   font-family: 'myfont';
   src: url('/static/gavali.ttf')  format('truetype');
@@ -8,7 +7,7 @@
 html { overflow-y: scroll; }
 
 div#ContentBody {    
-	line-height: 35px;
+	line-height: 40px;
     margin-top:10px;
 }
 
@@ -32,13 +31,13 @@ div#menubar {
     border-bottom-width: 1px;
 	border-bottom-color: #888;
     border-bottom-style: dashed;
-    font-family: Rubik, "Helvetica Neue", Helvetica;
+    font-family: Padauk, "Helvetica Neue", Helvetica;
 }
 
 logo {
 	color: #D7263D;
-	font-size: 22px;
-    font-family: Rubik, "Helvetica Neue", Helvetica;
+	font-size: 24px;
+    font-family: Padauk, "Helvetica Neue", Helvetica;
     font-weight: bold;
 }
 
@@ -47,7 +46,7 @@ k3 {
 }
 
 h3, k3 {
-	font-size: 22px;
+	font-size: 24px;
 	margin-top: 0px;
     margin-bottom: 15px;
     color: #2C365E;
@@ -58,7 +57,6 @@ h4 {
     font-weight: bold;
     margin-top: 5px;
     margin-bottom: 0px;
-    color: #a0f;
 }
 
 table#menu {
@@ -83,28 +81,28 @@ table {
 }
 
 body {
-	font-size: 18px;
+	font-size: 20px;
 	color: #000;
 	padding-left: 0px;
 	padding-right: 0px;
 	padding-bottom: 50px;
 	margin: 0px;
-	font-family: Rubik, "Helvetica Neue", Helvetica;
+	font-family: Padauk, "Helvetica Neue", Helvetica;
 }
 
 table#topicContent {
 	width:1000px;
 	border:0px;
-	font-size: 18px;
-	font-family: Rubik, "Helvetica Neue", Helvetica;
+	font-size: 20px;
+	font-family: Padauk, "Helvetica Neue", Helvetica;
 }
 
 table#menu tr td a {
 	padding-right: 5px;
 	text-decoration: none;
 	color: #000;
-	font-size: 18px;
-	font-family: Rubik, "Helvetica Neue", Helvetica;
+	font-size: 20px;
+	font-family: Padauk, "Helvetica Neue", Helvetica;
 }
 
 a {
@@ -174,6 +172,6 @@ draft::before {
 }
 
 hl {
-    color: #a0f;
+    color: #33e;
     font-weight: bold;
 }
