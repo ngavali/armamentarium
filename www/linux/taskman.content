@@ -1,0 +1,118 @@
+<div id="myapp" ></div>
+<link rel="stylesheet" href="style.css" />
+<script>
+myApp.run();
+
+function create_button(value, classname) {
+    let button = document.createElement('button');
+    button.className = classname;
+    button.innerText = value;
+    return button;
+}
+
+function create_add_button() {
+    let button = create_button("+", "round button right green");
+    return button;
+}
+
+function create_close_button() {
+    let button = create_button("x", "round button right red");
+    button.onclick = function() {
+        this.parentElement.remove();
+    }
+    return button;
+}
+
+function create_add_item_button(onclickFunc) {
+    let add_item_button = create_button("+", "round button right green");
+    add_item_button.onclick = onclickFunc;
+    return add_item_button;
+}
+
+function if_empty(elem, text) {
+    if ( elem.innerText == "" ) {
+        elem.innerText = text;
+    }
+}
+
+function add_title(name) {
+    let title = document.createElement('div');
+    title.className = "card-title inline p5";
+    title.innerText = name;
+    return title;
+}
+
+function create_card_title(name, editable) {
+    let card_title = add_title(name);
+    card_title.contentEditable = false;
+    if ( editable == true ) {
+    card_title.onclick = function () {
+        console.log("(", name ,")");
+        if ( this.innerText == name ) {
+            this.innerText = "";
+        }
+        this.contentEditable = true;
+        this.focus();
+    };
+    card_title.addEventListener('keydown', function (event) {
+      if (event.keyCode === 13) {
+      event.preventDefault();
+      this.contentEditable = "false" ;
+      this.blur();
+          if_empty(this, name);
+      }
+    });
+    card_title.addEventListener('focusout', function (event) {
+        this.contentEditable = "false" ;
+        if_empty(this, name);
+    });
+    }
+    return card_title;
+}
+
+function card(title, classname, editable) {
+    let card = document.createElement('div');
+    card.className = classname;
+    card.appendChild(create_card_title(title, editable));
+    return card;
+}
+
+function item_card() {
+    let item_card = card("Action item", "task-item solid", true);
+    item_card.appendChild(create_close_button());
+    return item_card;
+}
+
+function add_task_card() {
+    let add_task_card = card("Add new Task", "task-card dashed", false);
+    
+    let add_task_button = create_add_button();
+    add_task_button.onclick = () => { 
+        document.getElementById('myapp').appendChild(task_card());
+    };
+
+    add_task_card.appendChild(add_task_button);
+
+    return add_task_card;
+}
+
+function task_card() {
+    let task_card = card("Task Name", "task-card solid", true );
+    
+    task_card.appendChild(create_close_button());
+
+    task_card.appendChild(create_add_item_button(function() { 
+        let task_item = item_card();
+        console.log(task_item);
+        task_card.appendChild(task_item);
+    }));
+
+    return task_card;
+}
+
+myApp = {
+    run: () => {
+        document.getElementById('myapp').appendChild(add_task_card());
+    }
+}
+</script>

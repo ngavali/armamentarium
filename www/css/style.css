@@ -7,7 +7,7 @@
 html { overflow-y: scroll; }
 
 div#ContentBody {    
-	line-height: 40px;
+	line-height: 35px;
     margin-top:10px;
 }
 
@@ -60,7 +60,7 @@ h4 {
 }
 
 table#menu {
-	width:1000px;
+	width:800px;
 	border:0px;
 	background: rgb(255,255,255);
 	height: 50px;
@@ -91,7 +91,7 @@ body {
 }
 
 table#topicContent {
-	width:1000px;
+	width:800px;
 	border:0px;
 	font-size: 20px;
 	font-family: Padauk, "Helvetica Neue", Helvetica;
@@ -158,6 +158,17 @@ ul ul {
 .align-right {
     align: right;
     float: right;
+}
+
+meditate::before {
+    content : "Diogenes Meditating...";
+	font-family: "Syne Mono", "Courier New", Consolas;
+	font-size: 14px;
+    background: #fafafa;
+	color: #f2a;
+	padding-left: 10px;
+    border-radius: 8px;
+    display: block;
 }
 
 draft::before {

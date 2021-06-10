@@ -31,7 +31,7 @@ Reading the value of <r><r>z</r></r> from any of the nodes at the end of this ch
 <h3>A small detour</h3>
 What if the write operation was concluded right after Step 2, while change is still propagating to other nodes. We would have then gotten <r><r>z</r></r>=1 on those nodes, which is an <i><b>inconsistency</b></i> (<r><r>z</r></r>=2 in node 1</i>). So, we must block all read operations until change is propagated to other nodes or respond back with the last successful write value for a given node, preferrably the later case</i>. Now, ack will also take some time to reach back to the node 1, so new reader on node 1 will see <r>z</r>=1 while on others <r>z</r>=2 (step 3). Thus, there will be a finite moment no matter how small it is where system is in in-consistent state. However, do you think it is practical to have a very strong consistency wherein write are immediately visible on other nodes and each read resulting in same result? when <i><b>latency</b></i> is inevitable (check, The <a href="#ds/fallacies" >fallacies</a> of distributed computing). Before this gets complicating, for now let us ignore it by assuming that the change propagates almost instanteneouly on all nodes <i>or</i> all nodes will be <e>eventually</e> in a consistent state (Step 4).</p>
 <center>
-<img src="/images/cap_reads.svg" width="850px" /><b>Fig.3.</b>
+<img src="/images/cap_reads.svg" width="800px" /><b>Fig.3.</b>
 </center></p>
 <h3>Back again and the implications</h3>
 Now, let us worsen the situation by creating the network partitioning. Wherein node 2 is unable to communicate with the rest of the nodes in the cluster. However, client can connect to any of them.</p>
