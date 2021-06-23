@@ -166,7 +166,8 @@ meditate::before {
 	font-size: 14px;
     background: #fafafa;
 	color: #f2a;
-	padding-left: 10px;
+	padding: 5px;
+    margin:10px;
     border-radius: 8px;
     display: block;
 }
