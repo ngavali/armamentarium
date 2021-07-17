@@ -27,15 +27,17 @@ div#menubar {
 	padding-bottom: 0px;
 	position: fixed;
 	width: 100%;
-	background: rgb(255,255,255);
-    border-bottom-width: 1px;
-	border-bottom-color: #888;
-    border-bottom-style: dashed;
+    background-image: linear-gradient(to top left, #5FB0B7, #440381);
+    background-image: linear-gradient(to top left, #FDFFFC, #FCF7F8);
+    order-bottom-width: 1px;
+	order-bottom-color: #888;
+    order-bottom-style: dashed;
     font-family: Padauk, "Helvetica Neue", Helvetica;
 }
 
 logo {
 	color: #D7263D;
+color:#A31621;
 	font-size: 24px;
     font-family: Padauk, "Helvetica Neue", Helvetica;
     font-weight: bold;
@@ -62,7 +64,6 @@ h4 {
 table#menu {
 	width:800px;
 	border:0px;
-	background: rgb(255,255,255);
 	height: 50px;
 }
 
@@ -100,19 +101,19 @@ table#topicContent {
 table#menu tr td a {
 	padding-right: 5px;
 	text-decoration: none;
-	color: #000;
+    color: #000;
 	font-size: 20px;
 	font-family: Padauk, "Helvetica Neue", Helvetica;
 }
 
 a {
 	color: #4F51f1;
+    color: #4E8098;
 	outline: none;
 }
 
 a:hover {
-    color: #63326e;
-	text-decoration: underline;
+    color: #90C2E7;
 }
 
 img {
@@ -123,7 +124,7 @@ img {
 
 table#menu tr td .activeLink {
 	padding-right: 5px;
-    color: #D7263D;
+    color:#A31621;
     font-weight: bold;
 }
 

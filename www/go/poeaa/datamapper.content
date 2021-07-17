@@ -220,7 +220,7 @@ const (
 
 //PersonMapper interface
 type PersonMapper interface {
-  GetAllPerson() []entity.Person
+  FindAll() []entity.Person
   FindById(int64) entity.Person
   Save(entity.Person)
   SaveAll([]entity.Person)
@@ -286,13 +286,13 @@ func (p MemoryPersonMapper) Create(name string, age int) entity.Person {
     age)
 }
 
-func (p MemoryPersonMapper) GetAllPerson() []entity.Person {
+func (p MemoryPersonMapper) FindAll() []entity.Person {
   return personCollection
 }
 
 func (p MemoryPersonMapper) FindById(id int64) entity.Person {
   var person entity.Person
-  for _, p := range p.GetAllPerson() {
+  for _, p := range p.FindAll() {
     if p.Id() == id {
       person = p
       break
@@ -441,7 +441,7 @@ func (p MySQLPersonMapper) Create(name string, age int) (person entity.Person) {
   return
 }
 
-func (p MySQLPersonMapper) GetAllPerson() (persons []entity.Person) {
+func (p MySQLPersonMapper) FindAll() (persons []entity.Person) {
 
   //persons = make([]entity.Person, 0)
   if _err := p.Database.Connect(); _err != nil {
