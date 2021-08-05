@@ -3,20 +3,39 @@
 Your application is connected to a single backend mysql/mariadb database node (Master/Slave mode) and your thinking of scaling it by upgrading to galera based multi-master mariadb database cluster.
 Oh Yes! we are. This article will walk you through the limitations and behavior that you need to deal with when making a move and will help you decide/design if that is a good choice for you.</p>
 
-So first of all <i>welcome to a brand new world of deadlocks!</i>.</p> 
+On a single node, transactions competing for the same row locks will not have much of a trouble. One gets the lock and rest can wait, and if the waiting was long enough you would see below error.
+<pre>
+ERROR 1205 (HY000): Lock wait timeout exceeded; try restarting transaction
+</pre>
+All goes well, if each finishes quick enough.
 
-If connections go to two different node then what would usually work well in a single node setup will give you sudden surprises.</br>
-In a single node configuration, various conflicting locks will usually not create any issues. But, when it comes to Galera it handles it in a little different way (Mostly you would see error message:- WSREP detected deadlock/conflict detected).</br>
+</p>
+The scene completely changes when you move to galera. Where you have multiple master nodes.
+If connections go to two different node then what would usually work well in a single node setup will give you sudden surprises and headaches.</br>
+The infamous error
+<pre>
+ERROR 1213 (40001): WSREP detected deadlock/conflict and aborted the transaction. Try restarting the transaction
+</pre>
+
+<i>Welcome to the brand new world of deadlocks!</i></p> 
+
 Surprises are listed as follows:</p>
 <h4>Surprise #1</h4>
 Working on different tables connected by a foriegn key.
 <pre>
 <b>Transaction #1 [Node #1]</b>
-update table A 
+update table A set ... where pk_a = val;
 [IX Lock]
 
 <b>Transaction #2 [Node #2]</b>
-insert into table B (has FK reference to table A) 
+--An INSERT--(has FK reference to table A (pk_a) ) 
+insert into table B ( ..., fk_a ) values ( ..., pk_a_val );
+[IS Lock]
+
+--OR
+
+--An UPDATE--(has FK reference to table A(pk_a) )
+update B set fk_a = pk_a_val ...; 
 [IS Lock]
 </pre>
 

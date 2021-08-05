@@ -23,24 +23,37 @@ pre {
 
 div#menubar {
 	margin: 0px;
-	padding-top: 5px;
+	padding-top: 0px;
 	padding-bottom: 0px;
 	position: fixed;
 	width: 100%;
-    background-image: linear-gradient(to top left, #5FB0B7, #440381);
-    background-image: linear-gradient(to top left, #FDFFFC, #FCF7F8);
-    order-bottom-width: 1px;
-	order-bottom-color: #888;
-    order-bottom-style: dashed;
+    background-image: linear-gradient(to top left, #FDFFFC, #D3D0CB);
+    background: #333;
+    border-bottom-widt: 1px;
+	border-bottom-colo: #888;
+    border-bottom-styl: dashed;
     font-family: Padauk, "Helvetica Neue", Helvetica;
 }
 
-logo {
-	color: #D7263D;
-color:#A31621;
-	font-size: 24px;
+logo-left {
+    color: #fff;
+    background-color:#A31621;
+    background-color:#333;
+    font-family: Padauk, "Helvetica Neue", Helvetica;
+	font-size: 22px;
+    font-weight: bold;
+    padding: 0px 5px 0px 10px;
+    border: #fff 2px SOLID;
+}
+logo-right {
+    color:#A31621;
+    color: #333;
+	font-size: 22px;
     font-family: Padauk, "Helvetica Neue", Helvetica;
     font-weight: bold;
+    padding: 0px 10px 0px 5px;
+    border: #fff 2px SOLID;
+    background: #fff;
 }
 
 k3 {
@@ -52,6 +65,7 @@ h3, k3 {
 	margin-top: 0px;
     margin-bottom: 15px;
     color: #2C365E;
+    ont-family: Padauk, "Helvetica Neue", Helvetica;
 }
 
 h4 {
@@ -59,12 +73,13 @@ h4 {
     font-weight: bold;
     margin-top: 5px;
     margin-bottom: 0px;
+    font-family: Padauk, "Helvetica Neue", Helvetica;
 }
 
 table#menu {
 	width:800px;
-	border:0px;
-	height: 50px;
+	order:0px;
+	height: 46px;
 }
 
 div#bodyTopic {
@@ -84,6 +99,7 @@ table {
 body {
 	font-size: 20px;
 	color: #000;
+    padding-top: 0px;
 	padding-left: 0px;
 	padding-right: 0px;
 	padding-bottom: 50px;
@@ -101,14 +117,14 @@ table#topicContent {
 table#menu tr td a {
 	padding-right: 5px;
 	text-decoration: none;
-    color: #000;
+    color: #fff;
 	font-size: 20px;
 	font-family: Padauk, "Helvetica Neue", Helvetica;
 }
 
 a {
 	color: #4F51f1;
-    color: #4E8098;
+    olor: #4E8098;
 	outline: none;
 }
 
@@ -124,7 +140,7 @@ img {
 
 table#menu tr td .activeLink {
 	padding-right: 5px;
-    color:#A31621;
+    color:#DE3C4B;
     font-weight: bold;
 }
 
