@@ -8,7 +8,6 @@ html { overflow-y: scroll; }
 
 div#ContentBody {    
 	line-height: 35px;
-    margin-top:10px;
 }
 
 pre {
@@ -28,7 +27,7 @@ div#menubar {
 	position: fixed;
 	width: 100%;
     background-image: linear-gradient(to top left, #FDFFFC, #D3D0CB);
-    background: #333;
+    background: #222;
     border-bottom-widt: 1px;
 	border-bottom-colo: #888;
     border-bottom-styl: dashed;
@@ -38,7 +37,7 @@ div#menubar {
 logo-left {
     color: #fff;
     background-color:#A31621;
-    background-color:#333;
+    background-color:#000;
     font-family: Padauk, "Helvetica Neue", Helvetica;
 	font-size: 22px;
     font-weight: bold;
@@ -47,11 +46,11 @@ logo-left {
 }
 logo-right {
     color:#A31621;
-    color: #333;
+    color: #000;
 	font-size: 22px;
     font-family: Padauk, "Helvetica Neue", Helvetica;
     font-weight: bold;
-    padding: 0px 10px 0px 5px;
+    padding: 0px 10px 0px 0px;
     border: #fff 2px SOLID;
     background: #fff;
 }
@@ -65,7 +64,6 @@ h3, k3 {
 	margin-top: 0px;
     margin-bottom: 15px;
     color: #2C365E;
-    ont-family: Padauk, "Helvetica Neue", Helvetica;
 }
 
 h4 {
@@ -73,7 +71,6 @@ h4 {
     font-weight: bold;
     margin-top: 5px;
     margin-bottom: 0px;
-    font-family: Padauk, "Helvetica Neue", Helvetica;
 }
 
 table#menu {
@@ -84,7 +81,8 @@ table#menu {
 
 div#bodyTopic {
 	margin: 0px;
-	padding-top: 70px;
+	padding-top: 65px;
+    padding-bottom: 600px;
 }
 
 table {
@@ -196,6 +194,7 @@ draft::before {
     background: #efefef;
 	color: #f22;
 	padding-left: 10px;
+    margin-bottom: 10px;
     border-radius: 8px;
     display: block;
 }

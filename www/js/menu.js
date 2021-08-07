@@ -7,7 +7,7 @@ var currentI = 0;
 var reading = false;
 var fontSelection = { true: "myfont", false: "Helvetica" };
 var fontSelection = { true: "myfont", false: "Padauk, 'Helvetica Neue', 'Helvetica'" };
-var readingSource = { true: "/static/book-active.svg", false: "/static/book-inactive.svg"}
+var readingSource = { true: "/static/book-active.png", false: "/static/book-inactive.png"}
 
 function toggleFont() {
     reading = !getReadingMode()
