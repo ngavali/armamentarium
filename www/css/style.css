@@ -27,7 +27,7 @@ div#menubar {
 	position: fixed;
 	width: 100%;
     background-image: linear-gradient(to top left, #FDFFFC, #D3D0CB);
-    background: #222;
+    ackground: #000;
     border-bottom-widt: 1px;
 	border-bottom-colo: #888;
     border-bottom-styl: dashed;
@@ -35,24 +35,24 @@ div#menubar {
 }
 
 logo-left {
-    color: #fff;
-    background-color:#A31621;
-    background-color:#000;
+    color: #0FA3B1;
+    ackground-color:#A31621;
+    ackground-color:#000;
     font-family: Padauk, "Helvetica Neue", Helvetica;
 	font-size: 22px;
     font-weight: bold;
-    padding: 0px 5px 0px 10px;
-    border: #fff 2px SOLID;
+    adding: 0px 5px 0px 10px;
+    order: #fff 2px SOLID;
 }
 logo-right {
     color:#A31621;
-    color: #000;
+    color: #FFC857;
 	font-size: 22px;
     font-family: Padauk, "Helvetica Neue", Helvetica;
     font-weight: bold;
-    padding: 0px 10px 0px 0px;
-    border: #fff 2px SOLID;
-    background: #fff;
+    padding: 0px 0px 0px 0px;
+    order: #fff 2px SOLID;
+    ackground: #fff;
 }
 
 k3 {
@@ -115,7 +115,7 @@ table#topicContent {
 table#menu tr td a {
 	padding-right: 5px;
 	text-decoration: none;
-    color: #fff;
+    color: #000;
 	font-size: 20px;
 	font-family: Padauk, "Helvetica Neue", Helvetica;
 }
@@ -139,6 +139,7 @@ img {
 table#menu tr td .activeLink {
 	padding-right: 5px;
     color:#DE3C4B;
+    color:#0FA3B1;
     font-weight: bold;
 }
 
