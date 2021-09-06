@@ -26,7 +26,7 @@ div#menubar {
 	padding-bottom: 0px;
 	position: fixed;
 	width: 100%;
-    background-image: linear-gradient(to top left, #FDFFFC, #D3D0CB);
+    background-image: linear-gradient(to top left, #FDFFFC, #EEF0F2);
     ackground: #000;
     border-bottom-widt: 1px;
 	border-bottom-colo: #888;
@@ -35,7 +35,7 @@ div#menubar {
 }
 
 logo-left {
-    color: #0FA3B1;
+    color: #A1C6EA;
     ackground-color:#A31621;
     ackground-color:#000;
     font-family: Padauk, "Helvetica Neue", Helvetica;
@@ -81,7 +81,7 @@ table#menu {
 
 div#bodyTopic {
 	margin: 0px;
-	padding-top: 65px;
+	padding-top: 70px;
     padding-bottom: 600px;
 }
 
@@ -179,7 +179,7 @@ ul ul {
 meditate::before {
     content : "Diogenes Meditating...";
 	font-family: "Syne Mono", "Courier New", Consolas;
-	font-size: 14px;
+	font-size: 16px;
     background: #fafafa;
 	color: #f2a;
 	padding: 5px;
@@ -191,7 +191,7 @@ meditate::before {
 draft::before {
     content : "draft version - I am still working on it";
 	font-family: "Syne Mono", "Courier New", Consolas;
-	font-size: 14px;
+	font-size: 16px;
     background: #efefef;
 	color: #f22;
 	padding-left: 10px;
