@@ -7,4 +7,6 @@ My musings with Rust</p>
 <h4>Long reads</h4>
 <a href="#rust/opr" >One Page Rust</a>
 <h4>Pointers</h4>
-<a href="#rust/linkedlist" >Linked List</a>
+<a href="#rust/linkedlist" >Linked List</a></br>
+<a href="#rust/tree" >Tree</a>
+

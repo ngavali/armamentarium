@@ -7,8 +7,8 @@ Tree used in this example
       7       19
     /   \       \
    3     8       17
- /   \
-1     4
+ /   \    \
+1     4    9
 </pre>
 <pre>
 package main
@@ -83,7 +83,7 @@ func main() {
         Tree.Left().Right().SetRight(NewNode(9))
 
         Tree.SetRight(NewNode(19))
-        Tree.Right().SetLeft(NewNode(17))
+        Tree.Right().SetRight(NewNode(17))
 
         fmt.Println("----------\nPre  Order\n----------")
         preorder(Tree)
@@ -130,6 +130,6 @@ In   Order
 8
 9
 15
-17
 19
+17
 </pre>

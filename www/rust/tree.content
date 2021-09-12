@@ -1,0 +1,127 @@
+<h3><a href="#rust"> Rust Programming Language</a> - Pointers (Tree)</h3></p>
+<h4>Tree Traversal</h4>
+Tree used in this example
+<pre style='background:#fff;font-family:myfont;font-weight:900;font-size:18px;'>
+          15
+        /    \
+      7       19
+    /   \       \
+   3     8       17
+ /   \    \
+1     4    9
+</pre>
+<pre>
+use std::boxed::Box;
+
+#[derive(Clone, Debug)]
+struct Node {
+    value: i32,
+    left: Option<Box<Node>>,
+    right: Option<Box<Node>>,
+}
+
+impl Node {
+    fn new(value: i32, left: Option<Box<Node>>, right: Option<Box<Node>>) -> Option<Box<Node>> {
+        Option::Some(Box::new(Node { value, left, right }))
+    }
+    fn value(&self) -> i32 {
+        self.value
+    }
+    fn left(&self) -> Option<Box<Node>> {
+        self.left.clone()
+    }
+    fn right(&self) -> Option<Box<Node>> {
+        self.right.clone()
+    }
+}
+
+fn in_order(node: Option<Box<Node>>) {
+    match node {
+        Some(node) => {
+            in_order(node.left());
+            println!("{}", node.value());
+            in_order(node.right());
+        }
+        None => return,
+    }
+}
+
+fn pre_order(node: Option<Box<Node>>) {
+    match node {
+        Some(node) => {
+            println!("{}", node.value());
+            pre_order(node.left());
+            pre_order(node.right());
+        }
+        None => return,
+    }
+}
+
+fn post_order(node: Option<Box<Node>>) {
+    match node {
+        Some(node) => {
+            post_order(node.left());
+            post_order(node.right());
+            println!("{}", node.value());
+        }
+        None => return,
+    }
+}
+
+fn main() {
+    let tree = Node::new(
+        15,
+        Node::new(
+            7,
+            Node::new(3, Node::new(1, None, None), Node::new(4, None, None)),
+            Node::new(8, None, Node::new(9, None, None)),
+        ),
+        Node::new(19, None, Node::new(17, None, None)),
+    );
+    println!("----------\nPre  Order\n----------");
+    pre_order(tree.clone());
+    println!("----------\nPost Order\n----------");
+    post_order(tree.clone());
+    println!("----------\nIn   Order\n----------");
+    in_order(tree);
+}
+</pre>
+Output
+<pre>
+----------
+Pre  Order
+----------
+15
+7
+3
+1
+4
+8
+9
+19
+17
+----------
+Post Order
+----------
+1
+4
+3
+9
+8
+7
+17
+19
+15
+----------
+In   Order
+----------
+1
+3
+4
+7
+8
+9
+15
+19
+17
+</pre>
