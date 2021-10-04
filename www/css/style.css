@@ -27,7 +27,7 @@ div#menubar {
 	position: fixed;
 	width: 100%;
     background-image: linear-gradient(to top left, #FDFFFC, #EEF0F2);
-    ackground: #000;
+    background-image: linear-gradient(to bottom right, #EFEFF0, #EAEAEA);
     border-bottom-widt: 1px;
 	border-bottom-colo: #888;
     border-bottom-styl: dashed;
@@ -35,7 +35,7 @@ div#menubar {
 }
 
 logo-left {
-    color: #A1C6EA;
+    color: #437C90;
     ackground-color:#A31621;
     ackground-color:#000;
     font-family: Padauk, "Helvetica Neue", Helvetica;
@@ -46,7 +46,7 @@ logo-left {
 }
 logo-right {
     color:#A31621;
-    color: #FFC857;
+    color: #F7C548;
 	font-size: 22px;
     font-family: Padauk, "Helvetica Neue", Helvetica;
     font-weight: bold;

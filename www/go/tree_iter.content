@@ -1,0 +1,249 @@
+<h3><a href="#go"  >Go Programming Language</a> - Tree</h3></p>
+<h4>Tree Traversal</h4>
+Tree traversal using DFS technique without recursion.</p>
+Tree used in this example
+<pre style='background:#fff;font-family:myfont;font-weight:900;font-size:18px;'>
+          15
+        /    \
+      7       19
+    /   \       \
+   3     8       17
+ /   \    \
+1     4    9
+</pre>
+Node (btree/node/node.go)
+<pre>
+package node
+
+type Node struct {
+	data  int
+	left  *Node
+	right *Node
+}
+
+func NewNode(data int) *Node {
+	return &Node{data: data}
+}
+
+func (n *Node) AddData(data int) {
+	n.data = data
+}
+
+func (n *Node) Data() int {
+	return n.data
+}
+
+func (n *Node) Left() *Node {
+	return n.left
+}
+
+func (n *Node) Right() *Node {
+	return n.right
+}
+
+func (n *Node) AddLeft(left *Node) {
+	n.left = left
+}
+
+func (n *Node) AddRight(right *Node) {
+	n.right = right
+}
+</pre>
+Storage (btree/storage/stack.go)
+<pre>
+package storage
+
+import (
+	"btree/node"
+	"fmt"
+)
+
+type Stack struct {
+	node []*node.Node
+}
+
+func NewStack() *Stack {
+	return &Stack{}
+}
+
+func (s *Stack) Size() int {
+	return len(s.node)
+}
+
+func (s *Stack) IsEmpty() bool {
+	if len(s.node) == 0 {
+		return true
+	}
+	return false
+}
+
+func (s *Stack) Push(n *node.Node) {
+	s.node = append(s.node, n)
+}
+
+func (s *Stack) Pop() (*node.Node, bool) {
+	if !s.IsEmpty() {
+		node := s.node[len(s.node)-1]
+		s.node = s.node[:len(s.node)-1]
+		return node, true
+	}
+	return nil, false
+}
+
+func (s *Stack) Nodes() []*node.Node {
+	return s.node
+}
+
+func (s *Stack) Top() (*node.Node, bool) {
+	if !s.IsEmpty() {
+		return s.node[len(s.node)-1], true
+	}
+	return nil, false
+}
+</pre>
+Traversal (btree/btree.go)
+<pre>
+package main
+
+import (
+	"btree/node"
+	"btree/storage"
+	"fmt"
+)
+
+var (
+	root *node.Node
+)
+
+func PostOrderIter(root *node.Node) {
+	stack := storage.NewStack()
+	current := root
+	var ok bool
+
+	for {
+		for current != nil {
+			if current.Right() != nil {
+				stack.Push(current.Right())
+			}
+			stack.Push(current)
+			current = current.Left()
+		}
+
+		current, ok = stack.Pop()
+
+		if ok {
+			if top, ok := stack.Top(); ok && top == current.Right() {
+				stack.Pop()
+				stack.Push(current)
+				current = current.Right()
+			} else {
+				fmt.Println(current.Data())
+				current = nil
+			}
+		}
+		if stack.IsEmpty() {
+			break
+		}
+	}
+}
+
+func PreOrderIter(root *node.Node) {
+	stack := storage.NewStack()
+	current := root
+	for current != nil || stack.Size() > 0 {
+		if current != nil {
+			fmt.Println(current.Data())
+			if current.Right() != nil {
+				stack.Push(current.Right())
+			}
+			current = current.Left()
+		} else {
+			current, _ = stack.Pop()
+		}
+	}
+}
+
+func InOrderIter(root *node.Node) {
+
+	stack := storage.NewStack()
+	current := root
+	var ok bool
+	for current != nil || stack.Size() > 0 {
+		if current != nil {
+			stack.Push(current)
+			current = current.Left()
+		} else {
+			if current, ok = stack.Pop(); ok {
+				fmt.Println(current.Data())
+			}
+			current = current.Right()
+		}
+	}
+
+}
+
+func DFSIterative() {
+
+	fmt.Println("====   DFS  ITERATIVE   ==== IN-ORDER")
+	InOrderIter(root)
+	fmt.Println("====   DFS  ITERATIVE   ==== PRE-ORDER")
+	PreOrderIter(root)
+	fmt.Println("====   DFS  ITERATIVE   ==== POST-ORDER")
+	PostOrderIter(root)
+}
+
+//Prepare a tree
+func init() {
+	root = node.NewNode(15)
+	root.AddLeft(node.NewNode(7))
+	root.Left().AddLeft(node.NewNode(3))
+	root.Left().Left().AddLeft(node.NewNode(1))
+	root.Left().Left().AddRight(node.NewNode(4))
+
+	root.Left().AddRight(node.NewNode(8))
+	root.Left().Right().AddRight(node.NewNode(9))
+
+	root.AddRight(node.NewNode(19))
+	root.Right().AddRight(node.NewNode(17))
+
+}
+
+func main() {
+
+	DFSIterative()
+
+}
+</pre>
+Output
+<pre>
+====   DFS  ITERATIVE   ==== IN-ORDER
+1
+3
+4
+7
+8
+9
+15
+19
+17
+====   DFS  ITERATIVE   ==== PRE-ORDER
+15
+7
+3
+1
+4
+8
+9
+19
+17
+====   DFS  ITERATIVE   ==== POST-ORDER
+1
+4
+3
+9
+8
+7
+17
+19
+15
+</pre>
