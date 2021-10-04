@@ -127,6 +127,6 @@ In   Order
 19
 17
 </pre>
-That's all folks. We will look at the Non-recursive technique in the next article. (Meanwhile you can check Go code for same <a href="#go/tree_iter">here</a>! to implement same in Rust). Have fun!</p>
+That's all folks. We will look at the Non-recursive technique in the next article. (Meanwhile you can check Go code for same <a href="#go/tree_iter">here</a>! and try to implement same in Rust). Have fun!</p>
 
 Thanks
