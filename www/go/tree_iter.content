@@ -3,13 +3,13 @@
 Tree traversal using DFS technique without recursion.</p>
 Tree used in this example
 <pre style='background:#fff;font-family:myfont;font-weight:900;font-size:18px;'>
-          15
-        /    \
-      7       19
-    /   \       \
-   3     8       17
- /   \    \
-1     4    9
+           15
+         /    \
+       7       19
+     /   \       \
+   3      8       17
+ /   \     \
+1     4     9
 </pre>
 Node (btree/node/node.go)
 <pre>
@@ -129,9 +129,7 @@ func PostOrderIter(root *node.Node) {
 			current = current.Left()
 		}
 
-		current, ok = stack.Pop()
-
-		if ok {
+		if current, ok = stack.Pop(); ok {
 			if top, ok := stack.Top(); ok && top == current.Right() {
 				stack.Pop()
 				stack.Push(current)
@@ -140,8 +138,7 @@ func PostOrderIter(root *node.Node) {
 				fmt.Println(current.Data())
 				current = nil
 			}
-		}
-		if stack.IsEmpty() {
+		} else {
 			break
 		}
 	}

@@ -1,0 +1,206 @@
+<h3><a href="#rust"> Rust Programming Language</a> - Pointers (Tree)</h3></p>
+<h4>Tree Traversal</h4>
+Tree traversal using DFS technique without recursion.</p>
+Tree used in this example
+<pre style='background:#fff;font-family:myfont;font-weight:900;font-size:18px;'>
+           15
+         /    \
+       7       19
+     /   \       \
+   3      8       17
+ /   \     \
+1     4     9
+</pre>
+Code: btree.rs
+<pre>
+mod node {
+    use std::boxed::Box;
+    #[derive(Clone, Debug, std::cmp::PartialEq)]
+    pub struct Node {
+        value: i32,
+        left: Option<Box<Node>>,
+        right: Option<Box<Node>>,
+    }
+
+    impl Node {
+        pub fn new(
+            value: i32,
+            left: Option<Box<Node>>,
+            right: Option<Box<Node>>,
+        ) -> Option<Box<Node>> {
+            Option::Some(Box::new(Node { value, left, right }))
+        }
+        pub fn value(&self) -> i32 {
+            self.value
+        }
+        pub fn left(&self) -> Option<Box<Node>> {
+            self.left.clone()
+        }
+        pub fn right(&self) -> Option<Box<Node>> {
+            self.right.clone()
+        }
+    }
+}
+
+mod storage {
+    use super::node::Node;
+
+    #[derive(Clone, Debug)]
+    pub struct Stack {
+        items: std::vec::Vec<Option<Box<Node>>>,
+    }
+
+    impl Stack {
+        pub fn new() -> Stack {
+            let items = std::vec::Vec::new();
+            Stack { items }
+        }
+
+        pub fn push(&mut self, item: Option<Box<Node>>) {
+            self.items.push(item);
+        }
+
+        pub fn pop(&mut self) -> Option<Box<Node>> {
+            match self.items.pop() {
+                Some(res) => res,
+                None => None,
+            }
+        }
+
+        pub fn top(&self) -> Option<Box<Node>> {
+            match self.items.clone().pop() {
+                Some(res) => return res,
+                None => return None,
+            };
+        }
+    }
+}
+
+fn in_order(root: Option<Box<node::Node>>) {
+    let mut stack: storage::Stack = storage::Stack::new();
+    let mut current = root;
+
+    while !current.is_none() || !stack.top().is_none() {
+        if let Some(node) = current.clone() {
+            stack.push(current.clone());
+            current = node.left();
+        } else {
+            if let Some(node) = stack.pop() {
+                println!("{}", node.value());
+                current = node.right();
+            }
+        }
+    }
+}
+
+fn pre_order(root: Option<Box<node::Node>>) {
+    let mut stack: storage::Stack = storage::Stack::new();
+    let mut current = root;
+
+    while !current.is_none() || !stack.top().is_none() {
+        if let Some(node) = current.clone() {
+            println!("{}", node.value());
+            if !node.right().is_none() {
+                stack.push(node.right());
+            }
+            current = node.left();
+        } else {
+            current = stack.pop();
+        }
+    }
+}
+
+fn post_order(root: Option<Box<node::Node>>) {
+    let mut stack: storage::Stack = storage::Stack::new();
+    let mut current = root;
+
+    loop {
+        while let Some(node) = current.clone() {
+            if !node.right().is_none() {
+                stack.push(node.right());
+            }
+            stack.push(Some(node.clone()));
+            current = node.left();
+        }
+
+        match stack.pop() {
+            Some(node) => {
+                if node.right() == stack.top() {
+                    stack.pop();
+                    stack.push(Some(node.clone()));
+                    current = node.right();
+                } else {
+                    println!("{}", node.value());
+                }
+            }
+            None => break,
+        };
+    }
+}
+
+fn main() {
+    let tree = node::Node::new(
+        15,
+        node::Node::new(
+            7,
+            node::Node::new(
+                3,
+                node::Node::new(1, None, None),
+                node::Node::new(4, None, None),
+            ),
+            node::Node::new(8, None, node::Node::new(9, None, None)),
+        ),
+        node::Node::new(19, None, node::Node::new(17, None, None)),
+    );
+    println!("----------\nIn   Order\n----------");
+    in_order(tree.clone());
+    println!("----------\nPre  Order\n----------");
+    pre_order(tree.clone());
+    println!("----------\nPost Order\n----------");
+    post_order(tree);
+}
+</pre>
+Output
+<pre>
+----------
+In   Order
+----------
+1
+3
+4
+7
+8
+9
+15
+19
+17
+----------
+Pre  Order
+----------
+15
+7
+3
+1
+4
+8
+9
+19
+17
+----------
+Post Order
+----------
+1
+4
+3
+9
+8
+7
+17
+19
+15
+</pre>
+That's all folks. (Go code for same <a href="#go/tree_iter">here</a>!)</p> 
+
+Hope you have enjoyed it!</p>
+
+-Thanks

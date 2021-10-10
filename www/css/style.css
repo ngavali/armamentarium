@@ -26,8 +26,8 @@ div#menubar {
 	padding-bottom: 0px;
 	position: fixed;
 	width: 100%;
-    background-image: linear-gradient(to top left, #FDFFFC, #EEF0F2);
-    background-image: linear-gradient(to bottom right, #EFEFF0, #EAEAEA);
+    background-image: linear-gradient(to top left, #FDFFFC, #D6EEFF);
+    background-image: linear-gradient(to bottom right, #EFEFF0, #D6EEFF);
     border-bottom-widt: 1px;
 	border-bottom-colo: #888;
     border-bottom-styl: dashed;
