@@ -9,6 +9,7 @@ go test -v ./testing/ 	#run test in the given path
 go test -v ./..		#test all packages in this module
 go test -v -count=1	#avoid using cache
 go clean -testcache [<i>Package path</i> ...]	#clean test cache or set <code>GOCACHE</code> environment variable to <code>off</code>
+go test -cover #code coverage
 </pre>
 Create testdata directory which is ignored by <code>go run</code>/<code>build</code></p>
 Colorize your go test result output</br>
