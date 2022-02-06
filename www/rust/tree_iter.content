@@ -18,25 +18,25 @@ mod node {
     #[derive(Clone, Debug, std::cmp::PartialEq)]
     pub struct Node {
         value: i32,
-        left: Option<Box<Node>>,
-        right: Option<Box<Node>>,
+        left: Option&lt;Box&lt;Node>>,
+        right: Option&lt;Box&lt;Node>>,
     }
 
     impl Node {
         pub fn new(
             value: i32,
-            left: Option<Box<Node>>,
-            right: Option<Box<Node>>,
-        ) -> Option<Box<Node>> {
+            left: Option&lt;Box&lt;Node>>,
+            right: Option&lt;Box&lt;Node>>,
+        ) -> Option&lt;Box&lt;Node>> {
             Option::Some(Box::new(Node { value, left, right }))
         }
         pub fn value(&self) -> i32 {
             self.value
         }
-        pub fn left(&self) -> Option<Box<Node>> {
+        pub fn left(&self) -> Option&lt;Box&lt;Node>> {
             self.left.clone()
         }
-        pub fn right(&self) -> Option<Box<Node>> {
+        pub fn right(&self) -> Option&lt;Box&lt;Node>> {
             self.right.clone()
         }
     }
@@ -47,7 +47,7 @@ mod storage {
 
     #[derive(Clone, Debug)]
     pub struct Stack {
-        items: std::vec::Vec<Option<Box<Node>>>,
+        items: std::vec::Vec&lt;Option&lt;Box&lt;Node>>>,
     }
 
     impl Stack {
@@ -56,18 +56,18 @@ mod storage {
             Stack { items }
         }
 
-        pub fn push(&mut self, item: Option<Box<Node>>) {
+        pub fn push(&mut self, item: Option&lt;Box&lt;Node>>) {
             self.items.push(item);
         }
 
-        pub fn pop(&mut self) -> Option<Box<Node>> {
+        pub fn pop(&mut self) -> Option&lt;Box&lt;Node>> {
             match self.items.pop() {
                 Some(res) => res,
                 None => None,
             }
         }
 
-        pub fn top(&self) -> Option<Box<Node>> {
+        pub fn top(&self) -> Option&lt;Box&lt;Node>> {
             match self.items.clone().pop() {
                 Some(res) => return res,
                 None => return None,
@@ -76,7 +76,7 @@ mod storage {
     }
 }
 
-fn in_order(root: Option<Box<node::Node>>) {
+fn in_order(root: Option&lt;Box&lt;node::Node>>) {
     let mut stack: storage::Stack = storage::Stack::new();
     let mut current = root;
 
@@ -93,7 +93,7 @@ fn in_order(root: Option<Box<node::Node>>) {
     }
 }
 
-fn pre_order(root: Option<Box<node::Node>>) {
+fn pre_order(root: Option&lt;Box&lt;node::Node>>) {
     let mut stack: storage::Stack = storage::Stack::new();
     let mut current = root;
 
@@ -110,7 +110,7 @@ fn pre_order(root: Option<Box<node::Node>>) {
     }
 }
 
-fn post_order(root: Option<Box<node::Node>>) {
+fn post_order(root: Option&lt;Box&lt;node::Node>>) {
     let mut stack: storage::Stack = storage::Stack::new();
     let mut current = root;
 

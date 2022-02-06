@@ -15,29 +15,29 @@ Tree used in this example
 <pre>
 use std::boxed::Box;
 
-<code>#[derive(Clone, Debug)]</code>
+&lt;code>#[derive(Clone, Debug)]&lt;/code>
 struct Node {
     value: i32,
-    left: Option<Box<Node>>,
-    right: Option<Box<Node>>,
+    left: Option&lt;Box&lt;Node>>,
+    right: Option&lt;Box&lt;Node>>,
 }
 
 impl Node {
-    fn new(value: i32, left: Option<Box<Node>>, right: Option<Box<Node>>) -> Option<Box<Node>> {
+    fn new(value: i32, left: Option&lt;Box&lt;Node>>, right: Option&lt;Box&lt;Node>>) -> Option&lt;Box&lt;Node>> {
         Option::Some(Box::new(Node { value, left, right }))
     }
     fn value(&self) -> i32 {
         self.value
     }
-    fn left(&self) -> Option<Box<Node>> {
+    fn left(&self) -> Option&lt;Box&lt;Node>> {
         self.left.clone()
     }
-    fn right(&self) -> Option<Box<Node>> {
+    fn right(&self) -> Option&lt;Box&lt;Node>> {
         self.right.clone()
     }
 }
 
-fn in_order(node: Option<Box<Node>>) {
+fn in_order(node: Option&lt;Box&lt;Node>>) {
     match node {
         Some(node) => {
             in_order(node.left());
@@ -48,7 +48,7 @@ fn in_order(node: Option<Box<Node>>) {
     }
 }
 
-fn pre_order(node: Option<Box<Node>>) {
+fn pre_order(node: Option&lt;Box&lt;Node>>) {
     match node {
         Some(node) => {
             println!("{}", node.value());
@@ -59,7 +59,7 @@ fn pre_order(node: Option<Box<Node>>) {
     }
 }
 
-fn post_order(node: Option<Box<Node>>) {
+fn post_order(node: Option&lt;Box&lt;Node>>) {
     match node {
         Some(node) => {
             post_order(node.left());

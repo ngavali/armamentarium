@@ -26,7 +26,8 @@ div#menubar {
     padding-bottom: 0px;
     position: fixed;
     width: 100%;
-    background-image: linear-gradient(to bottom right, #EFEFF0, #FEEFDD);
+    background-color: #fff;
+    ;ackground-image: linear-gradient(to bottom right, #EFEFF0, #FEEFDD);
     border-bottom-width: 1px;
     border-bottom-color: #888;
     border-bottom-style: dashed;
@@ -34,9 +35,6 @@ div#menubar {
 }
 
 logo-left {
-    color: #437C90;
-    ackground-color:#A31621;
-    ackground-color:#000;
     font-family: Padauk, "Helvetica Neue", Helvetica;
     font-size: 22px;
     font-weight: bold;
@@ -120,13 +118,12 @@ table#menu tr td a {
 }
 
 a {
-    color: #4F51f1;
-    olor: #4E8098;
+    color: #4E8098;
     outline: none;
 }
 
 a:hover {
-    color: #90C2E7;
+    color: #D74E09;
 }
 
 img {
@@ -138,6 +135,8 @@ img {
 table#menu tr td .activeLink {
     padding-right: 5px;
     color:#C49799;
+    color:#883955;
+    color:#FF3E41;
     font-weight: bold;
 }
 
