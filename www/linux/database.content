@@ -1,0 +1,243 @@
+<h3><a href="#linux">C</a> - InMemory DB in C</h3></p>
+<pre>
+#include &lt;stdio.h>
+
+enum CONS_TYPE { INT_RANGE, STR_LENGTH };
+
+struct Constraint {
+    enum CONS_TYPE type;
+    void * data;
+    void * func;
+};
+
+enum DATA_TYPE { INT, STRING, FLOAT };
+#define STRING_LIMIT 20
+
+struct Column {
+    enum DATA_TYPE type;
+    struct Constraint *constraint;
+    char * name;
+    struct Column *next;
+};
+
+struct Data {
+    void * data;
+    struct Data * next;
+};
+
+struct Row {
+    void * data;
+    struct Row * next;
+};
+
+struct Table {
+    char * name;
+    struct Column *cols;
+    struct Row * rows;
+};
+
+struct RANGE {
+    int MIN;
+    int MAX;
+};
+
+int checkIntInRange (int MIN, int MAX, int value) {
+    printf("Validator Called!!! - ");
+    if ( value > MIN && value &lt; MAX ) {
+        printf("Valid\n");
+        return 1;
+    }
+    printf("Invalid\n");
+    return 0;
+}
+
+
+typedef int (*RangeChecker)(int, int, int);
+
+int RunConstraintValidator(struct Constraint *constraint, void * value) {
+
+    switch ( constraint->type ) {
+        case INT_RANGE: {
+                            RangeChecker func = constraint->func;
+                            printf("VALUE=%d", *(int *) value);
+                            return func(((struct RANGE *)constraint->data)->MIN, ((struct RANGE *)constraint->data)->MAX, *(int *) value);
+                        }
+                        break;
+        case STR_LENGTH:
+                        printf("Not implemented!!!");
+        default:
+                        break;
+    }
+    return 1;
+}
+
+int AddColumnsToTable(struct Table *table, struct Column *C) {
+    printf("Adding Column=%s to table=%s\n", C->name, table->name);
+
+    if ( table->cols == NULL ) {
+        table->cols = C;
+        return 1;
+    }
+    struct Column *root = table->cols;
+    while ( root->next != NULL ) {
+        root=root->next;
+    }
+    root->next = C;
+    return 1;
+}
+
+int AddDataToRow(struct Row *rows, struct Data *data) {
+    printf("Adding Data to Row\n");
+    if ( rows->data == NULL ) {
+        rows->data = data;
+        return 1;
+    }
+    struct Data *root = rows->data;
+    while( root->next != NULL ) {
+        root = root->next;
+    }
+    root->next = data;
+    return 1;
+}
+
+int AddRowToTable(struct Table * table, struct Row * row) {
+    printf("Adding Row to Table=%s\n", table->name);
+
+    int valid = 0;
+    struct Column *col = table->cols;
+    struct Data *data = row->data;
+    do {
+        if ( col->constraint != NULL ) {
+            printf("Call validator for --> %s\n", col->name);
+            valid = RunConstraintValidator(col->constraint, data->data);
+            if ( valid == 0 ) {
+                printf("Invalid ROW DATA");
+                return 0;
+            }
+        }
+        col = col->next;
+        data = data->next;
+    } while (col);
+
+    if ( table->rows == NULL ) {
+        table->rows = row;
+        return 1;
+    }
+    struct Row *root = table->rows;
+    while( root->next != NULL ) {
+        root = root->next;
+    }
+    root->next = row;
+    return 1;
+}
+
+void PrintTableColumnNames(struct Table * table) {
+    printf("Table Name=%s\n", table->name);
+    struct Column *cols = table->cols;
+    if ( cols == NULL ) {
+        return;
+    }
+    do {
+        printf("ColName=%s\n", cols->name);
+        cols = cols->next ;
+    } while (cols);
+    return;
+}
+
+void PrintTableRows(struct Table * table) {
+    printf("Table Name=%s\n", table->name);
+
+    if ( table->rows == NULL ) {
+        return;
+    }
+    printf("==Rows==\n");
+
+    struct Row *row = table->rows;
+    do {
+        struct Column *col = table->cols;
+        struct Data *root = row->data;
+
+        do {
+            switch (col->type) {
+                case INT:
+                    printf("%d", * (int *) ( root->data ));
+                    break;
+                case STRING:
+                    printf("%s", (char *) ( root->data ));
+                    break;
+                case FLOAT:
+                    printf("%f", * (float *) ( root->data ));
+                    break;
+                default: printf("UNKNOWN TYPE\n");
+            }
+            //printf(" (%p)", root->data );
+            printf(",");
+            root = root->next;
+            col = col->next;
+        } while( col );
+
+        printf("\n");
+        row = row->next;
+    } while ( row );
+    printf("\nAll rows processed!!!\n");
+
+    return ;
+
+}
+
+struct Person {
+    int age;
+    float weight;
+    char * name;
+};
+
+int main() {
+
+    struct RANGE intRange = {18, 200};
+    struct Constraint RangeIntRangeChecker = { INT_RANGE , &intRange, &checkIntInRange };
+
+    struct Column Age = { INT, &RangeIntRangeChecker, "Age\0" };
+    struct Column Name = { STRING, NULL, "Name\0" };
+    struct Column Weight = { FLOAT, NULL, "Weight\0" };
+
+    struct Table PersonTable = { "Person\0", NULL, NULL };
+    AddColumnsToTable(&PersonTable,&Age);
+    AddColumnsToTable(&PersonTable,&Name);
+    AddColumnsToTable(&PersonTable,&Weight);
+
+    struct Person p1 = { 36, 86.5, "Nilesh\0"};
+    struct Person p2 = { 3, 15.5, "Vihaan\0"};
+
+    int p1_age, p2_age;
+    p1_age = 36;
+    p2_age = 3;
+    char * p1_name = "Nilesh\0";
+    char * p2_name = "Vihaan\0";
+    float p1_weight = 86.5;
+    float p2_weight = 15.5;
+
+    struct Data D1 = { &p1_age, NULL };
+    struct Data D2 = { p1_name, NULL };
+    struct Data D3 = { &p1_weight, NULL };
+    struct Row row1 = { NULL, NULL };
+    AddDataToRow(&row1, &D1);
+    AddDataToRow(&row1, &D2);
+    AddDataToRow(&row1, &D3);
+
+    AddRowToTable(&PersonTable, &row1);
+
+    struct Data D4 = { &p2.age, NULL };
+    struct Data D5 = { p2.name, NULL };
+    struct Data D6 = { &p2.weight, NULL };
+    struct Row row2 = { NULL, NULL };
+    AddDataToRow(&row2, &D4);
+    AddDataToRow(&row2, &D5);
+    AddDataToRow(&row2, &D6);
+
+    AddRowToTable(&PersonTable, &row2);
+
+    PrintTableColumnNames(&PersonTable);
+    PrintTableRows(&PersonTable);
+
+}
+</pre>
