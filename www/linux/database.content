@@ -208,17 +208,9 @@ int main() {
     struct Person p1 = { 36, 86.5, "Nilesh\0"};
     struct Person p2 = { 3, 15.5, "Vihaan\0"};
 
-    int p1_age, p2_age;
-    p1_age = 36;
-    p2_age = 3;
-    char * p1_name = "Nilesh\0";
-    char * p2_name = "Vihaan\0";
-    float p1_weight = 86.5;
-    float p2_weight = 15.5;
-
-    struct Data D1 = { &p1_age, NULL };
-    struct Data D2 = { p1_name, NULL };
-    struct Data D3 = { &p1_weight, NULL };
+    struct Data D1 = { &p1.age, NULL };
+    struct Data D2 = { p1.name, NULL };
+    struct Data D3 = { &p1.weight, NULL };
     struct Row row1 = { NULL, NULL };
     AddDataToRow(&row1, &D1);
     AddDataToRow(&row1, &D2);
