@@ -6,36 +6,31 @@ In this article, we shall explore pointers in rust by implementing a Linked List
 struct Node {
     name: String,
     value: i32,
-    next: Option<*mut Node>,				//Use Option to store NULL
+    next: Option&lt;*mut Node>, //Use Option to store NULL
 }
 
 impl Node {
-    fn new(name: String, value: i32, next: Option<*mut Node>) -> Node {
+    fn new(name: String, value: i32, next: Option&lt;*mut Node>) -> Node {
         Node { name, value, next }
     }
 }
 
 #[derive(Debug)]
 struct LinkedList {
-    head: Option<*mut Node>,
+    head: Option&lt;*mut Node>,
 }
 
 impl LinkedList {
-    fn new(head: Option<*mut Node>) -> LinkedList {
+    fn new(head: Option&lt;*mut Node>) -> LinkedList {
         LinkedList { head }
     }
 
     fn add_value(&self, value: i32) {
-        let mut a: Option<*mut Node> = self.head;
-        loop {
-            unsafe {					//Have to explicitly call out when playing around with raw pointers
-                match a {
-                    Some(node) => {
-                        (*node).value += value;
-                        a = (*node).next;
-                    }
-                    None => break,
-                }
+        let mut a: Option&lt;*mut Node> = self.head;
+        while let Some(node) = a {
+            unsafe {
+                (*node).value += value;
+                a = (*node).next;
             }
         }
     }
@@ -48,19 +43,14 @@ fn main() {
 
     let linked_list = LinkedList::new(Some(n1));
 
-    let mut a: Option<*mut Node> = linked_list.head;
+    let mut a: Option&lt;*mut Node> = linked_list.head;
 
     linked_list.add_value(1);
 
-    loop {
+    while let Some(node) = a {
         unsafe {
-            match a {
-                Some(node) => {
-                    println!("=>\n -Node {:?}\n -My address {:?}\n", *node, node);
-                    a = (*node).next;
-                }
-                None => break,
-            }
+            println!("=>\n -Node {:?}\n -My address {:?}\n", *node, node);
+            a = (*node).next;
         }
     }
 
@@ -114,14 +104,9 @@ impl LinkedList {
 
     fn add_value(&mut self, value: i32) {
         let mut a = &mut self.head;
-        loop {
-            match a {
-                Some(x) => {
-                    x.value += value;
-                    a = &mut x.next;
-                }
-                None => break,
-            }
+        while let Some(x) = a {
+            x.value += value;
+            a = &mut x.next;
         }
     }
 }
@@ -145,19 +130,14 @@ fn main() {
     //let mut a: Option&lt;Box&lt;Node>> = linked_list.head;
     //linked_list.add_value(1);
 
-    loop {
-        match a {
-            Some(node) => {
-                println!(
-                    "=>\n -Node name={:?} value={:?}\n -My address {:p}\n",
-                    node.as_ref().name,
-                    node.as_ref().value,
-                    node
-                );
-                a = (*node).next;
-            }
-            None => break,
-        }
+    while let Some(node) = a {
+        println!(
+            "=>\n -Node name={:?} value={:?}\n -My address {:p}\n",
+            node.as_ref().name,
+            node.as_ref().value,
+            node
+        );
+        a = (*node).next;
     }
 
     //Try uncommenting next code line and re-run the program
