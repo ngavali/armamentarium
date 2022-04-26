@@ -1,4 +1,4 @@
-<h3>Distributed Systems</h3>
+<h2>Distributed Systems</h2>
 <h4>Concepts</h4>
 The <a href="#ds/fallacies" >fallacies</a> of distributed computing</br>
 <a href="#ds/cap" >CAP</a>, simplified</br>

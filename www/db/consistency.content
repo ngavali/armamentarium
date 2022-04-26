@@ -1,9 +1,9 @@
-<h3><a href="#db"  > Database</a> - Isolation levels for transations.</h3>
+<h2><a href="#db"  > Database</a> - Isolation levels for transations.</h2>
 <draft/></p>
 <h4>Side effects</h4>
 Dirty reads,</br>
 Phantom reads</p>
-<h3>Isolation levels</h3>
+<h2>Isolation levels</h2>
 <dl>
 <dt><h4>Read uncommitted</h4></dt>
 <dd>Dirty reads</dd>

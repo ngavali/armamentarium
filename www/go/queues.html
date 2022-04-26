@@ -30,7 +30,7 @@
 <div id="bodyTopic" >
 <table id="topicContent" align="center">
 <tr><td>
-<h3><a href="/go.html">Go Programming Language</a> - Queue, Unblocking the channel</h3></p>
+<h2><a href="/go.html">Go Programming Language</a> - Queue, Unblocking the channel</h2></p>
 Creating a data stream using channels without any bounds? Full throttle! Yes, It is possible and we will discuss about the solution wherein we will use an intermediate storage structure [So called Queue] to handle buffering of the data stream.</p>
 We will try to overcome the problem, wherein channels block the processes which are writing to and reading from it.<p>
 Queue allows dynamic buffering of the data stream compared to a buffered channel, writer and reader processes accessing the queue doesn't influence each others behavior ( i.e., they donot block each other as in the case of channels - ex. Fast writer can continue writing to the channel without any need to wait for a slow reader to consume data stream from the other end of the channel ).</p>
@@ -40,7 +40,7 @@ Complete flow is depicted below, in Fig.1.</p>
 <center>
 	<img src="/images/queues.svg" width="400px" /><b>Fig.1. </b>Data flow
 </center></p>
-<h3>Components</h3>
+<h2>Components</h2>
 There are 4 go rountines, 2 Channels and 1 Queue, each described as follows:</p>
 <table width="100%">
 	<tr><td colspan="3"><h4>Goroutines</h4></td></tr>
@@ -65,7 +65,7 @@ There are 4 go rountines, 2 Channels and 1 Queue, each described as follows:</p>
 	<tr><td colspan="3"></p></td></tr>
 </table>
 
-<h3>Code</h3>
+<h2>Code</h2>
 Let us go through the code now
 <pre>
 package main

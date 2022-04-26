@@ -1,4 +1,4 @@
-<h3><a href="#linux"  >JWT</a> - Introduction</h3></p>
+<h2><a href="#linux"  >JWT</a> - Introduction</h2></p>
 They carry information called <i>Claim(s)</i>, encoded in JSON format. These claims are stored as key value pairs and can be encrypted and signed.</p>
 <h4>Structure of JWT</h4>
 A JWT token consists of

@@ -1,4 +1,4 @@
-<h3><a href="#rust"  >Rust Programming Language</a> - Mutability</h3></p>
+<h2><a href="#rust"  >Rust Programming Language</a> - Mutability</h2></p>
 Rust variables are immutable by default.</br>
 Version 1
 <pre>

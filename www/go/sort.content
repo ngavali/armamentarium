@@ -1,4 +1,4 @@
-<h3><a href="#go"  >Go Programming Language</a> - Sort</h3></p>
+<h2><a href="#go"  >Go Programming Language</a> - Sort</h2></p>
 <draft/></p>
 <h4>Quick Sort</h4>
 algorithm/sort/quicksort.go

@@ -1,6 +1,6 @@
-<h3>
+<h2>
 <a href="#go" >Go Programming Language</a> - 
-<a href="#go/patterns"  > Design Patterns</a> - Strategy</h3>
+<a href="#go/patterns"  > Design Patterns</a> - Strategy</h2>
 <draft/>
 Think of a reverse proxy. It accepts client connection and forwards requests to backend server and responses from backend server back to the client.</br>
 Let a proxy be represented by an object, say Wormhole. (Using some fancy terminology, A wormhole is a tunnel between two separate points in spacetime)</br>

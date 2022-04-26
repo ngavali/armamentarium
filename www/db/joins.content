@@ -1,9 +1,9 @@
 <tr><td>
-		<h3><a href="#db"  > Database</a> - SQL joins</h3>
+		<h2><a href="#db"  > Database</a> - SQL joins</h2>
 		SQL joins offer us the way to extract relevant rows by combining columns from one (self-join) or more tables. </p>
 		Rows from one (self-join) or more tables are associated together by corresponding common column(s) having same values.</p> These column(s) form key(s) for the join and row selectivity.</p>
 Now, before going any further and digging into SQL join queries, first let us try to build a visual map of joins ( See Fig.1 below ) and understand different types of joins available in MySQL/Mariadb database.</p>
-		<h3>Visual Representation</h3>
+		<h2>Visual Representation</h2>
 <center>
 	<img src="/images/joins.png" width="450px" /></p><b>Fig.1</b>
 </center></p>
@@ -14,7 +14,7 @@ Similarly, in right join non-intersecting blue dots ( rows in table B ) have no 
 The intersection - inner join ( A &cap; B ), we can see blue and red dots form pairs as they have matching keys and thus no NULLs. The intersection can result in no rows ( empty set ) if no matching pair is found.</p>
 In full outer join, all rows from each side are extracted, non-matching rows hold NULLs for the other side.</p>
 It might appear quite confusing at this moment, but once we go through an example things shall become more clear. I will be using mariadb database to demonstrate the same.<p>
-<h3>SQL Query syntax</h3>
+<h2>SQL Query syntax</h2>
 Let us first look at the syntax for performing a join on two tables.
 <h4>Inner join</h4>
 <pre>
@@ -77,7 +77,7 @@ CREATE OR REPLACE TABLE `Book` (
 ) ENGINE=InnoDB
 ;
 </pre>
-<h3>Populate sample data</h3>
+<h2>Populate sample data</h2>
 
 <pre>
 INSERT INTO Author ( authorId, authorName ) VALUES 
@@ -98,7 +98,7 @@ INSERT INTO Book ( bookId, bookName, authorId ) VALUES
 ( 6, 'Yajurveda', <r>NULL</r> )
 ;
 </pre>
-<h3>Performing joins</h3>
+<h2>Performing joins</h2>
 In our case, join key column <code>authorId</code> is used to associate rows from Author and Book table. 
 <h4>Inner join</h4>
 <pre>

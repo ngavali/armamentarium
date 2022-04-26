@@ -1,4 +1,4 @@
-<h3><a href="#db"  > Database</a> - 2PC: Two Phase Commit</h3>
+<h2><a href="#db"  > Database</a> - 2PC: Two Phase Commit</h2>
 Has 2 Phases, hence the name. Has 2 actors - Coordinator and Participant.
 <ul>
 <li>Prepare - Coordinator asks all participants to <b>prepare</b> the change(s).</li>

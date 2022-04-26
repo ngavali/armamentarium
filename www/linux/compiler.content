@@ -1,4 +1,4 @@
-<h3><a href="#linux"  >C++</a> - Compiler</h3></p>
+<h2><a href="#linux"  >C++</a> - Compiler</h2></p>
 <pre>
 #Preprocessing
 g++ -E -o code_expanded.cpp code.cpp

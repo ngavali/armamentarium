@@ -1,7 +1,7 @@
-<h3><a href="#math"  >Mathematics</a> - Bayesian Model</h3>
+<h2><a href="#math"  >Mathematics</a> - Bayesian Model</h2>
 <draft/>
 Before going to Bayesian Model, you can do a gentle review of <a href="#math/probability" >Probability</a> theory.</p>
-<h3>Bayes theorem</h3>
+<h2>Bayes theorem</h2>
 P(A<sub>i</sub>|B) = P(B|A<sub>i</sub>) * P(A<sub>i</sub>) / P(B)</p>
 There are i mutually exclusive events A<sub>1</sub>, A<sub>2</sub>,..., and A<sub>i</sub></br>
 B is an event that can occur with these events.</p>
@@ -32,7 +32,7 @@ Indicates, that rain is very likely to happen given you observe cloud on a given
 </center>
 In nutshell, what we have calculated is the fraction that represents Rain in Cloudy sample space. This becomes our new P(Rain) in the universe full of clouds. And again with new evidences we keep updating our universe and over the time improve our estimation for P(R|C).
 <dl>
-<dt><h3>Bayesian Model</h3></dt>
+<dt><h2>Bayesian Model</h2></dt>
 <dd>
 <table>
 <tr><td width="100px">Posterior</td><td>= P(A|B)</td></tr>
@@ -50,7 +50,7 @@ For above ex.
 </table></br>
 </p>
 </dd>
-<dt><h3>Model update</h3></dt>
+<dt><h2>Model update</h2></dt>
 <dd>
 To start with we set prior on assumptions.</br>
 Posterior is evaluated in the presence of acquired likelihood and evidences.</br>

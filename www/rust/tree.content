@@ -1,4 +1,4 @@
-<h3><a href="#rust"> Rust Programming Language</a> - Pointers (Tree)</h3></p>
+<h2><a href="#rust"> Rust Programming Language</a> - Pointers (Tree)</h2></p>
 <h4>Tree Traversal</h4>
 In this example we will see how to create a tree and demostrate DFS traversal technique (Using Recursion). The main essense is how to safely wrap pointers into a Box and pass them across different sections of your code.</p>
 Tree used in this example

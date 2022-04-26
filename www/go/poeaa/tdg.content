@@ -1,4 +1,4 @@
-<h3><a href="#go" >Go Programming Language</a> - <a href="#go/poeaa">P of EAA</a> - Table Data Gateway</h3>
+<h2><a href="#go" >Go Programming Language</a> - <a href="#go/poeaa">P of EAA</a> - Table Data Gateway</h2>
 <draft/></p>
 <img src="static/table-data-gateway.png" width="250px" />
 ./gateway/database/record_set.go

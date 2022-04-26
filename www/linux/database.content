@@ -1,4 +1,4 @@
-<h3><a href="#linux">C</a> - InMemory DB in C</h3></p>
+<h2><a href="#linux">C</a> - InMemory DB in C</h2></p>
 <pre>
 #include &lt;stdio.h>
 

@@ -1,4 +1,4 @@
-<h3><a href="#linux"  >C++</a> - Octopus, a simple process manager.</h3></p>
+<h2><a href="#linux"  >C++</a> - Octopus, a simple process manager.</h2></p>
 <draft/>
 A simple process manager that can spawn and manage proceses.
 <pre>

@@ -1,4 +1,4 @@
-<h3><a href="#db"  > Database</a> - Mariadb Galera Cluster</h3>
+<h2><a href="#db"  > Database</a> - Mariadb Galera Cluster</h2>
 <draft/>
 Your application is connected to a single backend mysql/mariadb database node (Master/Slave mode) and your thinking of scaling it by upgrading to galera based multi-master mariadb database cluster.
 Oh Yes! we are. This article will walk you through the limitations and behavior that you need to deal with when making a move and will help you decide/design if that is a good choice for you.</p>

@@ -1,4 +1,4 @@
-<h3><a href="#go"  >Go Programming Language</a> - Simple HTTP Server</h3></p>
+<h2><a href="#go"  >Go Programming Language</a> - Simple HTTP Server</h2></p>
 <pre>
 package main
 

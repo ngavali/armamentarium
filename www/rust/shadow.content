@@ -1,4 +1,4 @@
-<h3><a href="#rust"  >Rust Programming Language</a> - Shadowing</h3></p>
+<h2><a href="#rust"  >Rust Programming Language</a> - Shadowing</h2></p>
 Having series of changes on the same variable without using <code><v>mut</v></code> keyword
 <pre>
 fn main() {

@@ -1,5 +1,5 @@
-<h3>
-<a href="#go" >Go Programming Language</a> - Design patterns</h3>
+<h2>
+<a href="#go" >Go Programming Language</a> - Design patterns</h2>
 <h4>Creational</h4>
 <a href="#go/design_patterns/creational/factory" >Factory</a></br>
 <a href="#go/design_patterns/creational/singleton" >Singleton</a></br>

@@ -1,6 +1,6 @@
-<h3><a href="#math"  >Mathematics</a> - Gentle review of the probability theory</h3>
+<h2><a href="#math"  >Mathematics</a> - Gentle review of the probability theory</h2>
 During the school days, I always struggled understanding the concepts of probability (rarely got the answers right). Most of the times frustrated, still I felt it was a very captivating topic and later at some point decided to take a sincere effort to get a better at it. This article is written with an intent to provide a gentle introduction of the very fundamental concepts of probability. So, let get started.</p>
-<h3>What is probability</h3>
+<h2>What is probability</h2>
 In simplest terms it can be defined as, how likely something (an event) is expected to happen</p>
 <!--b>&#x2119</b>P(An event) = ( number of favourable outcomes ) / ( total number of all possible outcome(s) )</p-->
 <img src="/images/probabilityD.svg" width="440px" /></p>
@@ -14,12 +14,12 @@ i.e., P(Head)+P(Tail) = 1</br>
 Thus, P(Tail) = 1 - P(Head) = 0.5
 </dd>
 </dl>
-<h3>Notations</h3>
+<h2>Notations</h2>
 <table>
 <tr><td>AND operation</td><td>is denoted by </td><td>∩</td></tr>
 <tr><td>OR operation</td><td>is denoted by </td><td>∪</td></tr>
 </table></p>
-<h3>Types of events</h3>
+<h2>Types of events</h2>
 <dl>
 <dt><h4>Mutually exclusive events</h4></dt>
 <dd>Mutually exclusive events can never occur at the <e>same time</e>. Joint probability for such events is always 0 (zero).</br>
@@ -87,7 +87,7 @@ The P(1st card is a face card and 2nd a number) = P(1st is a face card) * P(2nd 
 </dl>
 We encounter something special here i.e., P(B|A) and P(A|B) identified as <e>conditional probabilities</e>.
 </p>
-<h3>Conditional probability</h3>
+<h2>Conditional probability</h2>
 Probability of happening of an event A given that event B has <i>also</i> happened or observed.</p>
 <center>
 P(A|B) = P(A∩B) / P(B)</br>And similarly</br>

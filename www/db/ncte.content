@@ -1,5 +1,5 @@
 <tr><td>
-	<h3><a href="#db"  >Database</a> - Non-recursive CTE</h3>
+	<h2><a href="#db"  >Database</a> - Non-recursive CTE</h2>
 CTE know as Common Table Expressions. It is a standard SQL feature and recently support was added in mariadb database.</p>
 You can think of them as a named result set, which can refer to itself and optionally be excuted recursively.</p>
 

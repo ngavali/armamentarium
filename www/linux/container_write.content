@@ -1,4 +1,4 @@
-<h3><a href="#linux"  >Containers</a> - Let's build one</h3></p>
+<h2><a href="#linux"  >Containers</a> - Let's build one</h2></p>
 In case you want to have a look at basics of Namespaces, click <a href="#linux/container_intro" >introduction</a>.</p>
 As I mentioned in the earlier article, I will have readers go and take a dive of the code and explore things for themselves. Below execution flow will provide you a bird's eye view of the complete process.</p>
 <center>
@@ -43,7 +43,7 @@ Have a linux filesystem structure created under /containerfs directory (accessib
     └── bin
         └── id
 </pre>
-<h3>A Shallow Dive</h3> Using Go (Short version)</br>
+<h2>A Shallow Dive</h2> Using Go (Short version)</br>
 Program is named after the hindu god of creation, Brahma.
 <pre>
 package main
@@ -122,7 +122,7 @@ func container() {
         fmt.Println("I am dying!!!")
 }
 </pre>
-<h3>Deep dive</h3>
+<h2>Deep dive</h2>
 Using Rust (Long version)</br>
 Here you will exactly see, what is happening under the hood.
 <pre>

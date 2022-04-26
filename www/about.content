@@ -1,16 +1,17 @@
-<h3>About me and this website</h3>
-<img src="static/self.jpeg" height="200px" style="float:right;margin-left:30px"/>
-		Hi Friends, my name is Nilesh.</p>
-This website hosts collection of articles about my experiments with technology, learnings and other musings.
-<!--strike straight to the point and avoid any use of jargaons or blah! blah! statements.</p-->I hope you will find them useful. 
+<h2>About me and this website</h2>
+<img src="static/self.jpeg" height="150px" style="float:right;margin-left:30px"/>
+		Hi there! my name is Nilesh. </p>
+I have studied Electronics and Communication Engg. and I am passionate about science and technology.</p>
+This website hosts collection of articles about computer systems and software, my learnings and other musings.
+<!--strike straight to the point and avoid any use of jargaons or blah! blah! statements.</p-->
 <!--Also, the font used on this website is made using my very own handwriting, I feel handwritten look would give that old timer school feeling for the retro folks like me. Hope you will enjoy reading it like that. (Please drop me a message at gavali.nilesh80186@gmail.com feel if I need to improve on fonts for better engagement and the reading experience).If you like the font you can download it <a href="/static/gavali.ttf" target="_">here</a--></p>
-Code used in the examples can be found <a target="_" href="https://github.com/ngavali/rationalbear">here.</a>
 	<!--img style="display:block;align:left;border-radius:8px;" width="150" src="/images/jackn.jpg"--></p>
 		</p>
-Happy learning!</p>
+I hope you will find them interesting and useful. Happy learning!</p>
+Code used in the examples can be found <a target="_" href="https://github.com/ngavali/rationalbear">here.</a>
 		<!--
 		You can find links to the collection of some interesting literature <a href="#interests"  >here</a> that drives and keeps me motivated.</p>
-		<!--<h3>Motivation</h3>
+		<!--<h2>Motivation</h2>
 		Collection of useful resources that I gathered, while learning various software technologies!
 		During my tenure, some time back I got to work with databases. Realized the fact that eveything revolves around data and now I see database as one of the finest piece of software that has been ever built. It is always fun working on datasets and finding solutions to the problems using <a href="#db"  >Linux</a>, with maximum uptime dispite magnitudes of load.</p>
 		And finally, the future <a href="#ds"  >distributed systems</a>.</p>
@@ -21,12 +22,12 @@ Happy learning!</p>
 		</span>
 		</br></p>
 		You can find links to the collection of some interesting literature <a href="#interests"  >here</a> that drives me and keeps me motivated.</p>
-		<!--<h3>Motivation</h3>
+		<!--<h2>Motivation</h2>
 		Collection of useful resources that I gathered, while learning various software technologies!
 
 		This site is dedicated to my Father, who thought me on how to putting things into order and to be patient while performing your work or learning anything in life, without that it would have been not possible for me to make these collections.
 		Thank you to my Mother and Wife for being patient and supportive at all times, while I am busy in pursuing my passion.</p>
-<h3>Inspiration</h3>
+<h2>Inspiration</h2>
 
 I do not know what I may appear to the world; but to myself I seem to have been only like a boy playing on the seashore, and diverting myself in now and then finding a smoother pebble or a prettier shell than ordinary, whilst the great ocean of truth lay all undiscovered before me.</br>
 Isaac Newton, From Brewster, Memoirs of Newton (1855)</br>

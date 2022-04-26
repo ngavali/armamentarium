@@ -1,4 +1,4 @@
-<h3><a href="#go"  >Go Programming Language</a> - Pointers</h3></p>
+<h2><a href="#go"  >Go Programming Language</a> - Pointers</h2></p>
 Reverse characters of a string in the given range.
 <pre>
 package main

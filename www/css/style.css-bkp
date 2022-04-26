@@ -1,137 +1,203 @@
-/*@import url('https://fonts.googleapis.com/css?family=Yantramanav');
-@import url('https://fonts.googleapis.com/css?family=Roboto|Yantramanav');*/
-@import url('https://fonts.googleapis.com/css?family=Merriweather|Frank+Ruhl+Libre|Vidaloka|Rasa|Kameron');
-
-body {
-	overflow-y: scroll;
+/*@import url('https://fonts.googleapis.com/css2?family=Padauk&display=swap');*/
+@font-face {
+    font-family: 'myfont';
+    src: url('/static/gavali.ttf')  format('truetype');
 }
 
+html { overflow-y: scroll; }
+
 div#ContentBody {    
-	line-height: 25px;
+    line-height: 35px;
 }
 
 pre {
-	line-height: 20px;
+    line-height: 18px;
+    white-space: pre-wrap;       /* Since CSS 2.1 */
+    white-space: -moz-pre-wrap;  /* Mozilla, since 1999 */
+    white-space: -pre-wrap;      /* Opera 4-6 */
+    white-space: -o-pre-wrap;    /* Opera 7 */
+    word-wrap: break-word;       /* Internet Explorer 5.5+ */
+    overflow-x: auto;
 }
 
 div#menubar {
-	margin: 0px;
-	padding-top: 5px;
-	padding-bottom: 5px;
-	position: fixed;
-	width: 100%;
-	background: rgb(255,255,255);
+    margin: 0px;
+    padding-top: 0px;
+    padding-bottom: 0px;
+    position: fixed;
+    width: 100%;
+    background-color: #fff;
+    ;ackground-image: linear-gradient(to bottom right, #EFEFF0, #FEEFDD);
+    border-bottom-width: 1px;
+    border-bottom-color: #888;
+    border-bottom-style: dashed;
+    font-family: Padauk, "Helvetica Neue", Helvetica;
 }
 
-.logo {
-	color: #5D4E6D;
-	color: #832161;
-	color: #C17767;
-	color: #CC3363;
+logo-left {
+    font-family: Padauk, "Helvetica Neue", Helvetica;
+    font-size: 22px;
+    font-weight: bold;
+    adding: 0px 5px 0px 10px;
+    order: #fff 2px SOLID;
 }
-
-logo {
-	font-size: 15pt;
-	font-weight: bold;
-	font-family: Kameron, Merriweather;
+logo-right {
+    color:#A31621;
+    color: #F7C548;
+    font-size: 22px;
+    font-family: Padauk, "Helvetica Neue", Helvetica;
+    font-weight: bold;
+    padding: 0px 0px 0px 0px;
+    order: #fff 2px SOLID;
+    ackground: #fff;
 }
 
 k3 {
-	display: block;
+    display: block;
 }
 
 h3, k3 {
-	font-size: 14pt;
-	font-weight: none;
-	margin-top: 0px;
+    font-size: 24px;
+    margin-top: 0px;
+    margin-bottom: 15px;
+    color: #2C365E;
 }
 
-h3 {
-	color: #547AA5;
-	color: #E6AF2E;
-	color: #1C6E8C;
-	color: #598B2C;
-	color: #6D98BA;
-	color: #2aa198;
+h4 {
+    font-size: 20px;
+    font-weight: bold;
+    margin-top: 5px;
+    margin-bottom: 0px;
 }
 
 table#menu {
-	width:1000px;
-	border:0px;
-	padding-bottom:5px;
-	border-bottom:#888 1pt SOLID;
-	background: rgb(255,255,255);
+    width:800px;
+    order:0px;
+    height: 46px;
 }
 
 div#bodyTopic {
-	margin: 0px;
-	padding-top: 100px;
+    margin: 0px;
+    padding-top: 70px;
+    padding-bottom: 600px;
 }
 
 table {
-	border-spacing: 0pt;
+    border-spacing: 0pt;
 }
 
 .head td {
-	border-bottom: #888 1px SOLID;
-	padding: 2pt;
-}
-
-table#topicContent {
-	width:1000px;
-	border:0px;
-	font-size: 12pt;
+    border-bottom: #888 1px SOLID;
+    padding: 2pt;
 }
 
 body {
-	font-family: Rasa, Yantramanav, Arial;
-	font-size: 12pt;
-	color: #444;
-	padding-left: 0px;
-	padding-right: 0px;
-	padding-bottom: 50px;
-	margin: 0px;
+    font-size: 20px;
+    color: #000;
+    padding-top: 0px;
+    padding-left: 0px;
+    padding-right: 0px;
+    padding-bottom: 50px;
+    margin: 0px;
+    font-family: Padauk, "Helvetica Neue", Helvetica;
 }
 
-table#topicContent tr td {
-	font-family: Rasa, Yantramanav, Arial;
-	font-size: 12pt;
-}
-
-table#menu tr td a {
-	padding-right: 5px;
-	text-decoration: none;
-	color: rgb( 100, 100, 100 );
+table#topicContent {
+    width:800px;
+    border:0px;
+    font-size: 20px;
+    font-family: Padauk, "Helvetica Neue", Helvetica;
 }
 
 table#menu tr td a {
-	font-size: 12pt;
+    padding-right: 5px;
+    text-decoration: none;
+    color: #000;
+    font-size: 20px;
+    font-family: Padauk, "Helvetica Neue", Helvetica;
 }
 
 a {
-	color: #4F5165;
-	outline: none;
+    color: #4E8098;
+    outline: none;
 }
 
 a:hover {
-	color: #CC3363;
-	olor: #D3B99F;
-	text-decoration: underline;
+    color: #D74E09;
 }
 
 img {
-	display: block;
-	margin-left: auto;
-	margin-right: auto;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 table#menu tr td .activeLink {
-	padding-right: 5px;
-	color: rgb(220, 30, 26);
-	color: #832161;
-	color: #C17767;
-	color: #832161;
-	color: #CC3363;
-	text-decoration: underline;
-	font-size: 12pt;
+    padding-right: 5px;
+    color:#C49799;
+    color:#883955;
+    color:#FF3E41;
+    font-weight: bold;
+}
+
+/*text styles*/
+/* Emphasis */
+e {
+    font-weight: bold;
+    font-style: italic;
+}
+
+fs {
+    float: right;
+}
+
+.points {
+    padding-left: 50px;
+}
+
+.ship {
+    -webkit-filter: grayscale(100%); /* Safari 6.0 - 9.0 */
+    filter: grayscale(100%);
+}
+
+ul {
+    list-style-type: square;
+}
+
+ul ul {
+    list-style-type: disc;
+}
+
+.align-right {
+    align: right;
+    float: right;
+}
+
+meditate::before {
+    content : "Diogenes Meditating...";
+    font-family: "Syne Mono", "Courier New", Consolas;
+    font-size: 16px;
+    background: #fafafa;
+    color: #f2a;
+    padding: 5px;
+    margin:10px;
+    border-radius: 8px;
+    display: block;
+}
+
+draft::before {
+    content : "draft version - I am still working on it";
+    font-family: "Syne Mono", "Courier New", Consolas;
+    font-size: 16px;
+    background: #efefef;
+    color: #f22;
+    padding-left: 10px;
+    margin-bottom: 10px;
+    border-radius: 8px;
+    display: block;
+}
+
+hl {
+    color: #33e;
+    font-weight: bold;
 }

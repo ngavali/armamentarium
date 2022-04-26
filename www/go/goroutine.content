@@ -1,4 +1,4 @@
-<h3><a href="#go"  >Go Programming Language</a> - Goroutine</h3></p>
+<h2><a href="#go"  >Go Programming Language</a> - Goroutine</h2></p>
 Demonstration of goroutine with waitgroup.</br>
 A WaitGroup waits for a collection of goroutines to finish.
 <pre>

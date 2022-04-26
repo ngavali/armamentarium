@@ -1,5 +1,5 @@
 <tr><td>
-<h3><a href="#linux"  >Linux</a> - HAProxy - SNI implementation - Capturing the client IP</h3></p>
+<h2><a href="#linux"  >Linux</a> - HAProxy - SNI implementation - Capturing the client IP</h2></p>
 <draft/>
 In the previous article [<a href="#linux"  >HAProxy - SNI implementation</a>], we saw SNI implementation using HAproxy talking to multiple SSL enabled web servers in the backend. However, that setup and configuration comes with a limitation. That is we are unable to capture the actual Client IP who is making request for the backend web server.</p>
 Instead, HAProxy host IP will show up in the apache logs. This is because HAproxy is talking to backend apache server on behalf of the client to complete the request. This is not desirable in application which require Client IP.</p>

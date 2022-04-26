@@ -1,4 +1,4 @@
-<h3>Miscellaneous topics</h3>
+<h2>Miscellaneous topics</h2>
 <h4>Linux</h4>
 HAProxy - <a href="#linux/snihaproxy" >SNI implementation</a></br>
 HAProxy - SNI implementation - <a href="#linux/snitransparenthaproxy" >Capturing the client IP</a></br>

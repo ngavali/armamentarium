@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Padauk&display=swap');
+/*@import url('https://fonts.googleapis.com/css2?family=Padauk&display=swap');*/
 @font-face {
     font-family: 'myfont';
     src: url('/static/gavali.ttf')  format('truetype');
@@ -36,17 +36,17 @@ div#menubar {
 
 logo-left {
     font-family: Padauk, "Helvetica Neue", Helvetica;
-    font-size: 22px;
-    font-weight: bold;
+    font-size: 24px;
+    font-weight: normal;
     adding: 0px 5px 0px 10px;
     order: #fff 2px SOLID;
 }
 logo-right {
     color:#A31621;
     color: #F7C548;
-    font-size: 22px;
+    font-size: 24px;
     font-family: Padauk, "Helvetica Neue", Helvetica;
-    font-weight: bold;
+    font-weight: normal;
     padding: 0px 0px 0px 0px;
     order: #fff 2px SOLID;
     ackground: #fff;
@@ -56,15 +56,17 @@ k3 {
     display: block;
 }
 
-h3, k3 {
-    font-size: 24px;
-    margin-top: 0px;
-    margin-bottom: 15px;
+h2, k3 {
+    font-size: 26px;
+    font-weight: normal;
+    margin-top: 10px;
+    margin-bottom: 20px;
     color: #2C365E;
+    font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
 }
 
 h4 {
-    font-size: 20px;
+    font-size: 18px;
     font-weight: bold;
     margin-top: 5px;
     margin-bottom: 0px;
@@ -92,7 +94,7 @@ table {
 }
 
 body {
-    font-size: 20px;
+    font-size: 18px;
     color: #000;
     padding-top: 0px;
     padding-left: 0px;
@@ -105,7 +107,7 @@ body {
 table#topicContent {
     width:800px;
     border:0px;
-    font-size: 20px;
+    font-size: 18px;
     font-family: Padauk, "Helvetica Neue", Helvetica;
 }
 
@@ -113,7 +115,7 @@ table#menu tr td a {
     padding-right: 5px;
     text-decoration: none;
     color: #000;
-    font-size: 20px;
+    font-size: 18px;
     font-family: Padauk, "Helvetica Neue", Helvetica;
 }
 
@@ -176,7 +178,7 @@ ul ul {
 meditate::before {
     content : "Diogenes Meditating...";
     font-family: "Syne Mono", "Courier New", Consolas;
-    font-size: 16px;
+    font-size: 14px;
     background: #fafafa;
     color: #f2a;
     padding: 5px;
@@ -188,7 +190,7 @@ meditate::before {
 draft::before {
     content : "draft version - I am still working on it";
     font-family: "Syne Mono", "Courier New", Consolas;
-    font-size: 16px;
+    font-size: 14px;
     background: #efefef;
     color: #f22;
     padding-left: 10px;

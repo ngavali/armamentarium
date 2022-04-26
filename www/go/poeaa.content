@@ -1,5 +1,5 @@
-<h3>
-<a href="#go" >Go Programming Language</a> - P of EAA</h3>
+<h2>
+<a href="#go" >Go Programming Language</a> - P of EAA</h2>
 This articles reflect my understanding of the concepts presented by Martin Fowler, in his book "Patterns of Enterprise Application Architecture". 
 I felt it was worthwhile getting my hands dirty implement those concepts using Go programming langauge.
 It might not be an accurate or complete implementation and I will be more than happy to have a feedback at gavali.nilesh80186@gmail.com.</p>

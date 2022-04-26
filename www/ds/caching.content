@@ -1,4 +1,4 @@
-<h3><a href="#ds"  >Distributed Systems</a> - The fallacies of distributed computing</h3>
+<h2><a href="#ds"  >Distributed Systems</a> - The fallacies of distributed computing</h2>
 <draft/></p>
 <h4>Cache-aside</h4>
 <h4>Write-around</h4>

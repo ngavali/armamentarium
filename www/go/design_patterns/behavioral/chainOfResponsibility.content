@@ -1,6 +1,6 @@
-<h3>
+<h2>
 <a href="#go" >Go Programming Language</a> - 
-<a href="#go/patterns"  > Design Patterns</a> - Chain of responsibility</h3>
+<a href="#go/patterns"  > Design Patterns</a> - Chain of responsibility</h2>
 
 <!--
 Consider, how a simple http server handles a particular request it first Accepts a request, AuthN user, AuthN user, finally generate and Send an approriate response. But final response is based on the decisions made in each step.</p>

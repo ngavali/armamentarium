@@ -35,7 +35,7 @@
 <div id="bodyTopic" >
 <table id="topicContent" align="center">
 <tr><td>
-<h3><a href="/linux.html">Linux</a> - HAProxy - SNI implementation</h3></p>
+<h2><a href="/linux.html">Linux</a> - HAProxy - SNI implementation</h2></p>
 In this article, we will see how to configure HAProxy to serve multiple backend http(SSL) domains over a single IP address using Server Name Indication (SNI) TLS extension. 
 You must have seen apache httpd ( or any other http server ) being used to host mutliple http domains on a same machine and serving multiple SSL enabled virtual hosts on a single IP using SNI.</p>
 
@@ -54,7 +54,7 @@ haprx.snitest.com=192.168.56.101:443 HAProxy service
 host1.snitest.com=192.168.56.102:443 Apache service
 host2.snitest.com=192.168.56.103:443 Apache service
 </pre>
-<h3>Backend web services</h3>
+<h2>Backend web services</h2>
 <h4>Setup apache http(s) web services on backend hosts</h4>
 Generate self-signed certificates for both backends.</p>
 For host1</p>
@@ -128,7 +128,7 @@ cat&gt;/var/www/meson/index.html&lt;&lt;EOF
 &lt;h1&gt;Meson test page. It works!&lt;/h1&gt;
 EOF
 </pre>
-<h3>HAProxy</h3>
+<h2>HAProxy</h2>
 Configuration file /etc/haproxy/haproxy.cfg.
 <pre>
 cat>/etc/haproxy/haproxy.cfg&lt;&lt;EOF
@@ -219,7 +219,7 @@ Now, try accessing webpages for each host from your web browser.
 <a href="https://host1.snitest.com">https://host1.snitest.com</a>
 <a href="https://host2.snitest.com">https://host2.snitest.com</a>
 </pre>
-<h3>References</h3>
+<h2>References</h2>
 <a href="https://httpd.apache.org/docs/2.4/ssl/">Apache SSL configuration (version 2.4)</a></br>
 <a href="https://www.haproxy.org/download/1.5/doc/configuration.txt">HAProxy configuration</a></p>
 That's all folks! </br>

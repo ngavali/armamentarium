@@ -1,5 +1,5 @@
 <draft/></p>
-<h3><a href="#go"  >Go Programming Language</a> - Linked List Reversal</h3></p>
+<h2><a href="#go"  >Go Programming Language</a> - Linked List Reversal</h2></p>
 In this short article, we will see how to reverse a linked list using recursion logic.</p>
 <h4>At first, the act of reversal</h4>
 Assume, while traversing a link list (forget the direction) we are at node A, we try to perform reversal by updating node B to point to node A. i.e. we update B.next such that it points to A.</br>
@@ -153,7 +153,7 @@ Address 0xc42000a0c0 -> data node 02 , next 0xc42000a0a0
 Address 0xc42000a0a0 -> data node 01 , next 0x0
 </pre>
 </p>
-<h3>Using temporary variables</h3>
+<h2>Using temporary variables</h2>
 This is left as an exercise for the reader. We use extra variable to store the pointer to prev and next nodes.
 <h4>Code</h4>
 <pre>

@@ -1,5 +1,5 @@
 <tr><td>
-	<h3><a href="#db"  >Database</a> - Simple Job scheduler</h3>
+	<h2><a href="#db"  >Database</a> - Simple Job scheduler</h2>
 	In this article we will model a simple jobScheduler in database ( Job definition and its flow/dependencies ) and build required functionality ( retreive/store Job information and schedule Job(s) execution ). Here, I have used MySQL/Mariadb to implement the same. You can choose a database of your choice and port queries accordingly.
 <h4>Example Job workflow</h4>
 Below figure depicts an ETL (Extract, Transform and Load in Data Warehouse) Job workflow, wherein one process follows another. Circles represent jobs and arrows indicate the direction of the Job execution and dependencies.</br> For example : A &rarr; B indicates that Job B depends on Job A, and can run only when Job A completes successfully. Similarly, in below example Job T1 depends on Job E1 and E2 and can be run only when both are successfully completed and rest follows the same. 

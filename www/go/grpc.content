@@ -1,4 +1,4 @@
-<h3><a href="#go"  >Go Programming Language</a> - gRPC</h3></p>
+<h2><a href="#go"  >Go Programming Language</a> - gRPC</h2></p>
 Read <a href="#go/protobuff" >Protocol Buffers</a> before proceeding.
 <h4>Example</h4>
 Invoke RPC to find sum of numbers.
