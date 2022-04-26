@@ -5,8 +5,7 @@ var menuitem = { "Go":"go", "Rust":"rust", "DB":"db", "DS":"dist. systems", "Lin
 var navigate = [];
 var currentI = 0;
 var reading = false;
-var fontSelection = { true: "myfont", false: "Helvetica" };
-var fontSelection = { true: "myfont", false: "Padauk, 'Helvetica Neue', 'Helvetica'" };
+var fontSelection = { true: "myfont", false: "'Helvetica Neue',Helvetica,Arial,sans-serif" };
 var readingSource = { true: "/static/book-active.png", false: "/static/book-inactive.png"}
 
 function toggleFont() {
@@ -25,14 +24,14 @@ function getReadingMode() {
 }
 
 function fixFont(reading) {
-    _('topicContent').style.fontFamily = fontSelection[reading]
+    _('topicContent').style.fontFamily = fontSelection[reading];
 /*
     _('topicContent').style.fontWeight = reading ?  "bold" : "normal";
     } else {
         _('topicContent').style.fontWeight = "normal";
     }
 */
-    _('reader').src = readingSource[reading]
+    _('reader').src = readingSource[reading];
 }
 
 function setCookie(cookie_name, cookie_value, exdays) {
