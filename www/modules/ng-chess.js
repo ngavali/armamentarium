@@ -259,7 +259,7 @@ id: id,
 class: "errorDisplay",
 disabled: true
 })
-this.value = "White plays ... Click square to move or release piece"
+this.value = "White plays, click square to move or release piece"
 this.elem.innerHTML = this.value
 }
 

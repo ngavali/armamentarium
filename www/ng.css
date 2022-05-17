@@ -69,22 +69,22 @@ background: url('piecesSprite.svg') 90px -45px;
     padding-top: 20px;
 float: left;
 height: 40px;
-width: 400px;
+width: 450px;
 outline: none;
 }
 .errorDisplay {
     padding-top: 20px;
 loat: left;
 height: 40px;
-width: 400px;
+width: 450px;
 outline: none;
-         text-align: left;
+text-align: center;
 }
 .moveDisplay {
 height: 40px;
 width: 400px;
 outline: none;
-         text-align: left;
+text-align: center;
 }
 .chessboard {
 height: 360px;
@@ -121,6 +121,7 @@ height: 45px;
 width: 45px;
 float: left;
 }
+
 .moveTracker {
 display: inline-block;
 float:left;

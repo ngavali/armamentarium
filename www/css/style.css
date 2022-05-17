@@ -203,3 +203,11 @@ hl {
     color: #33e;
     font-weight: bold;
 }
+
+dl {
+    margin: 0px;
+}
+
+dd {
+    font-size: 16px;
+}
