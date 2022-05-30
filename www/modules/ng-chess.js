@@ -99,6 +99,7 @@ class Chessboard extends ng.DOMElement {
         BlackMoveTracker
         MoveDisplay
         ErrorDisplay
+    isCastling = false;
 
         constructor(id) {
             super("div", {
@@ -382,7 +383,7 @@ const myApp = () => {
         const c = new Chessboard("ChessBoard")
         //const selectedSquare = new Array()
         let selectedSquare
-        let isCastling = false
+        
         let player = {
 true: "white",
       false: "black"
@@ -441,7 +442,7 @@ const isValidMove = (cboard, move) => {
                         "black": c.BlackMoveTracker
                     }
 
-if (!isCastling) {
+if (!c.isCastling) {
                 moveTracker[move.playedBy].refresh(moveTracker[move.playedBy].value + "</br>" + (c.lastMoveNum + 1) + "." + aliases[move.src.has.name] + move.isCaptured + horAxis[move.dst.positionX - 1] + move.dst.positionY)
             } else {
                 if ((From.positionX + To.positionX) / 2 === 4) {
@@ -452,10 +453,10 @@ if (!isCastling) {
             }
 
                 move.do(c, {
-isCastling: isCastling
+isCastling: c.isCastling
 })
-if (isCastling) {
-    isCastling = !isCastling
+if (c.isCastling) {
+    c.isCastling = !c.isCastling;
 }
 c.Moves.push(move)
     c.lastMoveNum++

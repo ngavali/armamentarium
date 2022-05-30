@@ -120,7 +120,7 @@ const castlingMoveValidator = (cboard, FromLocation, ToLocation) => {
                                 return false
                             }
                         }
-                    isCastling = true
+                    cboard.isCastling = true
                         return true
                 }
             }
