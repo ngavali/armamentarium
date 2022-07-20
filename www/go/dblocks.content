@@ -215,5 +215,3 @@ Run same process with a timeout value this time. It waits for a given timeout pe
 Now, what if the DB server goes down! How do we replicate the active locks(s)? If operations are involved with the same DB that process want to work on, you shouldn't worry much but what if that is not the case? Welcome to the world of distributed systems and Stay tuned!
 </p>
 That's all for now!
-</p>
-- Thanks

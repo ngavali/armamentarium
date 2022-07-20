@@ -40,5 +40,4 @@ Now, let us worsen the situation by creating the network partitioning. Wherein n
 </center></p>
 Here comes the twist, can you now still have both consistency and complete availability at the same time? (say, you update the state on one of the nodes and try to read the state from others given the network partitioning) If you choose consistency, you have to let go availability or the other way round i.e. let go consistency, had availability been chosen.</p>
 I am leaving it as an exercise for the reader to play around!<p>
-That's all folks!</p>
-Thanks</p>
+That's all folks!

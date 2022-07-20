@@ -7,7 +7,10 @@
 html { overflow-y: scroll; }
 
 div#ContentBody {    
+    font-family: Helvetica,Arial,sans-serif;
+    font-weight: 300;
     line-height: 35px;
+    font-size: 16px;
 }
 
 pre {
@@ -29,15 +32,19 @@ div#menubar {
     background-color: #fff;
     ;ackground-image: linear-gradient(to bottom right, #EFEFF0, #FEEFDD);
     border-bottom-width: 1px;
-    border-bottom-color: #888;
-    border-bottom-style: dashed;
-    font-family: Padauk, "Helvetica Neue", Helvetica;
+    border-bottom-color: #aaa;
+    order-bottom-style: dashed;
+    border-bottom-style: solid;
+    font-family: Helvetica,Arial,sans-serif;
+    font-weight: 300;
+    --webkit-text-size-adjust: 100%;
 }
 
 logo-left {
-    font-family: Padauk, "Helvetica Neue", Helvetica;
+    font-family: Helvetica,Arial,sans-serif;
+    font-weight: 300;
     font-size: 24px;
-    font-weight: normal;
+    --webkit-text-size-adjust: 100%;
     adding: 0px 5px 0px 10px;
     order: #fff 2px SOLID;
 }
@@ -45,8 +52,9 @@ logo-right {
     color:#A31621;
     color: #F7C548;
     font-size: 24px;
-    font-family: Padauk, "Helvetica Neue", Helvetica;
-    font-weight: normal;
+    font-family: Helvetica,Arial,sans-serif;
+    font-weight: 300;
+    --webkit-text-size-adjust: 100%;
     padding: 0px 0px 0px 0px;
     order: #fff 2px SOLID;
     ackground: #fff;
@@ -58,16 +66,18 @@ k3 {
 
 h2, k3 {
     font-size: 26px;
-    font-weight: normal;
     margin-top: 10px;
     margin-bottom: 20px;
     color: #2C365E;
-    font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+    font-family: Helvetica,Arial,sans-serif;
+    font-weight: 300;
+    --webkit-text-size-adjust: 100%;
 }
 
 h4 {
+    font-family: Helvetica,Arial,sans-serif;
     font-size: 18px;
-    font-weight: bold;
+    font-weight: 350;
     margin-top: 5px;
     margin-bottom: 0px;
 }
@@ -101,14 +111,16 @@ body {
     padding-right: 0px;
     padding-bottom: 50px;
     margin: 0px;
-    font-family: Padauk, "Helvetica Neue", Helvetica;
+    font-family: Helvetica,Arial,sans-serif;
+    font-weight: 300;
+    --webkit-text-size-adjust: 100%;
 }
 
 table#topicContent {
     width:800px;
     border:0px;
     font-size: 18px;
-    font-family: Padauk, "Helvetica Neue", Helvetica;
+    font-family: Helvetica,Arial,sans-serif;
 }
 
 table#menu tr td a {
@@ -116,16 +128,20 @@ table#menu tr td a {
     text-decoration: none;
     color: #000;
     font-size: 18px;
-    font-family: Padauk, "Helvetica Neue", Helvetica;
+    font-family: Helvetica,Arial,sans-serif;
 }
 
 a {
     color: #4E8098;
+    color: #1756a9;
     outline: none;
+    font-family: Helvetica,Arial,sans-serif;
+    font-weight: 300;
 }
 
 a:hover {
     color: #D74E09;
+    color:#2a7ae2;
 }
 
 img {
@@ -139,7 +155,8 @@ table#menu tr td .activeLink {
     color:#C49799;
     color:#883955;
     color:#FF3E41;
-    font-weight: bold;
+    font-family: Helvetica,Arial,sans-serif;
+    font-weight: 350;
 }
 
 /*text styles*/
