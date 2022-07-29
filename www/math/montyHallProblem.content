@@ -135,7 +135,7 @@ _('switch-visual').style.width = `${success_rate}%`;
 _('no-switch-visual').style.width = `${100-success_rate}%`;
 
 this.disabled = false;
-" />
+" /></br>
 
 Success rate: Switch=<span id="simulation-result-1"></span>, No Switch=<span id="simulation-result-2"></span>, 
 Total time: <span id="simulation-run-time"></span>
