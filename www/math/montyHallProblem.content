@@ -1,5 +1,147 @@
+<script>
+
+var configuration = [];
+const NUMBER_OF_ROOMS = 3;
+const IS_DEBUG = false;
+
+function shuffle(array) {
+  let currentIndex = array.length,  randomIndex;
+
+  // While there remain elements to shuffle.
+  while (currentIndex != 0) {
+
+    // Pick a remaining element.
+    randomIndex = Math.floor(Math.random() * currentIndex);
+    currentIndex--;
+
+    // And swap it with the current element.
+    [array[currentIndex], array[randomIndex]] = [
+      array[randomIndex], array[currentIndex]];
+  }
+  return array;
+}
+
+function setupRooms() {
+    let i = configuration.length;
+    if ( configuration.length < NUMBER_OF_ROOMS ) {
+        if  ( configuration.length === 0 ) {
+            configuration.push('C');
+            i++;
+        }
+        while (i < NUMBER_OF_ROOMS) {
+            configuration.push('G');
+            i++;
+        }
+    }
+    return shuffle(configuration);
+}
+
+function selectDoor() {
+    return Math.floor( Math.random() * NUMBER_OF_ROOMS );
+}
+
+function FindDoorHavingCar() {
+    let i = 0; 
+    do {
+        if ( configuration[i] === 'C' ) {
+            return i;
+        }
+        i++;
+    } while ( i<NUMBER_OF_ROOMS );
+}
+
+function doesSwitchWins(doorSelected, doorHavingCar) {
+    return doorSelected !== doorHavingCar;
+}
+
+
+function log(line) {
+    if (IS_DEBUG) {
+        console.log(line);
+    }
+}
+
+function montyHall() {
+    configuration = setupRooms();
+    log(configuration);
+    const doorSelected = selectDoor();
+    const doorHavingCar = FindDoorHavingCar();
+    const switchWins = doesSwitchWins(doorSelected, doorHavingCar);
+    log(`Door selected: ${doorSelected} and Car is behind the door: ${doorHavingCar}, Switching wins: ${switchWins}`)
+    return switchWins;
+}
+
+function simulateMontyHall(N) {
+    console.log(`Running simulation: ${N} times.`);
+    let switchWins = 0;
+    for (let i =0; i<N; i++){
+        if (montyHall()) {
+            switchWins+=1;
+        }
+    }
+    return Math.round(switchWins*100/N,2);
+}
+</script>
+
+<style>
+.door {
+    width: 50px;
+    height: 100px;
+    background-color: brown;
+    border: 1px #000 SOLID;
+    float:left;
+    display: block;
+    margin: 5px;
+    padding: 5px;
+}
+
+div#percentage-bar {
+}
+
+div#switch-visual {
+    background-color: #0e0;
+    float: left;
+}
+div#no-switch-visual {
+    background-color: #e00;
+    float: left;
+}
+</style>
+
+<!--div style="display:block;">
+    <div id="door1" class="door"></div>
+    <div id="door2" class="door"></div>
+    <div id="door3" class="door"></div>
+<div-->
 <h2><a href="#math"  >Mathematics</a> - The Monty Hall problem</h2>
 
+<fieldset>
+  <legend>Simulator</legend>
+# of simulations: <input type="text" id="num_simulations" />
+<input type="button" value="Simulate" onclick="
+
+this.disabled = true;
+success_rate = simulateMontyHall(_('num_simulations').value);
+_('simulation-result-1').textContent = success_rate + '%';
+_('simulation-result-2').textContent = (100-success_rate) + '%';
+
+per_bar_width=parseInt(_('percentage-bar').style.width, 10);
+_('switch-visual').style.width = per_bar_width * ( success_rate / 100 );
+_('no-switch-visual').style.width = per_bar_width * ( 1 - success_rate / 100 );
+
+this.disabled = false;
+" /></p>
+Success rate: Switch=<span id="simulation-result-1"></span>, No Switch=<span id="simulation-result-2"></span>
+<center>
+<div id="percentage-bar" style="width: 600">
+    <div id="switch-visual" style="width: 100; height: 10;"></div>
+    <div id="no-switch-visual" style="width: 100; height: 10; background-color: #f00;"></div>
+</div>
+</center>
+
+</fieldset>
+
+</p>
 When I got to know about this problem, its solution appeared to be a very straight forward. However after learning the solution, it was very difficult to believe that I've got it wrong and it did not appear to make any sense at first sight. And after some careful thought processing it became apparently reasonable. Ok, well I got it but why are we talking about it. Firstly, it is always interesting and fun to discuss a quirky problem. Secondly, they tickle our brain and forces us to re-establish the status quo of our knowledge and understanding. Finally, things or event might not be as they seem to be at first sight and sometimes a close examination is required to reveal its true nature. All an all it makes us a better thinker.</p>
 
 Here, I will no go deep into mathematical analysis but instead try to sketch a better picture to get an intuition of the solution.</p>
@@ -20,5 +162,3 @@ What would you do, stick your first choice door#1 or switch to door#3? Still not
 You may take a look at <a href="#math/probability" >Gentle review of the probability theory</a> to learn more about probability.</p>
 
 Thats all folks! Hope you have enjoyed it.</p>
-
-Thanks.

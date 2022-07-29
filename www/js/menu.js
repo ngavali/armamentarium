@@ -65,7 +65,16 @@ _ = ( objString ) => {
     }
 
     function putIntoDiv ( toPut, divObject ) {
-        divObject.innerHTML = toPut;
+        try {
+            let frag = document.createRange().createContextualFragment(toPut);
+            //divObject.innerHTML = toPut;
+            divObject.innerHTML = '';
+            divObject.appendChild(frag);
+        } catch (ex) {
+            console.log("Couldnt convert content to DOM due to exception: " + ex);
+            console.log("Falling back to text mode");
+            divObject.innerHTML = toPut;
+        }
     }
 
     function fetchDataPrivate(request, callback, args) {
