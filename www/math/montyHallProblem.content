@@ -117,23 +117,30 @@ div#no-switch-visual {
 
 <fieldset>
   <legend>Simulator</legend>
-# of simulations: <input type="text" id="num_simulations" />
+# of simulations: <input type="text" id="num_simulations" value=1 />
 <input type="button" value="Simulate" onclick="
 
 this.disabled = true;
-success_rate = simulateMontyHall(_('num_simulations').value);
-_('simulation-result-1').textContent = success_rate + '%';
-_('simulation-result-2').textContent = (100-success_rate) + '%';
 
-per_bar_width=parseInt(_('percentage-bar').style.width, 10);
-_('switch-visual').style.width = per_bar_width * ( success_rate / 100 );
-_('no-switch-visual').style.width = per_bar_width * ( 1 - success_rate / 100 );
+startTime=new Date();
+success_rate = simulateMontyHall(_('num_simulations').value);
+endTime=new Date();
+
+_('simulation-run-time').textContent = `${(endTime - startTime)}ms`;
+
+_('simulation-result-1').textContent = `${success_rate}%`;
+_('simulation-result-2').textContent = `${100-success_rate}%`;
+
+_('switch-visual').style.width = `${success_rate}%`;
+_('no-switch-visual').style.width = `${100-success_rate}%`;
 
 this.disabled = false;
-" /></p>
-Success rate: Switch=<span id="simulation-result-1"></span>, No Switch=<span id="simulation-result-2"></span>
+" />
+
+Success rate: Switch=<span id="simulation-result-1"></span>, No Switch=<span id="simulation-result-2"></span>, 
+Total time: <span id="simulation-run-time"></span>
 <center>
-<div id="percentage-bar" style="width: 600">
+<div id="percentage-bar" style="width: 100%">
     <div id="switch-visual" style="width: 100; height: 10;"></div>
     <div id="no-switch-visual" style="width: 100; height: 10; background-color: #f00;"></div>
 </div>
