@@ -41,6 +41,8 @@ function selectDoor() {
 }
 
 function FindDoorHavingCar() {
+    return configuration.indexOf('C');
+    /*
     let i = 0; 
     do {
         if ( configuration[i] === 'C' ) {
@@ -48,6 +50,7 @@ function FindDoorHavingCar() {
         }
         i++;
     } while ( i<NUMBER_OF_ROOMS );
+    */
 }
 
 function doesSwitchWins(doorSelected, doorHavingCar) {

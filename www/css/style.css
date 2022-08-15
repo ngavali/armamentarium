@@ -42,7 +42,7 @@ div#menubar {
 
 logo-left {
     font-family: Helvetica,Arial,sans-serif;
-    font-weight: 300;
+    font-weight: 350;
     font-size: 24px;
     --webkit-text-size-adjust: 100%;
     adding: 0px 5px 0px 10px;
@@ -53,7 +53,7 @@ logo-right {
     color: #F7C548;
     font-size: 24px;
     font-family: Helvetica,Arial,sans-serif;
-    font-weight: 300;
+    font-weight: 350;
     --webkit-text-size-adjust: 100%;
     padding: 0px 0px 0px 0px;
     order: #fff 2px SOLID;
