@@ -1,14 +1,15 @@
 <h2>About me and this website</h2>
 <img src="static/self.jpeg" height="150px" style="float:right;margin-left:30px"/>
-		Hi there! my name is Nilesh. </p>
-I have studied Electronics and Communication Engg. and I am passionate about science and technology.</p>
-This website hosts collection of articles about computer systems and software, my learnings and other musings.
+		Hey there! I am Nilesh. </p>
+I have studied Electronics and Communication Engg. from University of Mumbai (Distinction) and I am passionate about science and technology.</p>
+This website hosts collection of articles on my experiences with computer systems and software, and also some musings around reading books on varied topics.
 <!--strike straight to the point and avoid any use of jargaons or blah! blah! statements.</p-->
 <!--Also, the font used on this website is made using my very own handwriting, I feel handwritten look would give that old timer school feeling for the retro folks like me. Hope you will enjoy reading it like that. (Please drop me a message at gavali.nilesh80186@gmail.com feel if I need to improve on fonts for better engagement and the reading experience).If you like the font you can download it <a href="/static/gavali.ttf" target="_">here</a--></p>
 	<!--img style="display:block;align:left;border-radius:8px;" width="150" src="/images/jackn.jpg"--></p>
 		</p>
 I hope you will find them interesting and useful. Happy learning!</p>
-Code used in the examples can be found <a target="_" href="https://github.com/ngavali/rationalbear">here.</a>
+My linkedin <a target="_" href="https://www.linkedin.com/in/nilesh-gavali-02223623/">profile</a>.</br>
+Code used in the examples can be found <a target="_" href="https://github.com/ngavali/rationalbear">here</a>.
 		<!--
 		You can find links to the collection of some interesting literature <a href="#interests"  >here</a> that drives and keeps me motivated.</p>
 		<!--<h2>Motivation</h2>
