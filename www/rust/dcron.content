@@ -1,0 +1,35 @@
+<style>
+li {
+ list-style-type: disc;
+}
+</style>
+<h2><a href="#rust"  >Rust Programming Language</a> - Distributed Cron</h2></p>
+<draft>
+Some <a target="_" href="https://queue.acm.org/detail.cfm?id=2745840">inputs</a>
+</p>
+Traditional Cron
+<ul>
+ <li>Restricted to single machine</li>
+ <li>Fire and forget</li>
+ <li>Idempotency (Double launches - Skipping is better)</li>
+ <li>Jobs can get skipped (Maintenance or Machine is down)</li>
+</ul>
+Cron in Distributed environments, uuhhh!
+<ul>
+ <li>Decouple processes from machines</li>
+ <li>Persist the state on a distributed file system (DFS)</li>
+ <li>Timeliness (Hot spares to quickly take over)</li>
+ <li>Resource usage (in Colocated spaces)</li>
+ <li>Handling failure (RPCs/APIs calls)</li>
+</ul>
+hmm, How to build one?
+<ul>
+ <li>Tracking the state of cron Jobs</br>
+    Did not choose to store state over DFS, instead store a small amount of state as part of the Cron service itself
+ </li>
+ <li>Using (fast) PAXOS (Why not Zab/Raft?) to achieve concensus</li>
+ <li>Replicas with Master and Slaves</li>
+ <li>Sync cron updates</li>
+</ul>
+Mechanism
+

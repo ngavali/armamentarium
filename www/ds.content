@@ -7,3 +7,4 @@ Distributed transaction, <a href="#ds/saga" >SAGA</a></br>
 <a href="#ds/consensus" >Consensus</a></br>
 <a href="#ds/vectorclock" >Vector Clock</a></br>
 <a href="#ds/caching" >Caching</a></br>
+
