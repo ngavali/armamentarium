@@ -93,8 +93,9 @@ border: 3px #393D3F SOLID;
 border: 3px #333 SOLID;
 }
 .blackSquare {
-background: #88a096;
 background: #D7263D;
+background: #B27C66;
+background: #88a096;
 height: 45px;
 width: 45px;
 float: left;
@@ -115,8 +116,8 @@ float: left;
 }
 
 .blackSquareSelected {
-background: #637074;
 background: #b7061D;
+background: #637074;
 height: 45px;
 width: 45px;
 float: left;
