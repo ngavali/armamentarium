@@ -1,0 +1,256 @@
+<h2><a href="#go"  >Go Programming Language</a> - UDP</h2></p>
+<draft/>
+<h3>DNS Server</h3>
+This example demonstrates usage of UDP connection via a minimal DNS server implementation. Also, it includes an interplay between binary data and Go data types.
+</br>
+A quick refresher on how DNS packets look like - https://courses.cs.duke.edu/fall16/compsci356/DNS/DNS-primer.pdf.
+</br>
+Code is pretty much self understandable.
+<pre>
+package main
+
+import (
+    "bytes"
+    "encoding/binary"
+    "fmt"
+    "log"
+    "net"
+)
+
+const (
+    HEADERLENGTH         = 12
+    DNSRESOURCENAMEMAXLENGTH = 255
+    QUESTIONQUERYINFOLENGTH  = 4
+
+    DNSHeaderFormatterText = `DNSHeader {
+ IDentification : %d
+ Flags          : %016b
+ Questions      : %d
+ AnswerRRs      : %d
+ AuthorityRRs   : %d
+ AdditionalRRs  : %d
+}`
+
+    QuestionFormatterText = `Question {
+ Name     : [len=%d] %s
+ Query    : %v
+}`
+
+    QueryFormatterText = `Query {
+ Type     : %d
+ Class    : %d
+}`
+
+    AnswerFormatterText = `Answer {
+ Name     : [len=%d] %s
+ Query    : %v
+ TTL      : %d
+ RdLength : %d
+ RData    : [len=%d] %s
+}`
+)
+
+var NETWORKORDER = binary.BigEndian
+
+type Service interface {
+    Start()
+    Stop()
+}
+
+type DNSHeader struct {
+    IDentification uint16
+    Flags          uint16
+    Questions      uint16
+    AnswerRRs      uint16
+    AuthorityRRs   uint16
+    AdditionalRRs  uint16
+}
+
+func (h DNSHeader) String() string {
+    return fmt.Sprintf(DNSHeaderFormatterText, h.IDentification, h.Flags, h.Questions, h.AnswerRRs, h.AuthorityRRs, h.AdditionalRRs)
+}
+
+type Query struct {
+    Type  uint16
+    Class uint16
+}
+
+func (q Query) String() string {
+    return fmt.Sprintf(QueryFormatterText, q.Type, q.Class)
+}
+
+type Question struct {
+    Name []byte
+    Query
+}
+
+func (q Question) String() string {
+    return fmt.Sprintf(QuestionFormatterText, len(q.Name), q.Name, q.Query)
+}
+
+type Answer struct {
+    Name []byte
+    Query
+    TTL      uint32
+    RdLength uint16
+    RData    []byte
+}
+
+func (a Answer) String() string {
+    return fmt.Sprintf(AnswerFormatterText, len(a.Name), a.Name, a.Query, a.TTL, a.RdLength, len(a.RData), a.RData)
+}
+
+type DNSRequest struct {
+    DNSHeader
+    Question
+}
+
+func NewDNSRequest(data []byte) *DNSRequest {
+    return &DNSRequest{}
+}
+
+type DNSResponse struct {
+    DNSHeader
+    Question
+    Answer
+}
+
+func (r DNSResponse) ToBytes() []byte {
+    return nil
+}
+
+func dumpData(data []byte) {
+    log.Printf("!!!DEBUG!!! Data: length=%d bytes...", len(data))
+    for i, c := range data {
+        if i%16 == 0 {
+            fmt.Println("")
+        }
+        fmt.Printf("%02x", c)
+        if i%2 == 1 {
+            fmt.Printf(" ")
+        }
+    }
+    fmt.Println("")
+    log.Println("!!!DEBUG!!!")
+}
+
+type DNSService struct {
+    shutdown bool
+}
+
+func (s *DNSService) listen() {}
+
+func (s *DNSService) Stop() {}
+
+func (s *DNSService) Start() {
+
+    udpAddr, _err := net.ResolveUDPAddr("udp", "0.0.0.0:53")
+    if _err != nil {
+        log.Printf("net.ResolveUDPAddr: %s", _err)
+    }
+    udpConnection, _err := net.ListenUDP("udp", udpAddr)
+    if _err != nil {
+        log.Printf("net.ListenUDP: %s", _err)
+    }
+    defer udpConnection.Close()
+
+    data := make([]byte, 1024)
+
+    for {
+
+        msgSize, addr, _err := udpConnection.ReadFromUDP(data)
+        if _err != nil || msgSize == 0 {
+            log.Printf("udpConnection.Read: %s", _err)
+            break
+        }
+        log.Printf("request from : %+v", addr)
+
+        dumpData(data[:msgSize])
+
+        dnsRequestHeader := DNSHeader{}
+
+        //Network uses BigEndian ordering
+        binary.Read(bytes.NewBuffer(data[:HEADERLENGTH]), NETWORKORDER, &dnsRequestHeader)
+
+        log.Printf("Request: %+v\n", dnsRequestHeader)
+
+        dnsQuestion := data[HEADERLENGTH:]
+        dnsResourceName := make([]byte, 0, DNSRESOURCENAMEMAXLENGTH)
+
+        var k, resourceNameLength, questionLength = 0, 0, HEADERLENGTH
+        question := Question{}
+
+        //Process Questions
+        //Actually, Questions is always = 1
+        for i := 0; i < int(dnsRequestHeader.Questions); i++ {
+            //Process resource record
+            for dnsQuestion[k] != 0 {
+                resourceNameLength = k + int(dnsQuestion[k]) + 1
+                k++
+                dnsResourceName = append(append(dnsResourceName, 
+                    dnsQuestion[k:resourceNameLength]...), 
+                    '.')
+                k = resourceNameLength
+            }
+            k++
+
+            query := Query{}
+            queryData := bytes.NewBuffer(dnsQuestion[k : k+QUESTIONQUERYINFOLENGTH])
+            binary.Read(queryData, NETWORKORDER, &query)
+            question = Question{dnsQuestion[:resourceNameLength+1], query}
+
+            questionLength += k + QUESTIONQUERYINFOLENGTH
+
+            log.Printf("Looking up for : %s", dnsResourceName)
+
+        }
+
+        //Use header from the request and update it for the response
+        dnsRequestHeader.Flags |= 1 << 15 //Set type as answer
+        dnsRequestHeader.AnswerRRs = 1    //Set Answers
+
+        log.Printf("Response: %+v\n", dnsRequestHeader)
+
+        answer := Answer{
+            question.Name,
+            question.Query,
+            60,
+            4,
+            []byte{1, 1, 1, 1}, //You can use anything you like
+        }
+
+        dnsResponseHeader := new(bytes.Buffer)
+
+        //Write Header
+        binary.Write(dnsResponseHeader, NETWORKORDER, &dnsRequestHeader)
+
+        //Write Question
+        binary.Write(dnsResponseHeader, NETWORKORDER, &question.Name)
+        binary.Write(dnsResponseHeader, NETWORKORDER, &question.Query)
+
+        //Write Answer
+        binary.Write(dnsResponseHeader, NETWORKORDER, &answer.Name)
+        binary.Write(dnsResponseHeader, NETWORKORDER, &answer.Query)
+        binary.Write(dnsResponseHeader, NETWORKORDER, &answer.TTL)
+        binary.Write(dnsResponseHeader, NETWORKORDER, &answer.RdLength)
+        binary.Write(dnsResponseHeader, NETWORKORDER, &answer.RData)
+
+        //Write AdditionalRRs captured in the request
+        binary.Write(dnsResponseHeader, NETWORKORDER, data[questionLength:msgSize])
+
+        log.Printf("%+v\n", question)
+        log.Printf("%+v\n", answer)
+
+        dumpData(dnsResponseHeader.Bytes())
+
+        //Respond back to the requestor
+        udpConnection.WriteToUDP(dnsResponseHeader.Bytes(), addr)
+
+    }
+}
+
+func main() {
+    dnsService := DNSService{}
+    dnsService.Start()
+}
+</pre>

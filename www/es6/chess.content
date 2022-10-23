@@ -1,4 +1,5 @@
-<h2>Modules - <draft/></h2>
+<h2><a href="#linux" >ES6</a> - Chess app (Modules)</h2>
+<draft/>
 ng.js
 <pre>
 class DOMElement {

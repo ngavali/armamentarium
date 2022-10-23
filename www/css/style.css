@@ -30,10 +30,8 @@ div#menubar {
     position: fixed;
     width: 100%;
     background-color: #fff;
-    ;ackground-image: linear-gradient(to bottom right, #EFEFF0, #FEEFDD);
     border-bottom-width: 1px;
     border-bottom-color: #aaa;
-    order-bottom-style: dashed;
     border-bottom-style: solid;
     font-family: Helvetica,Arial,sans-serif;
     font-weight: 300;
