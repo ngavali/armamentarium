@@ -31,3 +31,5 @@ Process sychronization using a <a href="#go/dblocks" >DB lock</a></br>
 <a href="#go/testing" >Testing</a>
 <h4>Good Reads</h4>
 <a href="https://www.ardanlabs.com/blog/2017/05/language-mechanics-on-stacks-and-pointers.html" target="_">Stacks and Pointers</a>
+<h4>Network</h4>
+<a href="#go/udp" >UDP</a></br>
