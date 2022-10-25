@@ -25,12 +25,7 @@ function getReadingMode() {
 
 function fixFont(reading) {
     _('topicContent').style.fontFamily = fontSelection[reading];
-/*
     _('topicContent').style.fontWeight = reading ?  "bold" : "normal";
-    } else {
-        _('topicContent').style.fontWeight = "normal";
-    }
-*/
     _('reader').src = readingSource[reading];
 }
 
