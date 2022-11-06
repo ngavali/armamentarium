@@ -61,5 +61,5 @@ _('drawing').appendChild(svgElem);
 myInterval=setInterval(bouncer, 10);
 
 </script>
-<h2><a href="#random"  >Random</a> - Bounce</h2></p>
+<h2><a href="#random"  >Random thoughts!</a> - Bounce</h2></p>
 <div id="drawing"></div>

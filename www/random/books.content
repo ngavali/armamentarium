@@ -1,39 +1,70 @@
-<h2><a href="#random"  >Random</a> - Books</h2></p>
-My library</p>
-
+<h2><a href="#random"  >Random thoughts!</a> - Books</h2></p>
+<h3>Philosophy/History</h3>
 <ul>
+    <li>Fermat’s Last Theorem - Simon Singh [My favorite]</li>
+    <li>Alex's Adventures in Numberland - Alex Bellos</li>
+    <li>Enchiridion of Epictetus</li>
+    <li>On the Shortness of Life - Essays by Seneca</li>
+    <li>Meditations - Marcus Aurelius</li>
+    <li>The book of Mirdad - Mikhail Naimy</li>
+    <li>Ikigai: The Japanese Secret to a Long and Happy Life - Francesc Miralles and Hector Garcia</li>
+    <li>Courage - The joy of living dangerously - OSHO</li>
+    <li>Homo Deus - Yuval Harari</li>
+    <li>India, that is Bharat - J Sai Deepak</li>
+    <li>Savarkar - Biography - Part 1 & 2 - Vikram Sampath</li>
+</ul>
+<h3>Science</h3>
+<ul>
+<li>The Emperor of All Maladies: A Biography of Cancer - Siddhartha Mukherjee</li>
+<li>The Big Picture: On the Origins of Life, Meaning, and the Universe Itself - Sean Carroll</li>
 <li>The Demon-Haunted World - Ann Druyan and Carl Sagan</li>
-<li>The Midnight Library - Matt Haig</li>
-<li><dl><dt>The Order of Time - Carlo Rovelli</dt><dd>World is not a collection of things, it is a collection of events. There is no time, it's an illusion created by our brain.</dd></dl></li>
-<li>The Richest Man in Babylon - George S. Clason</li>
-<li>The Psychology of Money - Morgan Housel</li>
-<li>The Intelligent Investor - Benjamin Graham</li>
-<li>Das Capital - Karl Marx</li>
-<li>Wealth of Nations - Adam Smith</li>
-<li>Thinking, Fast and Slow - Daniel Kahneman</li>
-<li>Mastery - Robert Greene</li>
-<li>Enchiridion of Epictetus</li>
-<li>On the Shortness of Life - Essays by Seneca</li>
-<li>Meditations - Marcus Aurelius</li>
-<li>The book of Mirdad - Mikhail Naimy</li>
-<li>Ikigai: The Japanese Secret to a Long and Happy Life - Francesc Miralles and Hector Garcia</li>
-<li>Courage - The joy of living dangerously - OSHO</li>
-<li>Clean Code - Uncle Bob</li>
-<li>Design Patterns: Elements of Reusable Object-Oriented Software</li>
-<li>P of EAA - Martin Fowler</li>
-<li>Domain-Driven Design: Tackling Complexity in the Heart of Software - Eric Evans</li>
+<li><dl><dt>The Order of Time - Carlo Rovelli</dt><dd>World is not a collection of things, it is a collection of events. There is no time, it's an illusion created by our brain.
+</dd></dl></li>
+<li><dl><dt>Reality is Not What it Seems: The Journey to Quantum Gravity - Carlo Rovelli</dt><dd>Time is an emergent property.</dd></dl></li>
+<li>Seven Brief Lessons on Physics - Carlo Rovelli</li>
 <li>Genome</li>
 <li>Life at the speed of Light - Craig Venter</li>
 <li>The Selfish Gene - Richard Dawkins</li>
 <li>The Code Breaker - Walter Isaacson</li>
-<li>Seven Brief Lessons on Physics - Carlo Rovelli</li>
-<li>Homo Deus - Yuval Harari</li>
 <li>Factfulness - Hans Rosling</li>
-<li>Educated - Tara Westover</li>
-<li>A Mathematician's Apology - G. H. Hardy</li>
 <li>A Mathematician's Lament - Paul Lockhart</li>
 <li>A Thousand Brains - Jeff Hawkins</li>
 <li>Phantoms in the brain - V.S.Ramachandran</li>
-<li>Savarkar - Biography - Part 1 & 2 - Vikram Sampath</li>
-<li>India, that is Bharat - J Sai Deepak</li>
+</ul>
+<h3>Fiction</h3>
+<ul>
+    <li>The Midnight Library - Matt Haig</li>
+    <li>Before the Coffee Gets Cold - Toshikazu Kawaguchi</li>
+    <li>The Housekeeper and the Professor - Yōko Ogawa</li>
+<li>Jurassic Park - Michael Crichton</li>
+    <li>Piranesi - Susanna Clarke</li>
+</ul>
+<h3>Memoir</h3>
+<ul>
+    <li>Educated - Tara Westover</li>
+    <li>A Mathematician's Apology - G. H. Hardy</li>
+</ul>
+<h3>Self Help</h3>
+<ul>
+    <li>Mastery - Robert Greene</li>
+    <li>Courage to be Disliked - Fumitake Koga and Ichiro Kishimi</li>
+</ul>
+<h3>Psychology</h3>
+<ul>
+    <li>Thinking, Fast and Slow - Daniel Kahneman</li>
+</ul>
+<h3>Programming</h3>
+<ul>
+<li>Effective Programming: More Than Writing Code - Jeff Atwood</li>
+<li>Design Patterns: Elements of Reusable Object-Oriented Software</li>
+<li>P of EAA - Martin Fowler</li>
+<li>Domain-Driven Design: Tackling Complexity in the Heart of Software - Eric Evans</li>
+</ul>
+<h3>Finance/Economics/Money</h3>
+<ul>
+    <li>The Richest Man in Babylon - George S. Clason</li>
+    <li>The Psychology of Money - Morgan Housel</li>
+    <li>The Intelligent Investor - Benjamin Graham</li>
+    <li>Das Capital - Karl Marx</li>
+    <li>Wealth of Nations - Adam Smith</li>
 </ul>
