@@ -1,0 +1,133 @@
+<h2><a href="#linux">Javascript</a> - Bounce</h2></p>
+<center>
+<input type="button" onclick="start()" value="bounce"/>
+<div id="drawing"></div>
+</center>
+<script>
+function start() {
+
+function removeChilds(parent) {
+    while (parent.lastChild) {
+        parent.removeChild(parent.lastChild);
+    }
+}
+
+removeChilds(_('drawing'));
+
+var xmlns = "http://www.w3.org/2000/svg";
+
+class Particle {
+   x = 0
+   y = 0
+   color
+   vx = 0
+   vy = 0 
+   r = 2
+   e = 1
+   stopped = false;
+   obj
+   constructor(x, y, radius, e, { r, g, b }) {
+      this.x = x;
+      this.y = y;
+      this.r = radius;
+      this.e = e*0.9;
+      this.color = `rgb(${Math.round(255*r)}, ${Math.round(255*g)}, ${Math.round(255*b)})`;
+   } 
+
+   move ( boxY ) {
+        if (!this.stopped) {
+          this.vy += gravity;
+          this.y  += this.vy;
+
+          if ( this.y + this.r >= boxY ) {
+            if ( (this.vy * this.vy < 0.1) && (!this.stopped) ) {
+                this.stopped = true;
+            } else {
+                this.vy = -(this.vy*this.e).toFixed(2);
+                this.y  = boxY - this.r 
+            }
+          }
+        this.draw();
+        }
+   }
+
+   draw () {
+        this.obj = drawBullet(this.x, this.y, this.color, this.r);
+   }
+
+}
+
+let gravity = 0.2;
+let radius=1;
+let particles = [];
+let numberOfParticles = 500;
+
+for (let i=0; i<numberOfParticles; i++) {
+    particles.push(new Particle(i,500*Math.random(),radius,Math.random(),{ r:Math.random(), g:Math.random(), b:Math.random() }));
+}
+
+let plotWidth=500;
+let plotHeight=500;
+
+var svgElem = document.createElementNS (xmlns, "svg");
+svgElem.setAttributeNS (null, "id", "myLineChart" );
+svgElem.setAttributeNS (null, "width", plotWidth+1);
+svgElem.setAttributeNS (null, "height", plotHeight+1);
+svgElem.setAttributeNS (null, "border", "1pt SOLID #000");
+
+var frame = document.createElementNS (xmlns, "rect");
+frame.setAttributeNS (null, "id", "mySvgFrame" );
+frame.setAttributeNS (null, "width", plotWidth+1);
+frame.setAttributeNS (null, "height", plotHeight+1);
+frame.setAttributeNS (null, "fill", "#fefefe");
+frame.setAttributeNS (null, "stroke-width", 1);
+frame.setAttributeNS (null, "stroke", "rgb(0, 0, 0)");
+
+svgElem.appendChild(frame);
+
+function drawBullet(x, y, color, r, stroke, yval) {
+    bullet = document.createElementNS (xmlns, "circle");
+    bullet.setAttributeNS (null, "class", "particle");
+    bullet.setAttributeNS (null, "yL", yval);
+    bullet.setAttributeNS (null, "cx", x );
+    bullet.setAttributeNS (null, "cy", y );
+    bullet.setAttributeNS (null, "r" , r );
+    //  bullet.setAttributeNS (null, "stroke", "#fff");
+    bullet.setAttributeNS (null, "fill", color);
+    //	bullet.setAttributeNS (null, "fill-opacity", 1 );
+    //	bullet.setAttributeNS (null, "fill-opacity", 0 ); //transparent
+    //bullet.setAttributeNS (null, "stroke-width", stroke);
+    return bullet;
+}
+
+let myInterval;
+
+function bouncer() {
+
+    let stopped = true;
+    for (let i=0; i<particles.length; i++) {
+        
+        if (particles[i].obj) {
+            svgElem.removeChild(particles[i].obj); 
+        }
+        particles[i].move(plotHeight);
+        svgElem.appendChild(particles[i].obj);
+
+        stopped &=particles[i].stopped;
+    }
+
+
+    if (stopped) {
+        console.log("Interval cleared...");
+        clearInterval(myInterval);
+    }
+
+}
+
+_('drawing').appendChild(svgElem);
+
+myInterval=setInterval(bouncer, 10);
+
+}
+
+</script>

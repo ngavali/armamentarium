@@ -1,4 +1,6 @@
 /*@import url('https://fonts.googleapis.com/css2?family=Padauk&display=swap');*/
+@import url('https://fonts.googleapis.com/css2?family=Calligraffitti&family=Cedarville+Cursive&family=Homemade+Apple&display=swap');
+
 @font-face {
     font-family: 'myfont';
     font-weight: bold;
@@ -185,20 +187,19 @@ ul ul {
 }
 
 meditate::before {
-    content : "Diogenes Meditating...";
-    font-family: "Cutive Mono","Syne Mono", "Courier New", Consolas;
-    font-size: 14px;
-    background: #fafafa;
+    content : "Diogenes meditating...";
+    font-family: "Cedarville Cursive",Helvetica,Arial,myfont,sans-serif;
+    font-size: 20px;
+    background: #eee;
     color: #f2a;
-    padding: 5px;
-    margin:10px;
-    border-radius: 8px;
+    padding-left: 10px;
+    border-radius: 3px;
     display: block;
 }
 
 draft::before {
     content : "draft version - I am still working on it";
-    font-family: "Cutive Mono","Syne Mono", "Courier New", Consolas;
+    font-family: "Cedarville Cursive",Helvetica,Arial,myfont,sans-serif;
     font-size: 14px;
     background: #efefef;
     color: #f22;
@@ -219,4 +220,8 @@ dl {
 
 dd {
     font-size: 16px;
+}
+
+lv::before { 
+    content: "\1F929  "; 
 }

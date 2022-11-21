@@ -1,3 +1,6 @@
 <h2><a href="#ds"  >Distributed Systems</a> - Consensus</h2>
-<draft/>
-<h4>The Byzantine Generals Problem</h4>
+<meditate/>
+<h3>Byzantine Fault Tolerance</h3>
+<h3>Paxos</h3>
+Resources: https://www.youtube.com/watch?v=SRsK-ZXTeZ0
+<h3>Raft</h3>

@@ -62,7 +62,6 @@ _ = ( objString ) => {
     function putIntoDiv ( toPut, divObject ) {
         try {
             let frag = document.createRange().createContextualFragment(toPut);
-            //divObject.innerHTML = toPut;
             divObject.innerHTML = '';
             divObject.appendChild(frag);
         } catch (ex) {
@@ -79,7 +78,6 @@ _ = ( objString ) => {
             if (xmlhttp.readyState == 4) {
                 if(xmlhttp.status == 200) {
                     putIntoDiv(xmlhttp.responseText, request.target);
-                    //console.log("fetch private", args)
                     if ( callback != null ) {
                         callback(args)
                     }
