@@ -79,6 +79,11 @@ h4 {
     margin-bottom: 0px;
 }
 
+h3 {
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
 table#menu {
     width:800px;
     order:0px;

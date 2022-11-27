@@ -30,11 +30,11 @@ class Particle {
       this.x = x;
       this.y = y;
       this.r = radius;
-      this.e = e*0.9;
+      this.e = e/10;
       this.color = `rgb(${Math.round(255*r)}, ${Math.round(255*g)}, ${Math.round(255*b)})`;
    } 
 
-   move ( boxY ) {
+   move (parent, boxY ) {
         if (!this.stopped) {
           this.vy += gravity;
           this.y  += this.vy;
@@ -47,12 +47,16 @@ class Particle {
                 this.y  = boxY - this.r 
             }
           }
-        this.draw();
+        this.draw(parent);
         }
    }
 
-   draw () {
+   draw (parent) {
+        if (this.obj) {
+            parent.removeChild(this.obj);
+        }
         this.obj = drawBullet(this.x, this.y, this.color, this.r);
+        parent.appendChild(this.obj);
    }
 
 }
@@ -63,7 +67,7 @@ let particles = [];
 let numberOfParticles = 500;
 
 for (let i=0; i<numberOfParticles; i++) {
-    particles.push(new Particle(i,500*Math.random(),radius,Math.random(),{ r:Math.random(), g:Math.random(), b:Math.random() }));
+    particles.push(new Particle(i,500*Math.random(),Math.random()*5,Math.random()*9,{ r:Math.random(), g:Math.random(), b:Math.random() }));
 }
 
 let plotWidth=500;
@@ -106,16 +110,9 @@ function bouncer() {
 
     let stopped = true;
     for (let i=0; i<particles.length; i++) {
-        
-        if (particles[i].obj) {
-            svgElem.removeChild(particles[i].obj); 
-        }
-        particles[i].move(plotHeight);
-        svgElem.appendChild(particles[i].obj);
-
+        particles[i].move(svgElem, plotHeight);
         stopped &=particles[i].stopped;
     }
-
 
     if (stopped) {
         console.log("Interval cleared...");
