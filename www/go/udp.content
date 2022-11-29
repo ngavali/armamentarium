@@ -303,4 +303,32 @@ func main() {
     dnsService.Run()
 }
 </pre>
+Terminal 1
+<pre>
+$ sudo go run dns.go
+</pre>
+Terminal 2
+<pre>
+$ dig www.example.com @localhost
+
+; <<>> DiG 9.16.1-Ubuntu <<>> www.example.com @localhost
+;; global options: +cmd
+;; Got answer:
+;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 25564
+;; flags: qr rd ad; QUERY: 1, ANSWER: 2, AUTHORITY: 0, ADDITIONAL: 0
+;; WARNING: recursion requested but not available
+
+;; QUESTION SECTION:
+;www.example.com.               IN      A
+
+;; ANSWER SECTION:
+www.example.com.        60      IN      A       192.168.0.109
+www.example.com.        60      IN      A       192.168.0.110
+
+;; Query time: 10 msec
+;; SERVER: 127.0.0.1#53(127.0.0.1)
+;; WHEN: Tue Nov 29 20:54:37 IST 2022
+;; MSG SIZE  rcvd: 95
+
+</pre>
 That's all folks
