@@ -197,7 +197,6 @@ func NewDNSRequest(
     dnsRequest.DNSHeader.AdditionalRRs = 0
 
     return &dnsRequest
-
 }
 
 type DNSResponse struct {
@@ -230,6 +229,7 @@ func (r DNSResponse) IntoBytesBuffer(
     }
 
     dumpData(dnsResponseHeader.Bytes())
+
 }
 
 func (s *DNSService) ProcessRequest(dnsRequest *DNSRequest) *DNSResponse {
@@ -268,8 +268,7 @@ func (s *DNSService) HandleRequest(udpConnection *net.UDPConn, addr *net.UDPAddr
     //Use header from the request and update it for the response
     log.Printf("Request details: %+v\n", dnsRequest)
 
-    if dnsResponse := s.ProcessRequest(dnsRequest); dnsResponse != nil { //It is a question packet
-
+    if dnsResponse := s.ProcessRequest(dnsRequest); dnsResponse != nil {
         log.Printf("Answering for : %s", dnsResponse.Question.nameAsString())
         log.Printf("Response details: %+v\n", dnsResponse)
 
@@ -307,11 +306,14 @@ func (s *DNSService) Run() {
         s.HandleRequest(udpConnection, addr, data[:msgSize])
 
     }
+
 }
 
 func main() {
+
     dnsService := DNSService{}
     dnsService.Run()
+
 }
 </pre>
 Terminal 1
