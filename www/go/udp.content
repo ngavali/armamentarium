@@ -232,12 +232,7 @@ func (r DNSResponse) IntoBytesBuffer(
     dumpData(dnsResponseHeader.Bytes())
 }
 
-func (s *DNSService) HandleRequest(udpConnection *net.UDPConn, addr *net.UDPAddr, data []byte) {
-
-    log.Printf("Requestor : %+v", addr)
-    dnsRequest := NewDNSRequest(data)
-    //Use header from the request and update it for the response
-    log.Printf("Request details: %+v\n", dnsRequest)
+func (s *DNSService) ProcessRequest(dnsRequest *DNSRequest) *DNSResponse {
 
     if dnsRequest.DNSHeader.Flags&1<<15 == 0 { //It is a question packet
 
@@ -249,17 +244,31 @@ func (s *DNSService) HandleRequest(udpConnection *net.UDPConn, addr *net.UDPAddr
 
         if address, ok := OWNEDDOMAINS[dnsRequest.Question.nameAsString()]; ok {
             dnsResponse.DNSHeader.AnswerRRs = uint16(len(address))
-                for _, ip := range address {
-                    dnsResponse.Answer = append(dnsResponse.Answer,
-                        Answer{
-                            dnsRequest.Question.Name,
-                            dnsRequest.Question.Query,
-                            60,
-                            4,
-                            ip, //You can put any valid response here !!!
-                        })
-                }
+            for _, ip := range address {
+                dnsResponse.Answer = append(dnsResponse.Answer,
+                    Answer{
+                        dnsRequest.Question.Name,
+                        dnsRequest.Question.Query,
+                        60,
+                        4,
+                        ip, //You can put any valid response here !!!
+                    })
+            }
         }
+        return dnsResponse
+    }
+
+    return nil
+}
+
+func (s *DNSService) HandleRequest(udpConnection *net.UDPConn, addr *net.UDPAddr, data []byte) {
+
+    log.Printf("Requestor : %+v", addr)
+    dnsRequest := NewDNSRequest(data)
+    //Use header from the request and update it for the response
+    log.Printf("Request details: %+v\n", dnsRequest)
+
+    if dnsResponse := s.ProcessRequest(dnsRequest); dnsResponse != nil { //It is a question packet
 
         log.Printf("Answering for : %s", dnsResponse.Question.nameAsString())
         log.Printf("Response details: %+v\n", dnsResponse)
@@ -267,6 +276,8 @@ func (s *DNSService) HandleRequest(udpConnection *net.UDPConn, addr *net.UDPAddr
         dnsResponseData := new(bytes.Buffer)
         dnsResponse.IntoBytesBuffer(dnsResponseData)
         udpConnection.WriteToUDP(dnsResponseData.Bytes(), addr)
+    } else {
+        log.Printf("Couldn't handle this request. Bye!")
     }
 
 }
