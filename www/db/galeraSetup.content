@@ -1,0 +1,4 @@
+<h2><a href="#db"  > Database</a> - Mariadb Galera Cluster - Part II - Setup</h2>
+<draft/>
+In <a href="#db/galera"  > Part I</a> of this series, you saw some caveats of using Mariadb Galera database.
+In this part, we will see how to setup completely resilient Mariadb Galera cluster.

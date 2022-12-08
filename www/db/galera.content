@@ -1,17 +1,18 @@
-<h2><a href="#db"  > Database</a> - Mariadb Galera Cluster</h2>
-<draft/>
-Your application is connected to a single backend mysql/mariadb database node (Master/Slave mode) and your thinking of scaling it by upgrading to galera based multi-master mariadb database cluster.
-Oh Yes! we are. This article will walk you through the limitations and behavior that you need to deal with when making a move and will help you decide/design if that is a good choice for you.</p>
+<h2><a href="#db"  > Database</a> - Mariadb Galera Cluster - Part I - Things to know</h2>
+Your application is connected to a single backend mysql/mariadb database node (Master/Slave mode) and you are thinking of scaling it by upgrading to galera based multi-master mariadb database cluster.</p>
+<e>Oh Yes! we are</e>. Then this article is for you and will walk you through the things you need to know and deal with when making a move.</p>
 
-<h4>AUTOINCREMENTS</h4>
-Expect to have gaps in autoincremented values. The gap is equal to the number of nodes in the galera cluster.
+<h3>Autoincrements</h3>
+Expect to have gaps in autoincremented values. The gap is equal to the number of nodes in the galera cluster. This ensures IDs are distinct on each node in the cluster, avoiding any conflict inbetween them.
 </p>
-<h4>LOCKS</h4>
-<i>In Galera, table row locks are not visible across the nodes. It follows an optimistic approach and transactions running on different nodes can acquire lock on the same table rows.</i></p>
+<h3>Locks</h3>
+<i>In Galera, table row locks are not visible across the nodes. It follows an optimistic approach and transactions happening on different nodes can acquire lock on the same table rows.</i></p>
 
-Transactions compete for the same table row locks.
+Transactions can compete for the same table row locks as follows.
 <ul>
-<li>A [S]hared Read lock and e[X]clusive Write lock</li>
+One asking for 
+<li>
+A [S]hared Read lock with other e[X]clusive Write lock</li>
 <li>An e[X]clusive Write lock with other e[X]clusive Write lock</li>
 </ul>
 However, they  will not have much of a trouble on a single node. One gets the lock and rest can wait, and if the waiting was long enough you would see below error.
@@ -22,15 +23,30 @@ All goes well, if each finishes quick enough.
 
 </p>
 The scene completely changes when you move to galera. Where you have multiple master nodes.
-If connections go to two different node then what would usually work well in a single node setup will give you sudden surprises and headaches.</p>
-The infamous error
+If such competing transactions happen on different node then what would usually work well in a single node setup will give you sudden surprises and headaches.</p>
+The most infamous error that you will encounter as soon as you switch to Galera is - 
 <pre>
 ERROR 1213 (40001): WSREP detected deadlock/conflict and aborted the transaction. Try restarting the transaction
 </pre>
 
-<i>Welcome to the brand new world of deadlocks!</i></p> 
+<i>Welcome to the brand new world of deadlocks!</i>
 
 <h4>Surprise #1</h4>
+Working on a same table.
+<pre>
+<b>Transaction #1 [Node #1]</b>
+update table A
+[X Lock]
+
+<b>Transaction #2 [Node #2]</b>
+update table A
+[X Lock]
+</pre>
+
+You would say, wouldn't an optimistic locking solution in will take care of Surprise #1. But beware, there is still a possiblility you could still end up in conflict i.e., when both transactions have made the update before one of them commits the changes (test it for yourself).
+</br>
+Ok, but that didn't surprise me. Then wait, how about different tables?
+<h4>Surprise #2</h4>
 Tables connected by a foriegn key.
 <pre>
 <b>Transaction #1 [Node #1]</b>
@@ -48,25 +64,20 @@ insert into table B ( ..., fk_a ) values ( ..., pk_a_val );
 update B set fk_a = pk_a_val ...; 
 [S Lock]
 </pre>
+Handle concurrent data access in your application using some sort of pessimistic global locking. You cannot rely on the database table locks.</br>
 
-<h4>Surprise #2</h4>
-Working on a same table.
-<pre>
-<b>Transaction #1 [Node #1]</b>
-update table A
-[X Lock]
+When talking to different nodes, transactions assume serializable mode.</p>
+<e>
+You can catch those conflicting transactions from the logs by enabling wsrep_log_conflicts and general_log.</e></p>
 
-<b>Transaction #2 [Node #2]</b>
-update table A
-[X Lock]
-</pre>
-You would say, wouldn't an optimistic locking solution in will take care of Surprise #2. But beware, there is still a possiblility you could still end up in conflict i.e., when both transactions have made the update before one of them commits the changes (test it for yourself).
+<h3>Large transactions</h3>
+Other problem that you got to deal with are large transactions i.e. handling too much of data. Depending on your network conditions, such transactions will put all other changes in the queue and can slow down the database and the replication. It will affect the overall throughput.</p>
+<e>
+Fail fast and retry.</e></p>
 
-Handle concurrent data access in your application using some sort of pessimistic global locking. You cannot rely on the database table locks.</p>
-
-<h4>LARGE TRANSACTIONS</h4>
-Other problem that you got to deal with are large transactions i.e. handling too much of data. Such transactions will put all other changes in the queue and can slow down the replication depending on your network conditions. It will affect the overall QPS.</p>
-Fail fast and retry.</p>
-
-<h4>CROSS SITE REPLICATION</h4>
+<h3>Cross site replication</h3>
 You can use gmcast.segment option to group nodes present in the same network. This will optimize the galera protocol traffic. And in some cases IST and SST selection within the segment.
+</p>
+And, now that you have understood the challenges, note that they are not the show stoppers, you can overcome them with a good design. If your prime objective is data consistency you can safely choose Galera. Additionally, it avoids operational overhead too.</p>
+In <a href="#db/galeraSetup" >part II</a > we will see how to setup a Mariadb galera cluster.</p>
+That's all folks.
