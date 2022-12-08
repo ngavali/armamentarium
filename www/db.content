@@ -8,6 +8,6 @@ Below is the collection of articles that will get you familiarize with important
 <a href="#db/2pc" >2PC - Two Phase Commit</a></br>
 <a href="#db/jobScheduler" >Simple job scheduler</a></br>
 <a href="#db/graphsrdbms" >Oh My(SQL) Graph</a></br>
-Mariadb Galera Cluster
-<a href="#db/galera" >Part I - Things to know</a>
+<h4>Mariadb Galera Cluster</h4>
+<a href="#db/galera" >Part I - Things to know</a></br>
 <a href="#db/galeraSetup" >Part II - Setup</a>
