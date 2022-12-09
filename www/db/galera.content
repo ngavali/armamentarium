@@ -9,31 +9,23 @@ Primary key is MUST for all tables. Only InnoDB engine is supported.
 Expect to have gaps in autoincremented values. The gap is equal to the number of nodes in the galera cluster. This ensures IDs are distinct on each node in the cluster, avoiding any conflict inbetween them.
 </p>
 <h3>Locks</h3>
-<i>In Galera, table row locks are not visible across the nodes. It follows an optimistic approach and transactions happening on different nodes can acquire lock on the same table rows.</i></p>
-
-Transactions can compete for the same table row locks as follows.
+Transactions compete for the same table row locks as follows.
 <ul>
-One asking for 
-<li>
-A [S]hared Read lock with other e[X]clusive Write lock</li>
+<li>A [S]hared Read lock with other e[X]clusive Write lock</li>
 <li>An e[X]clusive Write lock with other e[X]clusive Write lock</li>
 </ul>
-However, they  will not have much of a trouble on a single node. One gets the lock and rest can wait, and if the waiting was long enough you would see below error.
+On a single node, things are pretty straight forward. One gets the lock and rest can wait.
+All goes well, when each finishes quickly and if the waiting is long enough you would see below error.
 <pre>
 ERROR 1205 (HY000): Lock wait timeout exceeded; try restarting transaction
 </pre>
-All goes well, if each finishes quick enough.
-
-</p>
-The scene completely changes when you move to galera. Where you have multiple master nodes.
-If such competing transactions happen on different node then what would usually work well in a single node setup will give you sudden surprises and headaches.</p>
+Above scenario changes drastically, when you move to galera. You have multiple master nodes ready to accept changes. If such competing transactions happen on different nodes, then what would usually worked well in a single node setup will now give you sudden surprises and headaches.</p>
 The most infamous error that you will encounter as soon as you switch to Galera is - 
 <pre>
 ERROR 1213 (40001): WSREP detected deadlock/conflict and aborted the transaction. Try restarting the transaction
 </pre>
-
-<i>Welcome to the brand new world of deadlocks!</i>
-
+<i>Welcome to the brand new world of deadlocks! In Galera, table row locks are not visible across the nodes. It follows an optimistic approach and transactions happening on different nodes can acquire lock on the same table rows.Unaware of each other until either of them commits.</i></p>
+Let us examine them
 <h4>Surprise #1</h4>
 Working on a same table.
 <pre>
@@ -48,7 +40,7 @@ update table A
 
 You would say, wouldn't an optimistic locking solution in will take care of Surprise #1. But beware, there is still a possiblility you could still end up in conflict i.e., when both transactions have made the update before one of them commits the changes (test it for yourself).
 </br>
-Ok, but that didn't surprise me. Then wait, how about different tables?
+<e>Ok, but that didn't surprise me. Then wait, how about different tables?</e>
 <h4>Surprise #2</h4>
 Tables connected by a foriegn key.
 <pre>
@@ -71,24 +63,22 @@ Handle concurrent data access in your application using some sort of pessimistic
 
 When talking to different nodes, transactions assume serializable mode.</p>
 <e>
-You can catch those conflicting transactions from the logs by enabling wsrep_log_conflicts and general_log.</e></p>
+You can catch those conflicting transactions in the logs by enabling wsrep_log_conflicts and general_log.</e></p>
 
 <pre>
-Read this for more: https://galeracluster.com/2015/06/debugging-transaction-conflicts-in-galera-cluster/</pre>
+Ref: https://galeracluster.com/2015/06/debugging-transaction-conflicts-in-galera-cluster/</pre>
 </p>
 
 <h3>Large transactions</h3>
-Other problem that you got to deal with are large transactions i.e. handling too much of data. Depending on your network conditions, such transactions will put all other changes in the queue and can slow down the database and the replication. It will affect the overall throughput.</p>
-<e>
-Fail fast and retry.</e></p>
-
+Other problem that you got to deal with are large transactions i.e. handling too much of data. Depending on your network conditions, such transactions will put all other changes in the queue and slow down the replicating nodes. It will affect the overall throughput.</p>
 <pre>
-Read this for more: https://galeracluster.com/2021/04/galera-streaming-replication-too-big-a-bite-can-choke-your-cluster/
+Ref: https://galeracluster.com/2021/04/galera-streaming-replication-too-big-a-bite-can-choke-your-cluster/
 </pre>
 
 <h3>Cross site replication</h3>
 You can use gmcast.segment option to group nodes present in the same network. This will optimize the galera protocol traffic. And in some cases IST and SST selection within the segment.
 </p>
-And, now that you have understood the challenges, note that they are not the show stoppers, you can overcome them with a good design. If your prime objective is data consistency you can safely choose Galera. Additionally, it avoids operational overhead too.</p>
-In <a href="#db/galeraSetup" >part II</a > we will see how to setup a Mariadb galera cluster.</p>
 That's all folks.
+</p>
+And, now that you have understood the challenges, note that they are not the show stoppers, you can overcome them with a good design. If your prime objective is data consistency, galera provides the same. Additionally, it avoids operational overhead too.</p>
+In <a href="#db/galeraSetup" >part II</a > we will see how to setup a Mariadb galera cluster.</p>
