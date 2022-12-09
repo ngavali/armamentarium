@@ -2,6 +2,9 @@
 Your application is connected to a single backend mysql/mariadb database node (Master/Slave mode) and you are thinking of scaling it by upgrading to galera based multi-master mariadb database cluster.</p>
 <e>Oh Yes! we are</e>. Then this article is for you and will walk you through the things you need to know and deal with when making a move.</p>
 
+<h3>Primary key</h3>
+Primary key is MUST for all tables. Only InnoDB engine is supported.
+
 <h3>Autoincrements</h3>
 Expect to have gaps in autoincremented values. The gap is equal to the number of nodes in the galera cluster. This ensures IDs are distinct on each node in the cluster, avoiding any conflict inbetween them.
 </p>
@@ -70,10 +73,18 @@ When talking to different nodes, transactions assume serializable mode.</p>
 <e>
 You can catch those conflicting transactions from the logs by enabling wsrep_log_conflicts and general_log.</e></p>
 
+<pre>
+Read this for more: https://galeracluster.com/2015/06/debugging-transaction-conflicts-in-galera-cluster/</pre>
+</p>
+
 <h3>Large transactions</h3>
 Other problem that you got to deal with are large transactions i.e. handling too much of data. Depending on your network conditions, such transactions will put all other changes in the queue and can slow down the database and the replication. It will affect the overall throughput.</p>
 <e>
 Fail fast and retry.</e></p>
+
+<pre>
+Read this for more: https://galeracluster.com/2021/04/galera-streaming-replication-too-big-a-bite-can-choke-your-cluster/
+</pre>
 
 <h3>Cross site replication</h3>
 You can use gmcast.segment option to group nodes present in the same network. This will optimize the galera protocol traffic. And in some cases IST and SST selection within the segment.
