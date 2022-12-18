@@ -32,4 +32,202 @@ hmm, How to build one?
  <li>Sync cron updates</li>
 </ul>
 Mechanism
+</p>
+<h3>Rust cron scheduler</h3>
+<pre>
+use chrono::{Datelike, Timelike, Utc};
 
+#[derive(PartialEq)]
+struct CronSchedule {
+    minute: Vec<u8>,
+    hour: Vec<u8>,
+    day_of_month: Vec<u8>,
+    month: Vec<u8>,
+    day_of_week: Vec<u8>,
+}
+
+impl CronSchedule {
+    fn new(cron_expression: &str) -> CronSchedule {
+        //let cron_expression = "03-15/5,45-50,*/10 */4 1-7 12 1-4";
+        let cron_fields = cron_expression.split(" ").collect::<Vec<&str>>();
+        if cron_fields.len() != 5 {
+            panic!("Invalid cron expression");
+        }
+        let (minute, hour, day_of_month, month, day_of_week) = (
+            CronSchedule::process_field(cron_fields[0], 00, 59),
+            CronSchedule::process_field(cron_fields[1], 00, 23),
+            CronSchedule::process_field(cron_fields[2], 01, 31),
+            CronSchedule::process_field(cron_fields[3], 01, 12),
+            CronSchedule::process_field(cron_fields[4], 00, 07),
+        );
+
+        CronSchedule {
+            minute,
+            hour,
+            day_of_month,
+            month,
+            day_of_week,
+        }
+    }
+
+    fn get_range(ch: &str, mut low: u8, mut high: u8) -> Vec<u8> {
+        let mut step = 1;
+        let mut range = Vec::new();
+
+        let expression = ch.split('/').collect::<Vec<&str>>();
+
+        let has_range = expression[0].split('-').collect::<Vec<&str>>();
+
+        if expression.len() == 2 {
+            step = expression[1].parse::<u8>().unwrap();
+        }
+
+        if has_range.len() == 2 {
+            low = has_range[0].parse::<u8>().unwrap();
+            high = has_range[1].parse::<u8>().unwrap();
+            //println!("Has range  -> ({:2}, {:2})", low, high);
+        } else if expression[0] != "*" {
+            low = expression[0].parse::<u8>().unwrap();
+            high = low;
+        }
+
+        let mut i = low;
+        while i <= high {
+            if i == low {
+                range.push(i);
+                i += step;
+            }
+            low += 1;
+        }
+
+        //println!("Computed range -> {:?}", range);
+        range
+    }
+
+    fn get_list(ch: &str) -> Vec<&str> {
+        ch.split(',').collect::<Vec<&str>>()
+    }
+
+    fn process_field(field: &str, low: u8, high: u8) -> Vec<u8> {
+        let mut ranges = Vec::new();
+        for expr in CronSchedule::get_list(field) {
+            //println!("Expression -> {}", expr);
+            let mut range = CronSchedule::get_range(expr, low, high);
+            ranges.append(&mut range);
+        }
+        ranges.sort();
+        ranges.dedup();
+        ranges
+    }
+
+    fn can_run_at(&self, d: DateTime) -> bool {
+        self.minute.contains(&d.minute)
+            & self.hour.contains(&d.hour)
+            & self.day_of_month.contains(&d.day_of_month)
+            & self.month.contains(&d.month)
+            & self.day_of_week.contains(&d.day_of_week)
+    }
+}
+
+impl std::fmt::Debug for CronSchedule {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(
+            f,
+            "CronSchedule {{
+minute      : {:?},
+hours       : {:?},
+day_of_month: {:?},
+month       : {:?},
+day_of_week : {:?},
+}}",
+            self.minute, self.hour, self.day_of_month, self.month, self.day_of_week
+        )
+    }
+}
+impl std::fmt::Display for CronSchedule {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(
+            f,
+            "CronSchedule {{
+minute      : {:?},
+hours       : {:?},
+day_of_month: {:?},
+month       : {:?},
+day_of_week : {:?},
+}}",
+            self.minute, self.hour, self.day_of_month, self.month, self.day_of_week
+        )
+    }
+}
+
+struct DateTime {
+    minute: u8,
+    hour: u8,
+    day_of_month: u8,
+    month: u8,
+    day_of_week: u8,
+}
+
+impl DateTime {
+    fn new() -> DateTime {
+        let utc_now = Utc::now();
+        DateTime {
+            minute: utc_now.minute() as u8,
+            hour: utc_now.hour() as u8,
+            day_of_month: utc_now.day() as u8,
+            month: utc_now.month() as u8,
+            day_of_week: utc_now.weekday().num_days_from_sunday() as u8,
+        }
+    }
+}
+
+impl std::fmt::Display for DateTime {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(
+            f,
+            "DateTime {{
+minute      : {:?},
+hours       : {:?},
+day_of_month: {:?},
+month       : {:?},
+day_of_week : {:?},
+}}",
+            self.minute, self.hour, self.day_of_month, self.month, self.day_of_week,
+        )
+    }
+}
+
+fn main() {
+    //cron_expression format
+    //minute hours day_of_month month day_of_week
+    let cron_expression = "*/10 */6 * * *";
+    //let cron_expression = "03-15/5,45-50,*/10 1-23/2 2 * *";
+    let cron_schedule = CronSchedule::new(cron_expression);
+    println!(
+        "{}
+Parsed -> {}",
+        cron_expression, cron_schedule
+    );
+
+    let now = DateTime::new();
+    println!("Current time -> {}", now);
+
+    println!("Ready to run -> {}", cron_schedule.can_run_at(now));
+}
+
+#[test]
+fn test_evaluate_cron_expression() {
+    let cron_expression = "*/10 */6 1 * */2";
+    let cron_schedule = CronSchedule::new(cron_expression);
+    assert_eq!(
+        cron_schedule,
+        CronSchedule {
+            minute: vec![0, 10, 20, 30, 40, 50],
+            hour: vec![0, 6, 12, 18],
+            day_of_month: vec![1],
+            month: vec![1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
+            day_of_week: vec![0, 2, 4, 6],
+        }
+    )
+}
+</pre>
