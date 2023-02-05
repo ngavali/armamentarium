@@ -63,7 +63,8 @@ class WhitePawn extends Pawn {
 
 class King extends chessPiece {
     constructor(color) {
-        super("King", color,[moveValidator.castlingMoveValidator, moveValidator.checkSingleStep])
+        //super("King", color,[moveValidator.castlingMoveValidator, moveValidator.checkSingleStep])
+        super("King", color,[moveValidator.castlingMoveValidator, moveValidator.kingsMoveValidator])
     }
 }
 

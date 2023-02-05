@@ -105,6 +105,16 @@ const checkSingleStep = (cboard, FromLocation, ToLocation) => {
 
 }
 
+const kingsMoveValidator = (cboard, FromLocation, ToLocation) => {
+    if ( Math.abs(FromLocation.positionX - ToLocation.positionX) <= 1 && ( Math.abs(FromLocation.positionY - ToLocation.positionY) <= 1 ) )
+    {
+        return true;
+    }
+    //Illegal movement
+    return false;
+}
+
+
 //Handle special case 2.c below in valid moves
 const castlingMoveValidator = (cboard, FromLocation, ToLocation) => {
     let rookX = (Math.round(ToLocation.positionX / 7)) * 7 + 1
@@ -128,7 +138,7 @@ const castlingMoveValidator = (cboard, FromLocation, ToLocation) => {
     return false
 }
 
-export { horizontalMoveValidator, verticalMoveValidator, diagonalMoveValidator, checkEnpassant, checkSingleStep, castlingMoveValidator, knightStepValidator }
+export { horizontalMoveValidator, verticalMoveValidator, diagonalMoveValidator, checkEnpassant, checkSingleStep, castlingMoveValidator, knightStepValidator, kingsMoveValidator }
 /*
 
    let From = move.src
