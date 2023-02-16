@@ -1,0 +1,9 @@
+{
+    "proxy": {
+        "port": 443,
+        "backend": {
+            "host": "www.google.com",
+            "port": 443
+        }
+    }
+}
