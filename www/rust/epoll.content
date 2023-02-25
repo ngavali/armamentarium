@@ -1,0 +1,28 @@
+<style>
+li {
+    list-style-type: disc;
+}
+</style>
+<h2><a href="#rust"  >Rust Programming Language</a> - Epoll</h2></p>
+<draft>
+E(vent) poll is an I/O event notification facility in Linux kernel that allows monitoring muliple file descriptors to see if any of them are ready for I/O operation.</p>
+It uses epoll instance, a kernel data structure to store 
+<ul>
+<li>the list of interested file descriptors, that process wants to monitor</br>
+I<sub>fd</sub> = { fd<sub>1</sub>, fd<sub>2</sub>, ... ,fd<sub>N</sub> }</li>
+<li>the list of ready file descriptors (of interested fds) that ready for I/O operation.</br>
+R<sub>fd</sub> &sub; I<sub>fd</sub> (Some fds are ready) or R<sub>fd</sub> &sube; I<sub>fd</sub> (All fds are ready)</li>
+</ul>
+Linux kernel provides following system calls to create and interact with the epoll instance.
+<ul>
+<li>epoll_create</br>
+Create a new epoll instance and returns its file descriptor.
+</li>
+<li>epoll_ctl</br>
+Interact with the epoll instance, add/remove interested file descriptors.
+</li>
+<li>epoll_wait</br>
+Wait for I/O events to happen, returns the list of ready events. (Blocks the calling thread)
+</li>
+</ul>
+These were the basic building blocks of the epoll. Now, let us see it in action with an example by creating a simple proxy server.

@@ -465,7 +465,7 @@ c.Moves.push(move)
     //}
     }
 //Illegal move
-c.ErrorDisplay.refresh("Illegal Move!!!")
+c.ErrorDisplay.refresh("<r>Illegal Move!!!<r>")
 return false
 }
 
