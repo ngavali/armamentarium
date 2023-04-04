@@ -1,16 +1,17 @@
 use libc;
 use std::{
     collections::HashMap,
-    io::{Read, Write},
+    io::{Error, Read, Write},
     net::{TcpListener, TcpStream},
     os::fd::{AsRawFd, RawFd},
     thread::{self, JoinHandle, ThreadId},
 };
 
-const BACKEND_ADDR: &str = "www.google.com:443";
+const BACKEND_ADDR: &str = "localhost:3306";
 
 struct ProxyServer {
     listener: TcpListener,
+    ep_fd: RawFd,
     fd_hash_map: HashMap<RawFd, RawFd>,
     thread_pool: Vec<JoinHandle<()>>,
 }
@@ -24,26 +25,37 @@ impl ProxyServer {
         println!("Listening on {} for incoming client_streams", bind_addr);
         ProxyServer {
             listener,
+            ep_fd: -1,
             fd_hash_map: HashMap::new(),
             thread_pool: Vec::new(),
         }
     }
 
-    fn start(&self) {
-        let ep_fd = unsafe { libc::epoll_create1(0) };
+    fn start(&mut self) {
+        self.ep_fd = unsafe { libc::epoll_create1(0) };
+        if self.ep_fd < 0 {
+            println!("{:?}", Error::last_os_error());
+            println!("Failed to initialize epoll");
+            return;
+        }
+        println!("Epoll ready");
         for client_stream in self.listener.incoming() {
             match client_stream {
                 Ok(client_stream) => {
-                    let ep_fd_clone = ep_fd.clone();
-                    thread::spawn(move || {
-                        let mut connection = Connection::new(ep_fd_clone, client_stream);
-                        connection.handle_client_stream();
-                        drop(connection);
-                    });
+                    self.handle_client_stream(client_stream);
                 }
                 Err(err) => println!("Failed to accept client_stream {}", err),
             }
         }
+    }
+
+    fn handle_client_stream(&self, in_stream: TcpStream) {
+        let ep_fd_clone = self.ep_fd.clone();
+        thread::spawn(move || {
+            let mut connection = Connection::new(ep_fd_clone, in_stream);
+            connection.handle_client_stream();
+            drop(connection);
+        });
     }
 }
 
@@ -201,7 +213,7 @@ fn main() {
     unsafe {
         libc::signal(libc::SIGUSR1, handler as usize);
     }
-    let bind_addr = "0.0.0.0:3306";
-    let proxy_server = ProxyServer::new(bind_addr);
+    let bind_addr = "0.0.0.0:3308";
+    let mut proxy_server = ProxyServer::new(bind_addr);
     proxy_server.start();
 }

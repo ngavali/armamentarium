@@ -137,6 +137,7 @@ a {
     color: #1756a9;
     outline: none;
     font-weight: 300;
+    text-decoration: none;
 }
 
 a:hover {

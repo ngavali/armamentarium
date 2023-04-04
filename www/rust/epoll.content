@@ -5,6 +5,16 @@ li {
 </style>
 <h2><a href="#rust"  >Rust Programming Language</a> - Epoll</h2></p>
 <draft>
+Before jumping into the epoll, let us try to build a simple proxy server.
+</br>In simple terms, Proxy is something that acts on behalf of something else. 
+</br>If a proxy is placed on the client side, it accepts request from a client and connects to a remote server to fetch the response on behalf of the client. It's called a Forward Proxy. It hides a client from the remote server.
+</br>And, if a proxy is placed on the server side, it accepts requests from a client on behalf of the backend servers, gets a response from the backend server(s) to a client. It's called a Reverse Proxy. It hides backend server(s) from a client.
+</br>
+After all, proxy is nothing but something that sits in-between a client and a server. 
+</p>
+Let us try to implement a Layer 4 Reverse Proxy, it will accept requests from the clients and will send it to the backend servers and the response back to the client connected to it.
+</p>
+
 E(vent) poll is an I/O event notification facility in Linux kernel that allows monitoring muliple file descriptors to see if any of them are ready for I/O operation.</p>
 It uses epoll instance, a kernel data structure to store 
 <ul>
