@@ -1,0 +1,30 @@
+<h2><a href="#ds"  >Distributed Systems</a> - MIT 6.824: Distributed Systems</h2>
+<meditate/>
+<h3>Course Link</h3>
+<ul>
+<li>Lectures - https://www.youtube.com/watch?v=cQP8WApzIQQ&list=PLrw6a1wE39_tb2fErI4-WkMbsvGQk9_UB</li>
+<li>Schedule - https://pdos.csail.mit.edu/6.824/schedule.html</li>
+</ul>
+<h3>Notes</h3>
+<h4>Lecture - 3</h4>
+Distributed Storage. Why Hard?
+<table>
+<tr>
+<td>Performance </td>
+<td>&rarr; Shard Over Many Servers - Faults</td>
+</tr>
+<tr><td>Faults</td>
+<td>&rarr; Tolerance</td></tr>
+<tr>
+<td>Tolerance</td>
+<td>&rarr; Replication</td>
+</tr>
+<tr>
+<td>Replication</td>
+<td>&rarr; Inconsitency</td>
+</tr>
+<tr>
+<td>Consistency</td>
+<td>&rarr; Performance</td>
+</tr>
+</table>
