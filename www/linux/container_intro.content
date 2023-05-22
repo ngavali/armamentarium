@@ -50,7 +50,7 @@ Create eth pair and bridge</p>
 ##Setup bridge interface
 ip link add name vbridge type bridge
 ##Create virtual link pair. Move one of them in the Namespace identified by pid
-ip link add veth0 type veth peer name veth1 netns <pid>
+ip link add veth0 type veth peer name veth1 netns &lt;pid&gt;
 </pre>
 <center>
 <image src="/images/veth_pair.svg" width="330px">

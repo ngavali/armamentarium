@@ -6,8 +6,10 @@
 <li>Schedule - https://pdos.csail.mit.edu/6.824/schedule.html</li>
 </ul>
 <h3>Notes</h3>
+<h4>Lecture - 1</h4>
+MapReduce - Shuffle operation
 <h4>Lecture - 3</h4>
-Distributed Storage. Why Hard?
+<h>Distributed Storage. Why Hard?</h>
 <table>
 <tr>
 <td>Performance </td>
@@ -27,4 +29,25 @@ Distributed Storage. Why Hard?
 <td>Consistency</td>
 <td>&rarr; Performance</td>
 </tr>
-</table>
+</table><p/>
+<h>Stronge Consistency</h>
+A single system, single threaded. Has a poor fault tolerance.<br/>
+Let's build a replica (Distributed system) with replicated data.
+<h>Bad Replication Design</h>
+<h>Split Brain</h>
+<h4>Lecture - 4</h4>
+<h>Replication</h> 
+Failures
+<ul>
+<li>Fail stop faults</li>
+<li>Bugs - Undesired behavior</li>
+</ul>
+Errors -> Convert to Fail Stop?
+<h>Strategies for Replication</h>
+State Transfer<br/>
+Replicated State Machine - Events
+<h4>Lecture - 6</h4>
+Fault Tolerance - Raft<br/>
+Split Brain Majority: 
+Number of replicas = 2F+1 => Can take F failures.
+<h>Why do we even need a leader</h> Paxos, consensus algorithm consists of two rounds. With leader it's only one round and everyone agrees with the leader? verify this.
