@@ -30,10 +30,16 @@ Create test binary
 go test -c
 ./testing.test -test.v
 </pre>
-Misc
+<h4>Misc</h4>
+List go files in the given package
 <pre>
-#list go files in the given package
 go list -f={{.GoFiles}} net/http
-#list go test files in the given package
+List go test files in the given package
 go list -f={{.TestGoFiles}} net/http
 </pre>
+Use race flag to detect any races in your code. [But pls note that it cannot capture races always.]
+<pre>
+go test -race
+</pre>
+Print stack trace of a running program. Press Ctrl+\ [Ctrl+Backslash] 
+

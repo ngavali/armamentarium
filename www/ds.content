@@ -8,3 +8,5 @@ Distributed transaction, <a href="#ds/saga" >SAGA</a></br>
 <a href="#ds/vectorclock" >Vector Clock</a></br>
 <a href="#ds/caching" >Caching</a></br>
 <a href="#ds/readings" >Readings</a></br>
+<h4>Course</h4>
+<a href="#ds/course" >MIT 6.824: Distributed Systems</a>
