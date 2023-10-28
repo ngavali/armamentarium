@@ -32,9 +32,9 @@ div#menubar {
     position: fixed;
     width: 100%;
     background-color: #fff;
-    border-bottom-width: 1px;
-    border-bottom-color: #aaa;
-    border-bottom-style: solid;
+    order-bottom-width: 1px;
+    order-bottom-color: #aaa;
+    order-bottom-style: solid;
     font-weight: 400;
     --webkit-text-size-adjust: 100%;
 }
@@ -118,6 +118,7 @@ body {
     margin: 0px;
     font-weight: 400;
     --webkit-text-size-adjust: 100%;
+    background-color: #fafaf6;
 }
 
 table#topicContent {
@@ -197,8 +198,8 @@ ul ul {
 }
 
 meditate::before {
-    content : "Diogenes meditating...";
-    font-family: "Cedarville Cursive",Helvetica,Arial,myfont,sans-serif;
+    content : "Diogenes meditating... Work in progress";
+    font-family: Helvetica,Arial,myfont,sans-serif,"Cedarville Cursive";
     font-size: 20px;
     background: #eee;
     color: #f2a;
@@ -209,7 +210,7 @@ meditate::before {
 
 draft::before {
     content : "draft version - I am still working on it";
-    font-family: "Cedarville Cursive",Helvetica,Arial,myfont,sans-serif;
+    font-family: Helvetica,Arial,myfont,sans-serif,"Cedarville Cursive";
     font-size: 14px;
     background: #efefef;
     color: #f22;
@@ -234,6 +235,7 @@ dd {
 
 lv::before { 
     content: "\1F60D  "; 
+    content: "\1F3F7  ";
 }
 
 h {
