@@ -1,7 +1,30 @@
-<h2>Random thoughts!</h2>
-129-th sUkta of the 10-th mandala of the Rigveda
-</p>
+<style>
+.collapsible {
+  background-color: #777;
+  color: white;
+  cursor: pointer;
+  padding: 18px;
+  width: 100%;
+  border: none;
+  text-align: left;
+  outline: none;
+  font-size: 15px;
+}
 
+.active, .collapsible:hover {
+  background-color: #557;
+}
+
+.content {
+  padding: 0 18px;
+  display: none;
+  overflow: hidden;
+  background-color: #f1f1f1;
+}
+</style>
+<h2>Random thoughts!</h2>
+<button type="button" class="collapsible">129-th sUkta of the 10-th mandala of the Rigveda</button>
+<div class="content"><p>
 नासदीय सूक्त (ऋग्वेद )
 - nAsadIya sUkta (Rigveda )
 </br>
@@ -67,7 +90,9 @@ But,  after all, who knows, and who can say
 Whence all creation had its origin,
   he, whether he fashioned it or whether he did not,
   he, who surveys it all from highest heaven,
-  he knows - or maybe even he does not know.  </p>
+  he knows - or maybe even he does not know.
+</p>
+</div>
 <img width="400px" src="/static/vs.jpg" />
 These collection of articles are dedicated to Surabhi, Vihaan and all other curious <i>kids</i> out there...</br>
 <!--a href="#random/prologue" >Prologue</a></br-->
@@ -87,3 +112,21 @@ These collection of articles are dedicated to Surabhi, Vihaan and all other curi
 <a href="#random/books" >Books</a></br>
 <a href="#random/problems" >Dealing with problems</a></br>
 <a href="#random/fstreet" >Farnam street</a></br>
+
+<script>
+    //Collapsable content
+var coll = document.getElementsByClassName("collapsible");
+var i;
+
+for (i = 0; i < coll.length; i++) {
+  coll[i].addEventListener("click", function() {
+    this.classList.toggle("active");
+    var content = this.nextElementSibling;
+    if (content.style.display === "block") {
+      content.style.display = "none";
+    } else {
+      content.style.display = "block";
+    }
+  });
+}
+</script>
