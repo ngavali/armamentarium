@@ -32,6 +32,7 @@ div#menubar {
     position: fixed;
     width: 100%;
     background-color: #fff;
+    background-color: #f6f6f6;
     order-bottom-width: 1px;
     order-bottom-color: #aaa;
     order-bottom-style: solid;
@@ -118,7 +119,6 @@ body {
     margin: 0px;
     font-weight: 400;
     --webkit-text-size-adjust: 100%;
-    background-color: #fafaf6;
 }
 
 table#topicContent {
