@@ -1,0 +1,17 @@
+<h2><a href="#ds"  >Distributed Systems</a> - Patterns</h2>
+<draft/>
+<h3>Notes</h3>
+
+Failures- <b>Write Ahead Log</b> <br/>
+Competing Updates- <b>Leader</b> and <b>Followers</b> <br/>
+Leader Failure- <b>HeatBeats</b> <br/>
+<b>Leader Election</b>- Latest state? (Write Ahead) Log replication <br/>
+<b>Quorum</b>- Majority writes Write Ahead Log <br/>
+<b>Generation Clocks</b>- Order updates <br/>
+Concurrent Updates- <b>Singular Update Queue</b> (Go/Rust-Channels Goroutines/Threads) <br/>
+<b>Request Waiting List</b>- Track clients request and respond on completion with a callback <br/>
+Repeated Requests- <b>Idempotent Receiver</b>, A <b>Unique identifier</b> is handed off to a client for a request, with all replicas aware of the same<br/>
+
+Two problems in distributed systems- <b>Exactly-once</b> delivery and Guaranteed order of messages <br/>
+Tolerate out-of-order message- <b>Single Socket Channel</b> (TCP) between Leader and Followers <br/>
+

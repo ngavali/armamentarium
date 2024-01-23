@@ -1,4 +1,7 @@
 <h2>Miscellaneous topics</h2>
+<h4>Readings</h4>
+<a href="#linux/readings" >Acmqueue</a></br>
+<a href="#linux/whitepapers" >White Papers</a></br>
 <h4>Linux</h4>
 HAProxy - <a href="#linux/snihaproxy" >SNI implementation</a></br>
 HAProxy - SNI implementation - <a href="#linux/snitransparenthaproxy" >Capturing the client IP</a></br>
@@ -22,5 +25,3 @@ Chess app using <a href="#es6/chess" >ES6</a></br>
 <a href="#linux/ddd" >My notes</a></br>
 <h4>AWS</h4>
 <a href="#linux/aws" >Notes</a></br>
-<h4>Readings</h4>
-<a href="#linux/readings" >Acmqueue</a></br>
