@@ -37,7 +37,7 @@ Now, that we have the basic building blocks. Let us look at its working by imple
 Non-blocking Listener - Single Threaded - With Epoll<p/>
 <img src="static/lb-epoll.svg"/>
 <p/>
-Code
+Code - https://github.com/ngavali/rationalbear/blob/master/rust/load_balancer/src/main.rs
 <pre>
 use std::{
     collections::{HashMap, VecDeque},
@@ -481,3 +481,7 @@ fn main() -> std::io::Result&lt;()> {
 For those familiar with ES/NodeJs, you must have heard of an Event loop, a single threaded process which is able to handle mutliple I/O requests, perform asynchronous actions, and any computational activity blocks it (Browser freeze).
 <p/>
 Under the hood, all the magic is done using an event notification framework provided by an underlying OS. In this article, we talked specifically about Epoll (A Linux Kernel implementation).<p/>
+
+Update:<br/>
+Here is a version that creates a separate worker thread to handle I/O, and can be extended to multiple worker threads!!!<br/>
+https://github.com/ngavali/rationalbear/blob/master/rust/load_balancer_worker/src/main.rs
