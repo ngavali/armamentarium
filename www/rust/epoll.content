@@ -483,4 +483,4 @@ For those familiar with ES/NodeJs, you must have heard of an Event loop, a singl
 Under the hood, all the magic is done using an event notification framework provided by an underlying OS. In this article, we talked specifically about Epoll (A Linux Kernel implementation).<p/>
 
 <h4>Update</h4>
-Here is a version that creates a <a href="https://github.com/ngavali/rationalbear/blob/b00b939c5594d7a09c96d603533fe56facfc5a88/rust/load_balancer_worker/src/main.rs" target="_">separate worker thread</a> to handle I/O, and can be extended to have <a href="https://github.com/ngavali/rationalbear/blob/b00b939c5594d7a09c96d603533fe56facfc5a88/rust/load_balancer_worker/src/main.rs" target="_">multiple worker threads</a>.<br/>
+Here is a version that creates a <a href="https://github.com/ngavali/rationalbear/blob/b00b939c5594d7a09c96d603533fe56facfc5a88/rust/load_balancer_worker/src/main.rs" target="_">separate worker thread</a> to handle I/O, and can be extended to have <a href="https://github.com/ngavali/rationalbear/blob/8ad769a8bc91cd75325df7c695a720fea979ca4a/rust/load_balancer_worker/src/main.rs" target="_">multiple worker threads</a>.<br/>
