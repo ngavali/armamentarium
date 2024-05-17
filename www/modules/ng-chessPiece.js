@@ -8,7 +8,7 @@ class chessPiece extends ng.DOMElement {
     positionY
     moveNum
     isCaptured = false
-	steps
+    steps
     validators
 
     constructor(name, color, validators = []) {
@@ -17,7 +17,7 @@ class chessPiece extends ng.DOMElement {
         })
         this.name = name
         this.color = color
-        this.moveNum = 0    
+        this.moveNum = 0
         //console.log(this.name, validators)
         this.validators = validators
     }
@@ -25,12 +25,12 @@ class chessPiece extends ng.DOMElement {
     ValidateMove(cboard, move) {
         //console.log("validator called for ", this.name, this.color)
         let result = false
-        if ( this.validators.length > 0 ) {
-            this.validators.forEach( function(validator) {
+        if (this.validators.length > 0) {
+            this.validators.forEach(function (validator) {
                 result ||= validator(cboard, move.src.has, move.dst)
             })
             return result
-        }   else {
+        } else {
             return true
         }
     }
@@ -44,40 +44,41 @@ class chessPiece extends ng.DOMElement {
 }
 
 class Pawn extends chessPiece {
+    isEnPassant = false
     constructor(color) {
         super("Pawn", color, [moveValidator.checkEnpassant, moveValidator.checkSingleStep])
     }
 }
 
 class BlackPawn extends Pawn {
-	constructor() {
-		super("black")
-	}
+    constructor() {
+        super("black")
+    }
 }
 
 class WhitePawn extends Pawn {
-	constructor() {
-		super("white")
-	}
+    constructor() {
+        super("white")
+    }
 }
 
 class King extends chessPiece {
     constructor(color) {
         //super("King", color,[moveValidator.castlingMoveValidator, moveValidator.checkSingleStep])
-        super("King", color,[moveValidator.castlingMoveValidator, moveValidator.kingsMoveValidator])
+        super("King", color, [moveValidator.castlingMoveValidator, moveValidator.kingsMoveValidator])
     }
 }
 
 class BlackKing extends King {
-	constructor() {
-		super("black")
-	}
+    constructor() {
+        super("black")
+    }
 }
 
 class WhiteKing extends King {
-	constructor(color) {
-		super("white")
-	}
+    constructor(color) {
+        super("white")
+    }
 }
 
 class Knight extends chessPiece {
@@ -87,15 +88,15 @@ class Knight extends chessPiece {
 }
 
 class BlackKnight extends Knight {
-	constructor() {
-		super("black")
-	}
+    constructor() {
+        super("black")
+    }
 }
 
 class WhiteKnight extends Knight {
-	constructor() {
-		super("white")
-	}
+    constructor() {
+        super("white")
+    }
 }
 
 class Queen extends chessPiece {
@@ -105,15 +106,15 @@ class Queen extends chessPiece {
 }
 
 class BlackQueen extends Queen {
-	constructor() {
-		super("black")
-	}
+    constructor() {
+        super("black")
+    }
 }
 
 class WhiteQueen extends Queen {
-	constructor() {
-		super("white")
-	}
+    constructor() {
+        super("white")
+    }
 }
 
 class Bishop extends chessPiece {
@@ -123,15 +124,15 @@ class Bishop extends chessPiece {
 }
 
 class BlackBishop extends Bishop {
-	constructor() {
-		super("black")
-	}
+    constructor() {
+        super("black")
+    }
 }
 
 class WhiteBishop extends Bishop {
-	constructor() {
-		super("white")
-	}
+    constructor() {
+        super("white")
+    }
 }
 
 class Rook extends chessPiece {
@@ -141,26 +142,26 @@ class Rook extends chessPiece {
 }
 
 class BlackRook extends Rook {
-	constructor() {
-		super("black")
-	}
+    constructor() {
+        super("black")
+    }
 }
 
 class WhiteRook extends Rook {
-	constructor() {
-		super("white")
-	}
+    constructor() {
+        super("white")
+    }
 }
 
 /*
 let  chessPieceFactory("color") {
 
-	let blackPieceFactory(name) {
-	}
+    let blackPieceFactory(name) {
+    }
 
-	let whitePieceFactory(name) {
-	}
+    let whitePieceFactory(name) {
+    }
 }
 */
 
-export { WhitePawn, BlackPawn, WhiteQueen, BlackQueen, WhiteRook, BlackRook, WhiteBishop, BlackBishop, WhiteKing, BlackKing, WhiteKnight, BlackKnight  }
+export {WhitePawn, BlackPawn, WhiteQueen, BlackQueen, WhiteRook, BlackRook, WhiteBishop, BlackBishop, WhiteKing, BlackKing, WhiteKnight, BlackKnight}
