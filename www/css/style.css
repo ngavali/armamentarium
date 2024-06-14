@@ -12,7 +12,7 @@ html { overflow-y: scroll; }
 div#ContentBody {    
     font-weight: 400;
     line-height: 35px;
-    font-size: 16px;
+    font-size: 17px;
 }
 
 pre {
@@ -27,37 +27,27 @@ pre {
 
 div#menubar {
     margin: 0px;
-    padding-top: 0px;
+    padding-top: 10px;
     padding-bottom: 0px;
     position: fixed;
     width: 100%;
     background-color: #fff;
-    background-color: #f6f6f6;
-    order-bottom-width: 1px;
-    order-bottom-color: #aaa;
-    order-bottom-style: solid;
-    font-weight: 400;
     --webkit-text-size-adjust: 100%;
 }
 
 logo-left {
     font-family: Helvetica,Arial,myfont,sans-serif;
-    font-weight: 350;
-    font-size: 24px;
+    font-weight: 100;
+    font-size: 26px;
     --webkit-text-size-adjust: 100%;
-    adding: 0px 5px 0px 10px;
-    order: #fff 2px SOLID;
+    color: #888;
 }
 logo-right {
-    color:#A31621;
-    color: #F7C548;
-    font-size: 24px;
+    font-size: 28px;
     font-family: Helvetica,Arial,myfont,sans-serif;
     font-weight: 350;
     --webkit-text-size-adjust: 100%;
     padding: 0px 0px 0px 0px;
-    order: #fff 2px SOLID;
-    ackground: #fff;
 }
 
 k3 {
@@ -99,7 +89,7 @@ div#bodyTopic {
 }
 
 table td {
-    border-spacing: 0pt;
+    border-spacing: 0px;
     margin: 0px;
     font-weight: 400;
 }
@@ -136,8 +126,7 @@ table#menu tr td a {
 }
 
 a {
-    color: #4E8098;
-    color: #1756a9;
+    color: #888;
     outline: none;
     font-weight: 400;
     text-decoration: none;
@@ -156,9 +145,7 @@ img {
 
 table#menu tr td .activeLink {
     padding-right: 5px;
-    color:#C49799;
-    color:#883955;
-    color:#FF3E41;
+    color:#888;
     font-family: Helvetica,Arial,myfont,sans-serif;
     font-weight: 350;
 }
