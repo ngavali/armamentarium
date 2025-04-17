@@ -4,5 +4,12 @@
   "developer": "Nilesh Gavali",
   "description": "A minimalist meditation and breathing companion to help you relax and focus.",
   "website": "https://rbear.netlify.app",
-  "contactEmail": "gavalinileshr@gmail.com"
+  "contactEmail": "gavalinileshr@gmail.com",
+  "features": [
+    "Well know breathing pattern",
+    "Custom breathing pattern with calibration",
+    "Haptic and audio cues for seamless experience",
+    "Progress Tracker",
+    "Cool colors theme",
+  ]
 }
