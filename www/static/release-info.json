@@ -6,11 +6,12 @@
   "website": "https://rbear.netlify.app",
   "contactEmail": "gavalinileshr@gmail.com",
   "features": [
-    "Well know breathing pattern",
+    "Well known breathing pattern",
     "Custom breathing pattern with calibration",
-    "Haptic and audio cues for seamless experience",
+    "Background music, well known binaural beats",
+    "Haptic(Vibrate) and Audio cues for breath sync",
     "Progress Tracker",
-    "Cool colors theme"
+    "Cool colors and transitions"
   ],
   "downloadUrl" : "https://drive.google.com/file/d/1bmuoVXbTE9qe7O04NAIhy7yPBvnFg04_/view?usp=sharing"
 }
