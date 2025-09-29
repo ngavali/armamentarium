@@ -1,0 +1,116 @@
+<h2><a href="#linux"  >C++</a> - Core Dumps</h2></p>
+This article talks about generating core dump on Linux systems.<br/>
+Your application crashes but doesn't generate coredump, is it? or it says core dumped and you don't find any. No worries!!!
+<br/>Use below command to find out the core file pattern
+<pre>
+$ cat /proc/sys/kernel/core_pattern 
+</pre>
+If you see beloww output, then the core dump is handled by apport. The core dump location would be the directory /var/lib/apport/coredump/. Details of the core dump can be found in the log file /var/log/apport.log
+<pre>
+|/usr/share/apport/apport -p%p -s%s -c%c -d%d -P%P -u%u -g%g -F%F -- %E
+</pre>
+If you see following output, then the core dump will be generated in the cwd (current working directory) of the process. File name will be core or (core.&lt;pid> depending on the sysctl core settings)
+<pre>
+$ cat /proc/sys/kernel/core_pattern 
+core
+</pre>
+You can use different specifiers in core_pattern to include other details too (eg. %h for hostname, %s Number of signal causing the dump)
+<br/>
+If you want core dump file to have pid of the process as an extension then use following. 
+<pre>
+sudo sysctl -w kernel.core_uses_pid=1
+</pre>
+This would write file core dump with the name as core.&lt;pid>, &lt;pid> being the pid of the process that generated this coredump.
+<br/>
+All good so far. No, you still don't see the core dump file?
+<br/>
+Ahh we missed resource limits for the owner of the process. There are various ways to determine the same.
+<br/>
+By checking the ulimit for the current user
+<pre>
+$ ulimit -Sc
+0
+$ ulimit -Hc
+unlimited
+</pre>
+Using the process id
+<pre>
+$ ps -ef | grep apache
+root      116379       1  0 11:40 ?        00:00:00 /usr/sbin/apache2 -k start
+www-data  116381  116379  0 11:40 ?        00:00:00 /usr/sbin/apache2 -k start
+www-data  116382  116379  0 11:40 ?        00:00:00 /usr/sbin/apache2 -k start
+$ cat /proc/116379/limits | awk '{ if(NR==1 || $0~/core/) print $0}'
+Limit                     Soft Limit           Hard Limit           Units     
+Max core file size        0                    unlimited            bytes     
+</pre>
+These limits can be changed per user by having entries in the /etc/security/limits.conf file.
+<pre>
+$ grep core /etc/security/limits.conf 
+#        - core - limits the core file size (KB)
+#*               soft    core            0
+#root            hard    core            100000
+userX		 soft	 core		 1024000
+</pre>
+As a root user you can verify those limits or using the command by logging in as specific user (as we had done above)
+# su userX -c 'ulimit -Sc'
+1024000
+</pre>
+You can use a following program to get the details of the resource limit for the core dump file and update it accordingly.
+<pre>
+#include &lt;sys/resource.h>
+#include &lt;iostream>
+#include &lt;err.h>
+#include &lt;string.h>
+#include &lt;climits>
+
+rlimit* get_rlimit() {
+  std::cout &lt;&lt; "Get rlimit core value" &lt;&lt; std::endl;
+  rlimit *rlim = (rlimit*) malloc(sizeof(rlimit));
+  getrlimit(RLIMIT_CORE, rlim);
+  if (errno == 0) {
+    if (rlim->rlim_cur == RLIM_INFINITY) {
+      std::printf("Soft limit = Unlimited\n");
+    } else {
+      std::printf("Soft limit = %lu bytes\n", rlim->rlim_cur);
+    }
+    if (rlim->rlim_max == RLIM_INFINITY) {
+      std::printf("Hard limit = Unlimited\n");
+    } else {
+      std::printf("Hard limit = %lu bytes\n", rlim->rlim_max);
+    }
+  } else {
+    std::printf("Failed to get rlimit core value. Error=%s\n", strerror(errno));
+    return nullptr;
+  }
+  return rlim;
+}
+
+void set_rlimit() {
+  rlimit *rlim = get_rlimit();
+  std::cout &lt;&lt; "Set rlimit core value" &lt;&lt; std::endl;
+  rlim->rlim_cur = 10;
+  setrlimit(RLIMIT_CORE, rlim);
+  if (errno == 0) {
+    if (rlim->rlim_cur == RLIM_INFINITY) {
+      std::printf("Soft limit = Unlimited\n");
+    } else {
+      std::printf("Soft limit = %lu bytes\n", rlim->rlim_cur);
+    }
+    if (rlim->rlim_max == RLIM_INFINITY) {
+      std::printf("Hard limit = Unlimited\n");
+    } else {
+      std::printf("Hard limit = %lu bytes\n", rlim->rlim_max);
+    }
+  } else {
+    std::printf("Failed to set rlimit core value. Error=%s\n", strerror(errno));
+  }
+}
+
+int main() {
+  get_rlimit();
+  set_rlimit();
+  int* a = nullptr;
+  *a = 10;
+}
+</pre>
+That's all folks!
