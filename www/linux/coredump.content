@@ -52,6 +52,7 @@ $ grep core /etc/security/limits.conf
 userX		 soft	 core		 1024000
 </pre>
 As a root user you can verify those limits or using the command by logging in as specific user (as we had done above)
+<pre>
 # su userX -c 'ulimit -Sc'
 1024000
 </pre>
