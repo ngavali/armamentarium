@@ -1,18 +1,18 @@
 {
   "appName": "GoodLife",
-  "version": "1.0.2",
-  "build": 3,
+  "version": "1.0.3",
+  "build": 1,
   "developer": "Nilesh Gavali",
-  "description": "A minimalist meditation and breathing companion to help you relax and focus.",
+  "description": "A minimalisti's meditation and breathing companion. Helps to relax and increase your focus.",
   "website": "https://rbear.netlify.app",
   "contactEmail": "gavalinileshr@gmail.com",
   "features": [
     "Well known breathing patterns",
-    "Custom breathing pattern with calibration",
-    "Background music, well known binaural beats",
-    "Haptic(Vibrate) and Audio cues for breath sync",
+    "Want your own. Well use custom breathing pattern",
+    "Background music, increase your focus or relax with well known binaural beats",
+    "Haptics and Audio cues for breath sync",
     "Progress Tracker",
     "Cool colors and transitions"
   ],
-  "downloadUrl" : "https://drive.google.com/file/d/1bmuoVXbTE9qe7O04NAIhy7yPBvnFg04_/view?usp=sharing"
+  "downloadUrl" : "https://example.com/"
 }
