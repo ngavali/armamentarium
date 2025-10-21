@@ -1,7 +1,7 @@
 {
   "appName": "GoodLife",
   "version": "1.0.3",
-  "build": 4,
+  "build": 1,
   "developer": "Nilesh Gavali",
   "description": "A minimalisti's meditation and breathing companion. Helps to relax and increase your focus.",
   "website": "https://rbear.netlify.app",
@@ -14,5 +14,5 @@
     "Progress Tracker",
     "Cool colors and transitions"
   ],
-  "downloadUrl" : "https://example.com/"
+  "downloadUrl" : "https://drive.google.com/file/d/1bmuoVXbTE9qe7O04NAIhy7yPBvnFg04_/view?usp=sharing"
 }
