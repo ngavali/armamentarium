@@ -213,9 +213,9 @@ Inv_Recoverable ==
 =============================================================================
 </pre>
 Model 
-<img src="/images/AwsDynamoDbProblem_Model.png"/>
+<img src="/images/AwsDynamoDbProblem_Model.png" width=640px/>
 Run the model checker and it should yell - Invariant Inv_DontDeleteActivePlan is violated.
-<img src="/images/AwsDynamoDbProblem_ErrorTrace.png"/>
+<img src="/images/AwsDynamoDbProblem_ErrorTrace.png" width=640px/>
 </p>
 Is this model an exact replica of the failure?</br>
 Probably not.
