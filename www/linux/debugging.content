@@ -1,0 +1,24 @@
+<h2><a href="#linux"  >Programming</a> - Debugging</h2></p>
+The Nine Indispensable Rules for Finding Even the Most Elusive Software
+and Hardware Problems</p>
+
+UNDERSTAND THE SYSTEM</br>
+There's a side benefit to understanding your own systems, too. When you do find the bugs, you'll
+need to fix them without breaking anything else. Understanding what the system is supposed to do
+is the first step toward not breaking it.</p>
+MAKE IT FAIL</br>
+
+QUIT THINKING AND LOOK</br>
+
+DIVIDE AND CONQUER</br>
+
+CHANGE ONE THING AT A TIME</br>
+
+KEEP AN AUDIT TRAIL</br>
+
+CHECK THE PLUG</br>
+
+GET A FRESH VIEW</br>
+
+IF YOU DIDN'T FIX IT, IT AIN'T FIXED</br>
+
